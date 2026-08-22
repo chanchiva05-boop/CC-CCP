@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>អានសៀវភៅ CC&CCP</title>
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            font-family: 'Khmer OS', 'Noto Sans Khmer', sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 20px;
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        /* Canvas សម្រាប់បង្ហាញ PDF */
+        #pdf-canvas {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+        }
+        /* ប៊ូតុងបង្វិលទំព័រ */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .controls button {
+            padding: 10px 24px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .controls button:hover { background: #2980b9; }
+        .controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .controls span {
+            font-size: 18px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        /* Watermark / សារការពារ */
+        .protect-note {
+            text-align: center;
+            margin-top: 12px;
+            color: #e74c3c;
+            font-size: 14px;
+            background: #fde8e8;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #f5c6c6;
+            user-select: none;
+        }
+        /* ហាម右键 */
+        .no-right-click {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container no-right-click" id="reader-container">
+    <h1>📖 CC & CCP</h1>
+
+    <!-- Canvas សម្រាប់ render PDF -->
+    <canvas id="pdf-canvas"></canvas>
+
+    <!-- ប៊ូតុងគ្រប់គ្រង -->
+    <div class="controls">
+        <button id="prev-page" disabled>◀ មុន</button>
+        <span id="page-num">1 / 1</span>
+        <button id="next-page">បន្ទាប់ ▶</button>
+    </div>
+
+    <div class="protect-note">
+        ⛔ ហាមចម្លង បោះពុម្ព ឬទាញយកសៀវភៅនេះ
+    </div>
+</div>
+
+<script>
+    (function() {
+        // --- កំណត់ផ្លូវឯកសារ PDF (ដាក់ឲ្យត្រូវ) ---
+        const PDF_URL = 'CC&CCP.pdf';  // ប្តូរតាមឈ្មោះឯកសាររបស់អ្នក
+
+        // --- ហាម Print (Ctrl+P / Cmd+P) ---
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                alert('⛔ ការបោះពុម្ពមិនត្រូវបានអនុញ្ញាត!');
+                return false;
+            }
+        });
+
+        // --- ហាម Right-click ---
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('⛔ មុខងារនេះត្រូវបានបិទ');
+        });
+
+        // --- ហាមអូសរូបភាព / ជ្រើសរើសអត្ថបទ (បន្ថែម) ---
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+        });
+
+        // --- ប្រើ PDF.js ដើម្បីបង្ហាញ PDF ---
+        const canvas = document.getElementById('pdf-canvas');
+        const ctx = canvas.getContext('2d');
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        const pageNumSpan = document.getElementById('page-num');
+
+        let pdfDoc = null;
+        let currentPage = 1;
+        let totalPages = 0;
+
+        // កំណត់ PDF.js worker (ត្រូវការសម្រាប់ដំណើរការ)
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        // --- មុខងារបង្ហាញទំព័រ ---
+        function renderPage(pageNum) {
+            pdfDoc.getPage(pageNum).then(function(page) {
+                const viewport = page.getViewport({ scale: 1.5 });  // កែ scale តាមចិត្ត
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                page.render(renderContext).promise.then(function() {
+                    pageNumSpan.textContent = `${pageNum} / ${totalPages}`;
+                    prevBtn.disabled = (pageNum === 1);
+                    nextBtn.disabled = (pageNum === totalPages);
+                });
+            }).catch(function(err) {
+                console.error('Error rendering page:', err);
+                alert('មិនអាចបង្ហាញទំព័រនេះបានទេ។ សូមពិនិត្យមើលឯកសារ PDF ។');
+            });
+        }
+
+        // --- ដំណើរការផ្ទុក PDF ---
+        pdfjsLib.getDocument(PDF_URL).promise.then(function(doc) {
+            pdfDoc = doc;
+            totalPages = doc.numPages;
+            currentPage = 1;
+            renderPage(currentPage);
+        }).catch(function(err) {
+            console.error('Error loading PDF:', err);
+            alert('មិនអាចផ្ទុកឯកសារ PDF បានទេ។ សូមពិនិត្យផ្លូវឯកសារ។');
+        });
+
+        // --- ប៊ូតុងប្តូរទំព័រ ---
+        prevBtn.addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
+            }
+        });
+
+        nextBtn.addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage(currentPage);
+            }
+        });
+
+        // --- ហាម Ctrl+S (Save) ---
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                alert('⛔ មិនអាចរក្សាទុកឯកសារនេះបានទេ!');
+                return false;
+            }
+        });
+
+    })();
+</script>
+</body>
+</html>
