@@ -4,14 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>អានសៀវភៅ CC & CCP</title>
-    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <!-- Google Font Khmer & English -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+Khmer:wght@100..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Noto+Sans+Khmer:wght@100..900&display=swap" rel="stylesheet"/>
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -28,7 +24,6 @@
             padding: 24px;
         }
 
-        /* ===== MAIN CARD ===== */
         .reader-card {
             max-width: 1000px;
             width: 100%;
@@ -41,7 +36,6 @@
             overflow: hidden;
         }
 
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -111,11 +105,6 @@
             gap: 6px;
         }
 
-        .badge i {
-            font-size: 14px;
-        }
-
-        /* ===== CANVAS WRAPPER ===== */
         .canvas-wrapper {
             background: #f8f9fc;
             border-radius: 18px;
@@ -134,18 +123,17 @@
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
         }
 
-        /* ===== CONTROLS ===== */
         .controls {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 18px;
+            gap: 14px;
             margin-top: 24px;
             flex-wrap: wrap;
         }
 
         .controls button {
-            padding: 12px 28px;
+            padding: 12px 24px;
             border: none;
             border-radius: 40px;
             font-size: 15px;
@@ -161,18 +149,10 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
 
-        .controls button i {
-            font-size: 16px;
-        }
-
         .controls button:hover:not(:disabled) {
             background: #d5dbdf;
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .controls button:active:not(:disabled) {
-            transform: translateY(0px);
         }
 
         .controls button:disabled {
@@ -191,26 +171,88 @@
             box-shadow: 0 8px 24px rgba(44, 62, 80, 0.25);
         }
 
-        .page-indicator {
-            font-size: 17px;
-            font-weight: 600;
-            color: #2c3e50;
+        .page-control-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             background: #f8f9fc;
-            padding: 8px 22px;
+            padding: 4px 6px 4px 16px;
             border-radius: 40px;
             border: 1px solid #e9ebee;
-            min-width: 110px;
-            text-align: center;
-            letter-spacing: 0.3px;
         }
 
-        .page-indicator i {
-            margin-right: 8px;
-            color: #7f8c8d;
+        .page-control-group .page-label {
             font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* ===== FOOTER ===== */
+        .page-control-group .page-label i {
+            font-size: 14px;
+            color: #95a5a6;
+        }
+
+        .page-control-group input {
+            width: 56px;
+            padding: 8px 4px 8px 10px;
+            border: 1px solid #dce0e5;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            text-align: center;
+            color: #2c3e50;
+            background: white;
+            font-family: inherit;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .page-control-group input:focus {
+            border-color: #2c3e50;
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        .page-control-group input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+        .page-control-group input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .page-control-group .page-total {
+            font-size: 15px;
+            font-weight: 500;
+            color: #7f8c8d;
+            padding-right: 4px;
+        }
+
+        .page-control-group .go-btn {
+            padding: 8px 16px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-control-group .go-btn:hover {
+            background: #1a252f;
+        }
+
+        .page-control-group .go-btn i {
+            font-size: 13px;
+        }
+
         .footer {
             display: flex;
             justify-content: space-between;
@@ -247,17 +289,12 @@
             gap: 14px;
         }
 
-        .footer-info i {
-            font-size: 14px;
-        }
-
         .footer-info span {
             display: flex;
             align-items: center;
             gap: 4px;
         }
 
-        /* ===== TOAST NOTIFICATION ===== */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -288,48 +325,51 @@
         .toast i {
             font-size: 20px;
         }
+        .toast.warning i { color: #f1c40f; }
+        .toast.error i { color: #e74c3c; }
+        .toast.success i { color: #2ecc71; }
 
-        .toast.warning i {
-            color: #f1c40f;
-        }
-        .toast.error i {
-            color: #e74c3c;
+        @media (max-width: 720px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .controls button {
+                justify-content: center;
+            }
+            .page-control-group {
+                justify-content: center;
+                padding: 6px 12px;
+                flex-wrap: wrap;
+            }
+            .page-control-group input {
+                width: 50px;
+            }
         }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 640px) {
             body { padding: 12px; }
             .reader-card { padding: 18px 16px 20px; border-radius: 20px; }
             .book-title h1 { font-size: 20px; }
             .header { flex-direction: column; align-items: flex-start; }
             .header-right { width: 100%; justify-content: flex-start; }
-            .controls button { padding: 10px 18px; font-size: 14px; }
-            .page-indicator { font-size: 15px; padding: 6px 16px; min-width: 90px; }
             .footer { flex-direction: column; align-items: flex-start; }
             .protect-note { font-size: 13px; }
             .footer-info { font-size: 12px; flex-wrap: wrap; }
             .toast { font-size: 13px; padding: 12px 22px; width: 90%; }
         }
-
-        @media (max-width: 400px) {
-            .controls { gap: 10px; }
-            .controls button { padding: 8px 14px; font-size: 13px; gap: 6px; }
-            .page-indicator { font-size: 13px; padding: 4px 12px; min-width: 70px; }
-        }
     </style>
 </head>
 <body>
 
-<!-- ===== TOAST ===== -->
 <div class="toast" id="toast">
     <i class="fas fa-shield-alt"></i>
     <span id="toast-message">មុខងារនេះត្រូវបានបិទ</span>
 </div>
 
-<!-- ===== READER CARD ===== -->
 <div class="reader-card" id="reader-container">
 
-    <!-- HEADER -->
     <div class="header">
         <div class="header-left">
             <div class="book-icon">
@@ -351,25 +391,31 @@
         </div>
     </div>
 
-    <!-- CANVAS -->
     <div class="canvas-wrapper">
         <canvas id="pdf-canvas"></canvas>
     </div>
 
-    <!-- CONTROLS -->
     <div class="controls">
         <button id="prev-page" disabled>
             <i class="fas fa-chevron-left"></i> មុន
         </button>
-        <div class="page-indicator">
-            <i class="fas fa-file-pdf"></i> <span id="page-num">1 / 1</span>
+
+        <div class="page-control-group">
+            <span class="page-label">
+                <i class="fas fa-search"></i> ទំព័រ
+            </span>
+            <input type="number" id="page-input" min="1" value="1" />
+            <span class="page-total">/ <span id="total-pages-display">1</span></span>
+            <button class="go-btn" id="go-page-btn">
+                <i class="fas fa-arrow-right"></i> ទៅ
+            </button>
         </div>
+
         <button id="next-page" class="btn-primary">
             បន្ទាប់ <i class="fas fa-chevron-right"></i>
         </button>
     </div>
 
-    <!-- FOOTER -->
     <div class="footer">
         <div class="protect-note">
             <i class="fas fa-ban"></i>
@@ -385,16 +431,16 @@
 
 <script>
     (function() {
-        // ===== CONFIG =====
         const PDF_URL = 'CC&CCP.pdf';
         const TOAST_DURATION = 2500;
 
-        // ===== DOM REFS =====
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
         const prevBtn = document.getElementById('prev-page');
         const nextBtn = document.getElementById('next-page');
-        const pageNumSpan = document.getElementById('page-num');
+        const pageInput = document.getElementById('page-input');
+        const goBtn = document.getElementById('go-page-btn');
+        const totalPagesDisplay = document.getElementById('total-pages-display');
         const toast = document.getElementById('toast');
         const toastMsg = document.getElementById('toast-message');
 
@@ -403,12 +449,10 @@
         let totalPages = 0;
         let toastTimeout = null;
 
-        // ===== TOAST FUNCTION =====
         function showToast(message, type = 'warning') {
             if (toastTimeout) clearTimeout(toastTimeout);
             toastMsg.textContent = message;
             toast.className = 'toast ' + type;
-            // force reflow
             void toast.offsetWidth;
             toast.classList.add('show');
             toastTimeout = setTimeout(() => {
@@ -416,29 +460,12 @@
             }, TOAST_DURATION);
         }
 
-        // ===== BLOCK: Print =====
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
                 e.preventDefault();
                 showToast('⛔ ការបោះពុម្ពមិនត្រូវបានអនុញ្ញាត!', 'error');
                 return false;
             }
-        });
-
-        // ===== BLOCK: Right-click =====
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            showToast('⛔ មុខងារចុចស្ដាំត្រូវបានបិទ', 'warning');
-        });
-
-        // ===== BLOCK: Drag =====
-        document.addEventListener('dragstart', function(e) {
-            e.preventDefault();
-            showToast('⛔ មិនអាចអូសឯកសារបានទេ', 'warning');
-        });
-
-        // ===== BLOCK: Ctrl+S =====
-        document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
                 showToast('⛔ មិនអាចរក្សាទុកទំព័រនេះបានទេ!', 'error');
@@ -446,13 +473,21 @@
             }
         });
 
-        // ===== BLOCK: Ctrl+C (copy) — optional =====
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showToast('⛔ មុខងារចុចស្ដាំត្រូវបានបិទ', 'warning');
+        });
+
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            showToast('⛔ មិនអាចអូសឯកសារបានទេ', 'warning');
+        });
+
         document.addEventListener('copy', function(e) {
             e.preventDefault();
             showToast('⛔ ការចម្លងអត្ថបទមិនត្រូវបានអនុញ្ញាត', 'warning');
         });
 
-        // ===== PDF.js =====
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         function renderPage(pageNum) {
@@ -467,7 +502,7 @@
                 };
                 return page.render(renderContext).promise;
             }).then(function() {
-                pageNumSpan.textContent = `${currentPage} / ${totalPages}`;
+                pageInput.value = currentPage;
                 prevBtn.disabled = (currentPage === 1);
                 nextBtn.disabled = (currentPage === totalPages);
             }).catch(function(err) {
@@ -476,10 +511,11 @@
             });
         }
 
-        // ===== LOAD PDF =====
         pdfjsLib.getDocument(PDF_URL).promise.then(function(doc) {
             pdfDoc = doc;
             totalPages = doc.numPages;
+            totalPagesDisplay.textContent = totalPages;
+            pageInput.max = totalPages;
             currentPage = 1;
             renderPage(currentPage);
         }).catch(function(err) {
@@ -487,7 +523,29 @@
             showToast('មិនអាចផ្ទុកឯកសារ PDF បានទេ! សូមពិនិត្យផ្លូវឯកសារ។', 'error');
         });
 
-        // ===== BUTTONS =====
+        function goToPage() {
+            if (!pdfDoc) return;
+            let val = parseInt(pageInput.value);
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > totalPages) val = totalPages;
+            if (val === currentPage) {
+                showToast(`អ្នកកំពុងនៅទំព័រ ${val} រួចហើយ`, 'warning');
+                return;
+            }
+            currentPage = val;
+            renderPage(currentPage);
+            showToast(`📄 បានទៅទំព័រ ${currentPage}`, 'success');
+        }
+
+        goBtn.addEventListener('click', goToPage);
+
+        pageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                goToPage();
+            }
+        });
+
         prevBtn.addEventListener('click', function() {
             if (currentPage > 1) {
                 currentPage--;
@@ -502,9 +560,8 @@
             }
         });
 
-        // ===== KEYBOARD SHORTCUTS: Arrow Left/Right =====
         document.addEventListener('keydown', function(e) {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.target.tagName === 'INPUT') return;
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 if (currentPage > 1) {
