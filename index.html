@@ -329,6 +329,20 @@
         .toast.error i { color: #e74c3c; }
         .toast.success i { color: #2ecc71; }
 
+        .offset-badge {
+            background: #fef9e7;
+            color: #f39c12;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #f9e79f;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
         @media (max-width: 720px) {
             .controls {
                 flex-direction: column;
@@ -409,6 +423,9 @@
             <button class="go-btn" id="go-page-btn">
                 <i class="fas fa-arrow-right"></i> ទៅ
             </button>
+            <span class="offset-badge">
+                <i class="fas fa-plus-circle"></i> +5
+            </span>
         </div>
 
         <button id="next-page" class="btn-primary">
@@ -433,6 +450,7 @@
     (function() {
         const PDF_URL = 'CC&CCP.pdf';
         const TOAST_DURATION = 2500;
+        const PAGE_OFFSET = 5;
 
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
@@ -528,13 +546,18 @@
             let val = parseInt(pageInput.value);
             if (isNaN(val) || val < 1) val = 1;
             if (val > totalPages) val = totalPages;
-            if (val === currentPage) {
-                showToast(`អ្នកកំពុងនៅទំព័រ ${val} រួចហើយ`, 'warning');
+            
+            let targetPage = val + PAGE_OFFSET;
+            if (targetPage > totalPages) targetPage = totalPages;
+            
+            if (targetPage === currentPage) {
+                showToast(`អ្នកកំពុងនៅទំព័រ ${targetPage} រួចហើយ`, 'warning');
                 return;
             }
-            currentPage = val;
+            
+            currentPage = targetPage;
             renderPage(currentPage);
-            showToast(`📄 បានទៅទំព័រ ${currentPage}`, 'success');
+            showToast(`📄 បានទៅទំព័រ ${currentPage} (ស្វែងរក ${val} +${PAGE_OFFSET})`, 'success');
         }
 
         goBtn.addEventListener('click', goToPage);
