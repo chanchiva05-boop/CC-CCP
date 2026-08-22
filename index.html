@@ -6,7 +6,7 @@
     <title>អានសៀវភៅ CC & CCP</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Noto+Sans+Khmer:wght@100..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600;700&display=swap" rel="stylesheet"/>
     <style>
         * {
             margin: 0;
@@ -15,281 +15,200 @@
         }
 
         body {
-            font-family: 'Noto Sans Khmer', 'Inter', sans-serif;
-            background: #f0f2f5;
-            min-height: 100vh;
+            font-family: 'Noto Sans Khmer', sans-serif;
+            background: #eef1f5;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 24px;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        .reader-card {
-            max-width: 1000px;
+        .container {
+            max-width: 900px;
             width: 100%;
-            background: #ffffff;
-            border-radius: 28px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.05);
-            padding: 32px 32px 28px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 30px;
         }
 
         .header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
             gap: 12px;
+            margin-bottom: 20px;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+        .header i {
+            font-size: 28px;
+            color: #2c3e50;
+            background: #ecf0f1;
+            padding: 12px;
+            border-radius: 12px;
         }
 
-        .book-icon {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(145deg, #2c3e50, #1a252f);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #f1c40f;
-            font-size: 26px;
-            box-shadow: 0 6px 16px rgba(44, 62, 80, 0.25);
+        .header h1 {
+            font-size: 22px;
+            color: #2c3e50;
         }
 
-        .book-title h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a1a2e;
-            letter-spacing: -0.3px;
-            line-height: 1.2;
-        }
-
-        .book-title .sub {
-            font-size: 14px;
-            color: #7f8c8d;
-            font-weight: 400;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 2px;
-        }
-
-        .book-title .sub i {
-            font-size: 12px;
-            color: #e67e22;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .badge {
-            background: #eaf2f8;
-            color: #2980b9;
-            padding: 6px 16px;
-            border-radius: 30px;
+        .header span {
             font-size: 13px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            color: #7f8c8d;
+            margin-left: auto;
+            background: #eaf2f8;
+            padding: 4px 14px;
+            border-radius: 20px;
         }
 
         .canvas-wrapper {
-            background: #f8f9fc;
-            border-radius: 18px;
-            padding: 12px;
-            border: 1px solid #eef0f4;
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
-            position: relative;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 8px;
+            border: 1px solid #e9ecef;
         }
 
         #pdf-canvas {
             width: 100%;
             height: auto;
             display: block;
-            border-radius: 12px;
-            background: white;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border-radius: 8px;
         }
 
         .controls {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 14px;
-            margin-top: 24px;
+            gap: 12px;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
 
         .controls button {
-            padding: 12px 24px;
+            padding: 10px 22px;
             border: none;
-            border-radius: 40px;
+            border-radius: 30px;
             font-size: 15px;
             font-weight: 600;
             font-family: inherit;
             cursor: pointer;
-            transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
             background: #ecf0f1;
             color: #2c3e50;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .controls button:hover:not(:disabled) {
             background: #d5dbdf;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         }
 
         .controls button:disabled {
-            opacity: 0.35;
+            opacity: 0.4;
             cursor: not-allowed;
-            transform: none !important;
         }
 
         .controls .btn-primary {
             background: #2c3e50;
-            color: white;
+            color: #fff;
         }
 
         .controls .btn-primary:hover:not(:disabled) {
             background: #1a252f;
-            box-shadow: 0 8px 24px rgba(44, 62, 80, 0.25);
         }
 
-        .page-control-group {
+        .search-group {
             display: flex;
             align-items: center;
             gap: 6px;
-            background: #f8f9fc;
-            padding: 4px 6px 4px 16px;
-            border-radius: 40px;
-            border: 1px solid #e9ebee;
-        }
-
-        .page-control-group .page-label {
-            font-size: 14px;
-            color: #7f8c8d;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .page-control-group .page-label i {
-            font-size: 14px;
-            color: #95a5a6;
-        }
-
-        .page-control-group input {
-            width: 56px;
-            padding: 8px 4px 8px 10px;
-            border: 1px solid #dce0e5;
+            background: #f8f9fa;
+            padding: 4px 6px 4px 14px;
             border-radius: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .search-group i {
+            color: #95a5a6;
+            font-size: 14px;
+        }
+
+        .search-group input {
+            width: 50px;
+            padding: 7px 4px;
+            border: 1px solid #dce0e5;
+            border-radius: 20px;
+            text-align: center;
             font-size: 15px;
             font-weight: 600;
-            text-align: center;
-            color: #2c3e50;
-            background: white;
             font-family: inherit;
             outline: none;
-            transition: border 0.2s;
+            background: #fff;
         }
 
-        .page-control-group input:focus {
+        .search-group input:focus {
             border-color: #2c3e50;
-            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
         }
 
-        .page-control-group input::-webkit-inner-spin-button {
+        .search-group input::-webkit-inner-spin-button {
             -webkit-appearance: none;
         }
-        .page-control-group input[type="number"] {
+        .search-group input[type="number"] {
             -moz-appearance: textfield;
         }
 
-        .page-control-group .page-total {
-            font-size: 15px;
-            font-weight: 500;
+        .search-group .total {
             color: #7f8c8d;
-            padding-right: 4px;
+            font-weight: 500;
+            font-size: 14px;
         }
 
-        .page-control-group .go-btn {
-            padding: 8px 16px;
+        .search-group .go-btn {
+            padding: 7px 14px;
             background: #2c3e50;
-            color: white;
+            color: #fff;
             border: none;
-            border-radius: 30px;
-            font-size: 14px;
+            border-radius: 20px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
             font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 14px;
+            transition: 0.2s;
         }
 
-        .page-control-group .go-btn:hover {
+        .search-group .go-btn:hover {
             background: #1a252f;
-        }
-
-        .page-control-group .go-btn i {
-            font-size: 13px;
         }
 
         .footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid #eef0f4;
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid #e9ecef;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .protect-note {
+        .footer .warning {
             color: #e74c3c;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: #fdf2f2;
-            padding: 6px 18px 6px 14px;
-            border-radius: 30px;
-            border: 1px solid #fadbd8;
+            gap: 6px;
         }
 
-        .protect-note i {
-            font-size: 16px;
-        }
-
-        .footer-info {
-            font-size: 13px;
+        .footer .info {
+            font-size: 12px;
             color: #95a5a6;
             display: flex;
-            align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
-        .footer-info span {
+        .footer .info span {
             display: flex;
             align-items: center;
             gap: 4px;
@@ -299,21 +218,20 @@
             position: fixed;
             bottom: 30px;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            transform: translateX(-50%) translateY(80px);
             background: #2c3e50;
-            color: white;
-            padding: 14px 30px;
-            border-radius: 50px;
-            font-size: 15px;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 14px;
             font-weight: 500;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            font-family: 'Noto Sans Khmer', sans-serif;
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 999;
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-family: 'Noto Sans Khmer', 'Inter', sans-serif;
+            gap: 10px;
             pointer-events: none;
         }
 
@@ -323,86 +241,31 @@
         }
 
         .toast i {
-            font-size: 20px;
-        }
-        .toast.warning i { color: #f1c40f; }
-        .toast.error i { color: #e74c3c; }
-        .toast.success i { color: #2ecc71; }
-
-        .offset-badge {
-            background: #fef9e7;
-            color: #f39c12;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            border: 1px solid #f9e79f;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-left: 8px;
-        }
-
-        @media (max-width: 720px) {
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-            }
-            .controls button {
-                justify-content: center;
-            }
-            .page-control-group {
-                justify-content: center;
-                padding: 6px 12px;
-                flex-wrap: wrap;
-            }
-            .page-control-group input {
-                width: 50px;
-            }
+            font-size: 18px;
         }
 
         @media (max-width: 640px) {
-            body { padding: 12px; }
-            .reader-card { padding: 18px 16px 20px; border-radius: 20px; }
-            .book-title h1 { font-size: 20px; }
-            .header { flex-direction: column; align-items: flex-start; }
-            .header-right { width: 100%; justify-content: flex-start; }
+            .container { padding: 16px; }
+            .controls { flex-direction: column; }
+            .controls button { width: 100%; justify-content: center; }
+            .search-group { width: 100%; justify-content: center; }
             .footer { flex-direction: column; align-items: flex-start; }
-            .protect-note { font-size: 13px; }
-            .footer-info { font-size: 12px; flex-wrap: wrap; }
-            .toast { font-size: 13px; padding: 12px 22px; width: 90%; }
         }
     </style>
 </head>
 <body>
 
 <div class="toast" id="toast">
-    <i class="fas fa-shield-alt"></i>
-    <span id="toast-message">មុខងារនេះត្រូវបានបិទ</span>
+    <i class="fas fa-info-circle"></i>
+    <span id="toast-msg"></span>
 </div>
 
-<div class="reader-card" id="reader-container">
+<div class="container">
 
     <div class="header">
-        <div class="header-left">
-            <div class="book-icon">
-                <i class="fas fa-book-open"></i>
-            </div>
-            <div class="book-title">
-                <h1>CC &amp; CCP</h1>
-                <div class="sub">
-                    <i class="fas fa-circle" style="color: #27ae60; font-size: 8px;"></i>
-                    សៀវភៅអេឡិចត្រូនិច
-                    <i class="fas fa-lock" style="color: #e67e22; font-size: 11px; margin-left: 4px;"></i>
-                </div>
-            </div>
-        </div>
-        <div class="header-right">
-            <div class="badge">
-                <i class="fas fa-eye"></i> មើលតែប៉ុណ្ណោះ
-            </div>
-        </div>
+        <i class="fas fa-book"></i>
+        <h1>CC & CCP</h1>
+        <span><i class="fas fa-eye"></i> អានតែប៉ុណ្ណោះ</span>
     </div>
 
     <div class="canvas-wrapper">
@@ -410,38 +273,25 @@
     </div>
 
     <div class="controls">
-        <button id="prev-page" disabled>
-            <i class="fas fa-chevron-left"></i> មុន
-        </button>
+        <button id="prev-btn"><i class="fas fa-chevron-left"></i> មុន</button>
 
-        <div class="page-control-group">
-            <span class="page-label">
-                <i class="fas fa-search"></i> ទំព័រ
-            </span>
+        <div class="search-group">
+            <i class="fas fa-search"></i>
             <input type="number" id="page-input" min="1" value="1" />
-            <span class="page-total">/ <span id="total-pages-display">1</span></span>
-            <button class="go-btn" id="go-page-btn">
-                <i class="fas fa-arrow-right"></i> ទៅ
-            </button>
-            <span class="offset-badge">
-                <i class="fas fa-plus-circle"></i> +5
-            </span>
+            <span class="total">/ <span id="total-pages">1</span></span>
+            <button class="go-btn" id="go-btn"><i class="fas fa-arrow-right"></i></button>
         </div>
 
-        <button id="next-page" class="btn-primary">
-            បន្ទាប់ <i class="fas fa-chevron-right"></i>
-        </button>
+        <button id="next-btn" class="btn-primary">បន្ទាប់ <i class="fas fa-chevron-right"></i></button>
     </div>
 
     <div class="footer">
-        <div class="protect-note">
-            <i class="fas fa-ban"></i>
-            ហាមចម្លង · បោះពុម្ព · ទាញយក
+        <div class="warning">
+            <i class="fas fa-ban"></i> ហាមចម្លង · បោះពុម្ព · ទាញយក
         </div>
-        <div class="footer-info">
-            <span><i class="fas fa-lock" style="color: #27ae60;"></i> ការពារ</span>
-            <span><i class="fas fa-print" style="color: #e74c3c;"></i> បិទ Print</span>
-            <span><i class="fas fa-download" style="color: #e74c3c;"></i> បិទ Download</span>
+        <div class="info">
+            <span><i class="fas fa-lock" style="color:#27ae60;"></i> ការពារ</span>
+            <span><i class="fas fa-print" style="color:#e74c3c;"></i> បិទ Print</span>
         </div>
     </div>
 </div>
@@ -449,61 +299,52 @@
 <script>
     (function() {
         const PDF_URL = 'CC&CCP.pdf';
-        const TOAST_DURATION = 2500;
-        const PAGE_OFFSET = 5;
+        const OFFSET = 5;
 
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
-        const prevBtn = document.getElementById('prev-page');
-        const nextBtn = document.getElementById('next-page');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
         const pageInput = document.getElementById('page-input');
-        const goBtn = document.getElementById('go-page-btn');
-        const totalPagesDisplay = document.getElementById('total-pages-display');
+        const goBtn = document.getElementById('go-btn');
+        const totalPagesSpan = document.getElementById('total-pages');
         const toast = document.getElementById('toast');
-        const toastMsg = document.getElementById('toast-message');
+        const toastMsg = document.getElementById('toast-msg');
 
         let pdfDoc = null;
         let currentPage = 1;
         let totalPages = 0;
         let toastTimeout = null;
 
-        function showToast(message, type = 'warning') {
+        function showToast(msg, type = 'info') {
             if (toastTimeout) clearTimeout(toastTimeout);
-            toastMsg.textContent = message;
-            toast.className = 'toast ' + type;
-            void toast.offsetWidth;
-            toast.classList.add('show');
+            toastMsg.textContent = msg;
+            toast.className = 'toast show';
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('show');
-            }, TOAST_DURATION);
+            }, 2500);
         }
 
         document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's')) {
                 e.preventDefault();
-                showToast('⛔ ការបោះពុម្ពមិនត្រូវបានអនុញ្ញាត!', 'error');
-                return false;
-            }
-            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-                e.preventDefault();
-                showToast('⛔ មិនអាចរក្សាទុកទំព័រនេះបានទេ!', 'error');
+                showToast('⛔ មុខងារនេះត្រូវបានបិទ');
                 return false;
             }
         });
 
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            showToast('⛔ មុខងារចុចស្ដាំត្រូវបានបិទ', 'warning');
+            showToast('⛔ មុខងារចុចស្ដាំត្រូវបានបិទ');
         });
 
         document.addEventListener('dragstart', function(e) {
             e.preventDefault();
-            showToast('⛔ មិនអាចអូសឯកសារបានទេ', 'warning');
         });
 
         document.addEventListener('copy', function(e) {
             e.preventDefault();
-            showToast('⛔ ការចម្លងអត្ថបទមិនត្រូវបានអនុញ្ញាត', 'warning');
+            showToast('⛔ ការចម្លងមិនត្រូវបានអនុញ្ញាត');
         });
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
@@ -514,31 +355,25 @@
                 const viewport = page.getViewport({ scale: 1.6 });
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
-                const renderContext = {
-                    canvasContext: ctx,
-                    viewport: viewport
-                };
-                return page.render(renderContext).promise;
+                return page.render({ canvasContext: ctx, viewport: viewport }).promise;
             }).then(function() {
                 pageInput.value = currentPage;
-                prevBtn.disabled = (currentPage === 1);
-                nextBtn.disabled = (currentPage === totalPages);
-            }).catch(function(err) {
-                console.error('Render error:', err);
-                showToast('មិនអាចបង្ហាញទំព័រនេះបានទេ', 'error');
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            }).catch(function() {
+                showToast('មិនអាចបង្ហាញទំព័រនេះបានទេ');
             });
         }
 
         pdfjsLib.getDocument(PDF_URL).promise.then(function(doc) {
             pdfDoc = doc;
             totalPages = doc.numPages;
-            totalPagesDisplay.textContent = totalPages;
+            totalPagesSpan.textContent = totalPages;
             pageInput.max = totalPages;
             currentPage = 1;
             renderPage(currentPage);
-        }).catch(function(err) {
-            console.error('Load PDF error:', err);
-            showToast('មិនអាចផ្ទុកឯកសារ PDF បានទេ! សូមពិនិត្យផ្លូវឯកសារ។', 'error');
+        }).catch(function() {
+            showToast('មិនអាចផ្ទុកឯកសារ PDF បានទេ');
         });
 
         function goToPage() {
@@ -546,18 +381,18 @@
             let val = parseInt(pageInput.value);
             if (isNaN(val) || val < 1) val = 1;
             if (val > totalPages) val = totalPages;
-            
-            let targetPage = val + PAGE_OFFSET;
-            if (targetPage > totalPages) targetPage = totalPages;
-            
-            if (targetPage === currentPage) {
-                showToast(`អ្នកកំពុងនៅទំព័រ ${targetPage} រួចហើយ`, 'warning');
+
+            let target = val + OFFSET;
+            if (target > totalPages) target = totalPages;
+
+            if (target === currentPage) {
+                showToast(`កំពុងនៅទំព័រ ${target} រួចហើយ`);
                 return;
             }
-            
-            currentPage = targetPage;
+
+            currentPage = target;
             renderPage(currentPage);
-            showToast(`📄 បានទៅទំព័រ ${currentPage} (ស្វែងរក ${val} +${PAGE_OFFSET})`, 'success');
+            showToast(`ទៅទំព័រ ${currentPage} (${val} +${OFFSET})`);
         }
 
         goBtn.addEventListener('click', goToPage);
@@ -585,18 +420,14 @@
 
         document.addEventListener('keydown', function(e) {
             if (e.target.tagName === 'INPUT') return;
-            if (e.key === 'ArrowLeft') {
+            if (e.key === 'ArrowLeft' && currentPage > 1) {
                 e.preventDefault();
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderPage(currentPage);
-                }
-            } else if (e.key === 'ArrowRight') {
+                currentPage--;
+                renderPage(currentPage);
+            } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
                 e.preventDefault();
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderPage(currentPage);
-                }
+                currentPage++;
+                renderPage(currentPage);
             }
         });
 
