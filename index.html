@@ -3,181 +3,491 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>អានសៀវភៅ CC&CCP</title>
+    <title>អានសៀវភៅ CC & CCP</title>
     <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <!-- Google Font Khmer & English -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+Khmer:wght@100..900&display=swap" rel="stylesheet"/>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: #f5f5f5;
+            font-family: 'Noto Sans Khmer', 'Inter', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            padding: 20px;
-            font-family: 'Khmer OS', 'Noto Sans Khmer', sans-serif;
+            align-items: center;
+            padding: 24px;
         }
-        .container {
-            max-width: 900px;
+
+        /* ===== MAIN CARD ===== */
+        .reader-card {
+            max-width: 1000px;
             width: 100%;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            padding: 20px;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.05);
+            padding: 32px 32px 28px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .book-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(145deg, #2c3e50, #1a252f);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f1c40f;
+            font-size: 26px;
+            box-shadow: 0 6px 16px rgba(44, 62, 80, 0.25);
+        }
+
+        .book-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+
+        .book-title .sub {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+        .book-title .sub i {
+            font-size: 12px;
+            color: #e67e22;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            background: #eaf2f8;
+            color: #2980b9;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge i {
+            font-size: 14px;
+        }
+
+        /* ===== CANVAS WRAPPER ===== */
+        .canvas-wrapper {
+            background: #f8f9fc;
+            border-radius: 18px;
+            padding: 12px;
+            border: 1px solid #eef0f4;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
             position: relative;
         }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 24px;
-        }
-        /* Canvas សម្រាប់បង្ហាញ PDF */
+
         #pdf-canvas {
             width: 100%;
             height: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: #fff;
+            display: block;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
         }
-        /* ប៊ូតុងបង្វិលទំព័រ */
+
+        /* ===== CONTROLS ===== */
         .controls {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
-            margin-top: 15px;
+            gap: 18px;
+            margin-top: 24px;
             flex-wrap: wrap;
         }
+
         .controls button {
-            padding: 10px 24px;
-            background: #3498db;
-            color: white;
+            padding: 12px 28px;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
             cursor: pointer;
-            transition: background 0.3s;
-        }
-        .controls button:hover { background: #2980b9; }
-        .controls button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .controls span {
-            font-size: 18px;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ecf0f1;
             color: #2c3e50;
-            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
-        /* Watermark / សារការពារ */
-        .protect-note {
+
+        .controls button i {
+            font-size: 16px;
+        }
+
+        .controls button:hover:not(:disabled) {
+            background: #d5dbdf;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .controls button:active:not(:disabled) {
+            transform: translateY(0px);
+        }
+
+        .controls button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .controls .btn-primary {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .controls .btn-primary:hover:not(:disabled) {
+            background: #1a252f;
+            box-shadow: 0 8px 24px rgba(44, 62, 80, 0.25);
+        }
+
+        .page-indicator {
+            font-size: 17px;
+            font-weight: 600;
+            color: #2c3e50;
+            background: #f8f9fc;
+            padding: 8px 22px;
+            border-radius: 40px;
+            border: 1px solid #e9ebee;
+            min-width: 110px;
             text-align: center;
-            margin-top: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .page-indicator i {
+            margin-right: 8px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #eef0f4;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .protect-note {
             color: #e74c3c;
             font-size: 14px;
-            background: #fde8e8;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #f5c6c6;
-            user-select: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fdf2f2;
+            padding: 6px 18px 6px 14px;
+            border-radius: 30px;
+            border: 1px solid #fadbd8;
         }
-        /* ហាម右键 */
-        .no-right-click {
-            user-select: none;
-            -webkit-user-select: none;
+
+        .protect-note i {
+            font-size: 16px;
+        }
+
+        .footer-info {
+            font-size: 13px;
+            color: #95a5a6;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .footer-info i {
+            font-size: 14px;
+        }
+
+        .footer-info span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #2c3e50;
+            color: white;
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Noto Sans Khmer', 'Inter', sans-serif;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .toast.warning i {
+            color: #f1c40f;
+        }
+        .toast.error i {
+            color: #e74c3c;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            body { padding: 12px; }
+            .reader-card { padding: 18px 16px 20px; border-radius: 20px; }
+            .book-title h1 { font-size: 20px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .header-right { width: 100%; justify-content: flex-start; }
+            .controls button { padding: 10px 18px; font-size: 14px; }
+            .page-indicator { font-size: 15px; padding: 6px 16px; min-width: 90px; }
+            .footer { flex-direction: column; align-items: flex-start; }
+            .protect-note { font-size: 13px; }
+            .footer-info { font-size: 12px; flex-wrap: wrap; }
+            .toast { font-size: 13px; padding: 12px 22px; width: 90%; }
+        }
+
+        @media (max-width: 400px) {
+            .controls { gap: 10px; }
+            .controls button { padding: 8px 14px; font-size: 13px; gap: 6px; }
+            .page-indicator { font-size: 13px; padding: 4px 12px; min-width: 70px; }
         }
     </style>
 </head>
 <body>
-<div class="container no-right-click" id="reader-container">
-    <h1>📖 CC & CCP</h1>
 
-    <!-- Canvas សម្រាប់ render PDF -->
-    <canvas id="pdf-canvas"></canvas>
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast">
+    <i class="fas fa-shield-alt"></i>
+    <span id="toast-message">មុខងារនេះត្រូវបានបិទ</span>
+</div>
 
-    <!-- ប៊ូតុងគ្រប់គ្រង -->
-    <div class="controls">
-        <button id="prev-page" disabled>◀ មុន</button>
-        <span id="page-num">1 / 1</span>
-        <button id="next-page">បន្ទាប់ ▶</button>
+<!-- ===== READER CARD ===== -->
+<div class="reader-card" id="reader-container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <div class="book-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <div class="book-title">
+                <h1>CC &amp; CCP</h1>
+                <div class="sub">
+                    <i class="fas fa-circle" style="color: #27ae60; font-size: 8px;"></i>
+                    សៀវភៅអេឡិចត្រូនិច
+                    <i class="fas fa-lock" style="color: #e67e22; font-size: 11px; margin-left: 4px;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="badge">
+                <i class="fas fa-eye"></i> មើលតែប៉ុណ្ណោះ
+            </div>
+        </div>
     </div>
 
-    <div class="protect-note">
-        ⛔ ហាមចម្លង បោះពុម្ព ឬទាញយកសៀវភៅនេះ
+    <!-- CANVAS -->
+    <div class="canvas-wrapper">
+        <canvas id="pdf-canvas"></canvas>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+        <button id="prev-page" disabled>
+            <i class="fas fa-chevron-left"></i> មុន
+        </button>
+        <div class="page-indicator">
+            <i class="fas fa-file-pdf"></i> <span id="page-num">1 / 1</span>
+        </div>
+        <button id="next-page" class="btn-primary">
+            បន្ទាប់ <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="protect-note">
+            <i class="fas fa-ban"></i>
+            ហាមចម្លង · បោះពុម្ព · ទាញយក
+        </div>
+        <div class="footer-info">
+            <span><i class="fas fa-lock" style="color: #27ae60;"></i> ការពារ</span>
+            <span><i class="fas fa-print" style="color: #e74c3c;"></i> បិទ Print</span>
+            <span><i class="fas fa-download" style="color: #e74c3c;"></i> បិទ Download</span>
+        </div>
     </div>
 </div>
 
 <script>
     (function() {
-        // --- កំណត់ផ្លូវឯកសារ PDF (ដាក់ឲ្យត្រូវ) ---
-        const PDF_URL = 'CC&CCP.pdf';  // ប្តូរតាមឈ្មោះឯកសាររបស់អ្នក
+        // ===== CONFIG =====
+        const PDF_URL = 'CC&CCP.pdf';
+        const TOAST_DURATION = 2500;
 
-        // --- ហាម Print (Ctrl+P / Cmd+P) ---
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-                e.preventDefault();
-                alert('⛔ ការបោះពុម្ពមិនត្រូវបានអនុញ្ញាត!');
-                return false;
-            }
-        });
-
-        // --- ហាម Right-click ---
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            alert('⛔ មុខងារនេះត្រូវបានបិទ');
-        });
-
-        // --- ហាមអូសរូបភាព / ជ្រើសរើសអត្ថបទ (បន្ថែម) ---
-        document.addEventListener('dragstart', function(e) {
-            e.preventDefault();
-        });
-
-        // --- ប្រើ PDF.js ដើម្បីបង្ហាញ PDF ---
+        // ===== DOM REFS =====
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
         const prevBtn = document.getElementById('prev-page');
         const nextBtn = document.getElementById('next-page');
         const pageNumSpan = document.getElementById('page-num');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-message');
 
         let pdfDoc = null;
         let currentPage = 1;
         let totalPages = 0;
+        let toastTimeout = null;
 
-        // កំណត់ PDF.js worker (ត្រូវការសម្រាប់ដំណើរការ)
+        // ===== TOAST FUNCTION =====
+        function showToast(message, type = 'warning') {
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastMsg.textContent = message;
+            toast.className = 'toast ' + type;
+            // force reflow
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, TOAST_DURATION);
+        }
+
+        // ===== BLOCK: Print =====
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                showToast('⛔ ការបោះពុម្ពមិនត្រូវបានអនុញ្ញាត!', 'error');
+                return false;
+            }
+        });
+
+        // ===== BLOCK: Right-click =====
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showToast('⛔ មុខងារចុចស្ដាំត្រូវបានបិទ', 'warning');
+        });
+
+        // ===== BLOCK: Drag =====
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            showToast('⛔ មិនអាចអូសឯកសារបានទេ', 'warning');
+        });
+
+        // ===== BLOCK: Ctrl+S =====
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                showToast('⛔ មិនអាចរក្សាទុកទំព័រនេះបានទេ!', 'error');
+                return false;
+            }
+        });
+
+        // ===== BLOCK: Ctrl+C (copy) — optional =====
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            showToast('⛔ ការចម្លងអត្ថបទមិនត្រូវបានអនុញ្ញាត', 'warning');
+        });
+
+        // ===== PDF.js =====
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-        // --- មុខងារបង្ហាញទំព័រ ---
         function renderPage(pageNum) {
+            if (!pdfDoc) return;
             pdfDoc.getPage(pageNum).then(function(page) {
-                const viewport = page.getViewport({ scale: 1.5 });  // កែ scale តាមចិត្ត
+                const viewport = page.getViewport({ scale: 1.6 });
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
-
                 const renderContext = {
                     canvasContext: ctx,
                     viewport: viewport
                 };
-                page.render(renderContext).promise.then(function() {
-                    pageNumSpan.textContent = `${pageNum} / ${totalPages}`;
-                    prevBtn.disabled = (pageNum === 1);
-                    nextBtn.disabled = (pageNum === totalPages);
-                });
+                return page.render(renderContext).promise;
+            }).then(function() {
+                pageNumSpan.textContent = `${currentPage} / ${totalPages}`;
+                prevBtn.disabled = (currentPage === 1);
+                nextBtn.disabled = (currentPage === totalPages);
             }).catch(function(err) {
-                console.error('Error rendering page:', err);
-                alert('មិនអាចបង្ហាញទំព័រនេះបានទេ។ សូមពិនិត្យមើលឯកសារ PDF ។');
+                console.error('Render error:', err);
+                showToast('មិនអាចបង្ហាញទំព័រនេះបានទេ', 'error');
             });
         }
 
-        // --- ដំណើរការផ្ទុក PDF ---
+        // ===== LOAD PDF =====
         pdfjsLib.getDocument(PDF_URL).promise.then(function(doc) {
             pdfDoc = doc;
             totalPages = doc.numPages;
             currentPage = 1;
             renderPage(currentPage);
         }).catch(function(err) {
-            console.error('Error loading PDF:', err);
-            alert('មិនអាចផ្ទុកឯកសារ PDF បានទេ។ សូមពិនិត្យផ្លូវឯកសារ។');
+            console.error('Load PDF error:', err);
+            showToast('មិនអាចផ្ទុកឯកសារ PDF បានទេ! សូមពិនិត្យផ្លូវឯកសារ។', 'error');
         });
 
-        // --- ប៊ូតុងប្តូរទំព័រ ---
+        // ===== BUTTONS =====
         prevBtn.addEventListener('click', function() {
             if (currentPage > 1) {
                 currentPage--;
@@ -192,12 +502,21 @@
             }
         });
 
-        // --- ហាម Ctrl+S (Save) ---
+        // ===== KEYBOARD SHORTCUTS: Arrow Left/Right =====
         document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') {
                 e.preventDefault();
-                alert('⛔ មិនអាចរក្សាទុកឯកសារនេះបានទេ!');
-                return false;
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPage(currentPage);
+                }
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderPage(currentPage);
+                }
             }
         });
 
