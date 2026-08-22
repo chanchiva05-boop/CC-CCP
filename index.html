@@ -205,28 +205,15 @@
             background: #1a252f;
         }
 
-        .offset-badge {
-            background: #fef9e7;
-            color: #f39c12;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 600;
-            border: 1px solid #f9e79f;
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-        }
-
         .footer {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             margin-top: 16px;
             padding-top: 14px;
             border-top: 1px solid #eef0f4;
-            flex-wrap: wrap;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .protect-note {
@@ -240,20 +227,6 @@
             padding: 4px 14px 4px 10px;
             border-radius: 20px;
             border: 1px solid #fadbd8;
-        }
-
-        .footer-info {
-            font-size: 12px;
-            color: #95a5a6;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .footer-info span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .toast {
@@ -294,8 +267,6 @@
             .controls { flex-direction: column; align-items: stretch; gap: 10px; }
             .controls button { justify-content: center; }
             .page-control-group { justify-content: center; flex-wrap: wrap; }
-            .footer { flex-direction: column; align-items: flex-start; }
-            .book-title h1 { font-size: 18px; }
         }
     </style>
 </head>
@@ -331,7 +302,6 @@
             <input type="number" id="page-input" min="1" value="1" />
             <span class="page-total">/ <span id="total-pages-display">1</span></span>
             <button class="go-btn" id="go-page-btn"><i class="fas fa-arrow-right"></i> ទៅ</button>
-            <span class="offset-badge"><i class="fas fa-plus-circle"></i> +5</span>
         </div>
 
         <button id="next-page" class="btn-primary">បន្ទាប់ <i class="fas fa-chevron-right"></i></button>
@@ -339,11 +309,6 @@
 
     <div class="footer">
         <div class="protect-note"><i class="fas fa-ban"></i> ហាមចម្លង · បោះពុម្ព · ទាញយក</div>
-        <div class="footer-info">
-            <span><i class="fas fa-lock" style="color:#27ae60;"></i> ការពារ</span>
-            <span><i class="fas fa-print" style="color:#e74c3c;"></i> បិទ Print</span>
-            <span><i class="fas fa-download" style="color:#e74c3c;"></i> បិទ Download</span>
-        </div>
     </div>
 </div>
 
@@ -351,7 +316,6 @@
     (function() {
         const PDF_URL = 'CC&CCP.pdf';
         const TOAST_DURATION = 2500;
-        const PAGE_OFFSET = 5;
 
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
@@ -442,17 +406,14 @@
             if (isNaN(val) || val < 1) val = 1;
             if (val > totalPages) val = totalPages;
             
-            let targetPage = val + PAGE_OFFSET;
-            if (targetPage > totalPages) targetPage = totalPages;
-            
-            if (targetPage === currentPage) {
-                showToast(`កំពុងនៅទំព័រ ${targetPage} រួចហើយ`, 'warning');
+            if (val === currentPage) {
+                showToast(`កំពុងនៅទំព័រ ${val} រួចហើយ`, 'warning');
                 return;
             }
             
-            currentPage = targetPage;
+            currentPage = val;
             renderPage(currentPage);
-            showToast(`📄 ទំព័រ ${currentPage} (ស្វែងរក ${val} +${PAGE_OFFSET})`, 'success');
+            showToast(`📄 បានទៅទំព័រ ${currentPage}`, 'success');
         }
 
         goBtn.addEventListener('click', goToPage);
