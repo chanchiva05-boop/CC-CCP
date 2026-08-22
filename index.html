@@ -17,63 +17,85 @@
         body {
             font-family: 'Noto Sans Khmer', sans-serif;
             background: #eef1f5;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             padding: 20px;
         }
 
-        .container {
+        .reader-card {
             max-width: 900px;
             width: 100%;
-            background: #fff;
+            background: #ffffff;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 24px 28px 20px;
         }
 
         .header {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-left {
+            display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 20px;
         }
 
-        .header i {
-            font-size: 28px;
-            color: #2c3e50;
-            background: #ecf0f1;
-            padding: 12px;
+        .book-icon {
+            width: 44px;
+            height: 44px;
+            background: #2c3e50;
             border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f1c40f;
+            font-size: 20px;
         }
 
-        .header h1 {
-            font-size: 22px;
-            color: #2c3e50;
+        .book-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
         }
 
-        .header span {
+        .book-title .sub {
             font-size: 13px;
             color: #7f8c8d;
-            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge {
             background: #eaf2f8;
+            color: #2980b9;
             padding: 4px 14px;
             border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .canvas-wrapper {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 8px;
-            border: 1px solid #e9ecef;
+            background: #f8f9fc;
+            border-radius: 14px;
+            padding: 10px;
+            border: 1px solid #e9ebee;
         }
 
         #pdf-canvas {
             width: 100%;
             height: auto;
             display: block;
-            border-radius: 8px;
+            border-radius: 10px;
+            background: white;
         }
 
         .controls {
@@ -81,7 +103,7 @@
             justify-content: center;
             align-items: center;
             gap: 12px;
-            margin-top: 20px;
+            margin-top: 18px;
             flex-wrap: wrap;
         }
 
@@ -89,126 +111,146 @@
             padding: 10px 22px;
             border: none;
             border-radius: 30px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             font-family: inherit;
             cursor: pointer;
-            background: #ecf0f1;
-            color: #2c3e50;
-            transition: 0.2s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 8px;
+            background: #ecf0f1;
+            color: #2c3e50;
         }
 
         .controls button:hover:not(:disabled) {
             background: #d5dbdf;
+            transform: translateY(-1px);
         }
 
         .controls button:disabled {
-            opacity: 0.4;
+            opacity: 0.35;
             cursor: not-allowed;
+            transform: none;
         }
 
         .controls .btn-primary {
             background: #2c3e50;
-            color: #fff;
+            color: white;
         }
 
         .controls .btn-primary:hover:not(:disabled) {
             background: #1a252f;
         }
 
-        .search-group {
+        .page-control-group {
             display: flex;
             align-items: center;
-            gap: 6px;
-            background: #f8f9fa;
-            padding: 4px 6px 4px 14px;
+            gap: 5px;
+            background: #f8f9fc;
+            padding: 3px 5px 3px 14px;
             border-radius: 30px;
-            border: 1px solid #e9ecef;
+            border: 1px solid #e9ebee;
         }
 
-        .search-group i {
-            color: #95a5a6;
-            font-size: 14px;
-        }
-
-        .search-group input {
+        .page-control-group input {
             width: 50px;
-            padding: 7px 4px;
+            padding: 7px 4px 7px 8px;
             border: 1px solid #dce0e5;
             border-radius: 20px;
-            text-align: center;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
+            text-align: center;
+            color: #2c3e50;
+            background: white;
             font-family: inherit;
             outline: none;
-            background: #fff;
         }
 
-        .search-group input:focus {
+        .page-control-group input:focus {
             border-color: #2c3e50;
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.08);
         }
 
-        .search-group input::-webkit-inner-spin-button {
+        .page-control-group input::-webkit-inner-spin-button {
             -webkit-appearance: none;
         }
-        .search-group input[type="number"] {
+        .page-control-group input[type="number"] {
             -moz-appearance: textfield;
         }
 
-        .search-group .total {
-            color: #7f8c8d;
-            font-weight: 500;
+        .page-control-group .page-total {
             font-size: 14px;
+            font-weight: 500;
+            color: #7f8c8d;
+            padding-right: 2px;
         }
 
-        .search-group .go-btn {
+        .page-control-group .go-btn {
             padding: 7px 14px;
             background: #2c3e50;
-            color: #fff;
+            color: white;
             border: none;
             border-radius: 20px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             font-family: inherit;
-            font-size: 14px;
-            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .search-group .go-btn:hover {
+        .page-control-group .go-btn:hover {
             background: #1a252f;
+        }
+
+        .offset-badge {
+            background: #fef9e7;
+            color: #f39c12;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid #f9e79f;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
         }
 
         .footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 18px;
+            margin-top: 16px;
             padding-top: 14px;
-            border-top: 1px solid #e9ecef;
+            border-top: 1px solid #eef0f4;
             flex-wrap: wrap;
             gap: 8px;
         }
 
-        .footer .warning {
+        .protect-note {
             color: #e74c3c;
             font-size: 13px;
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 6px;
+            background: #fdf2f2;
+            padding: 4px 14px 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #fadbd8;
         }
 
-        .footer .info {
+        .footer-info {
             font-size: 12px;
             color: #95a5a6;
             display: flex;
+            align-items: center;
             gap: 12px;
         }
 
-        .footer .info span {
+        .footer-info span {
             display: flex;
             align-items: center;
             gap: 4px;
@@ -218,20 +260,21 @@
             position: fixed;
             bottom: 30px;
             left: 50%;
-            transform: translateX(-50%) translateY(80px);
+            transform: translateX(-50%) translateY(100px);
             background: #2c3e50;
-            color: #fff;
+            color: white;
             padding: 12px 28px;
             border-radius: 40px;
             font-size: 14px;
             font-weight: 500;
-            font-family: 'Noto Sans Khmer', sans-serif;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             opacity: 0;
-            transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 999;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-family: 'Noto Sans Khmer', sans-serif;
             pointer-events: none;
         }
 
@@ -240,32 +283,40 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        .toast i {
-            font-size: 18px;
-        }
+        .toast i { font-size: 18px; }
+        .toast.warning i { color: #f1c40f; }
+        .toast.error i { color: #e74c3c; }
+        .toast.success i { color: #2ecc71; }
 
-        @media (max-width: 640px) {
-            .container { padding: 16px; }
-            .controls { flex-direction: column; }
-            .controls button { width: 100%; justify-content: center; }
-            .search-group { width: 100%; justify-content: center; }
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .reader-card { padding: 16px; }
+            .controls { flex-direction: column; align-items: stretch; gap: 10px; }
+            .controls button { justify-content: center; }
+            .page-control-group { justify-content: center; flex-wrap: wrap; }
             .footer { flex-direction: column; align-items: flex-start; }
+            .book-title h1 { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
 <div class="toast" id="toast">
-    <i class="fas fa-info-circle"></i>
-    <span id="toast-msg"></span>
+    <i class="fas fa-shield-alt"></i>
+    <span id="toast-message">មុខងារនេះត្រូវបានបិទ</span>
 </div>
 
-<div class="container">
+<div class="reader-card">
 
     <div class="header">
-        <i class="fas fa-book"></i>
-        <h1>CC & CCP</h1>
-        <span><i class="fas fa-eye"></i> អានតែប៉ុណ្ណោះ</span>
+        <div class="header-left">
+            <div class="book-icon"><i class="fas fa-book-open"></i></div>
+            <div class="book-title">
+                <h1>CC &amp; CCP</h1>
+                <div class="sub"><i class="fas fa-circle" style="color: #27ae60; font-size: 7px;"></i> សៀវភៅអេឡិចត្រូនិច</div>
+            </div>
+        </div>
+        <div class="badge"><i class="fas fa-eye"></i> មើលតែប៉ុណ្ណោះ</div>
     </div>
 
     <div class="canvas-wrapper">
@@ -273,25 +324,25 @@
     </div>
 
     <div class="controls">
-        <button id="prev-btn"><i class="fas fa-chevron-left"></i> មុន</button>
+        <button id="prev-page" disabled><i class="fas fa-chevron-left"></i> មុន</button>
 
-        <div class="search-group">
-            <i class="fas fa-search"></i>
+        <div class="page-control-group">
+            <span style="font-size:13px; color:#7f8c8d;"><i class="fas fa-search"></i></span>
             <input type="number" id="page-input" min="1" value="1" />
-            <span class="total">/ <span id="total-pages">1</span></span>
-            <button class="go-btn" id="go-btn"><i class="fas fa-arrow-right"></i></button>
+            <span class="page-total">/ <span id="total-pages-display">1</span></span>
+            <button class="go-btn" id="go-page-btn"><i class="fas fa-arrow-right"></i> ទៅ</button>
+            <span class="offset-badge"><i class="fas fa-plus-circle"></i> +5</span>
         </div>
 
-        <button id="next-btn" class="btn-primary">បន្ទាប់ <i class="fas fa-chevron-right"></i></button>
+        <button id="next-page" class="btn-primary">បន្ទាប់ <i class="fas fa-chevron-right"></i></button>
     </div>
 
     <div class="footer">
-        <div class="warning">
-            <i class="fas fa-ban"></i> ហាមចម្លង · បោះពុម្ព · ទាញយក
-        </div>
-        <div class="info">
+        <div class="protect-note"><i class="fas fa-ban"></i> ហាមចម្លង · បោះពុម្ព · ទាញយក</div>
+        <div class="footer-info">
             <span><i class="fas fa-lock" style="color:#27ae60;"></i> ការពារ</span>
             <span><i class="fas fa-print" style="color:#e74c3c;"></i> បិទ Print</span>
+            <span><i class="fas fa-download" style="color:#e74c3c;"></i> បិទ Download</span>
         </div>
     </div>
 </div>
@@ -299,52 +350,61 @@
 <script>
     (function() {
         const PDF_URL = 'CC&CCP.pdf';
-        const OFFSET = 5;
+        const TOAST_DURATION = 2500;
+        const PAGE_OFFSET = 5;
 
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
         const pageInput = document.getElementById('page-input');
-        const goBtn = document.getElementById('go-btn');
-        const totalPagesSpan = document.getElementById('total-pages');
+        const goBtn = document.getElementById('go-page-btn');
+        const totalPagesDisplay = document.getElementById('total-pages-display');
         const toast = document.getElementById('toast');
-        const toastMsg = document.getElementById('toast-msg');
+        const toastMsg = document.getElementById('toast-message');
 
         let pdfDoc = null;
         let currentPage = 1;
         let totalPages = 0;
         let toastTimeout = null;
 
-        function showToast(msg, type = 'info') {
+        function showToast(message, type = 'warning') {
             if (toastTimeout) clearTimeout(toastTimeout);
-            toastMsg.textContent = msg;
-            toast.className = 'toast show';
+            toastMsg.textContent = message;
+            toast.className = 'toast ' + type;
+            void toast.offsetWidth;
+            toast.classList.add('show');
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('show');
-            }, 2500);
+            }, TOAST_DURATION);
         }
 
         document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's')) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
                 e.preventDefault();
-                showToast('⛔ មុខងារនេះត្រូវបានបិទ');
+                showToast('⛔ ការបោះពុម្ពមិនត្រូវបានអនុញ្ញាត!', 'error');
+                return false;
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                showToast('⛔ មិនអាចរក្សាទុកបានទេ!', 'error');
                 return false;
             }
         });
 
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
-            showToast('⛔ មុខងារចុចស្ដាំត្រូវបានបិទ');
+            showToast('⛔ មុខងារចុចស្ដាំត្រូវបានបិទ', 'warning');
         });
 
         document.addEventListener('dragstart', function(e) {
             e.preventDefault();
+            showToast('⛔ មិនអាចអូសឯកសារបានទេ', 'warning');
         });
 
         document.addEventListener('copy', function(e) {
             e.preventDefault();
-            showToast('⛔ ការចម្លងមិនត្រូវបានអនុញ្ញាត');
+            showToast('⛔ ការចម្លងមិនត្រូវបានអនុញ្ញាត', 'warning');
         });
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
@@ -358,22 +418,22 @@
                 return page.render({ canvasContext: ctx, viewport: viewport }).promise;
             }).then(function() {
                 pageInput.value = currentPage;
-                prevBtn.disabled = currentPage === 1;
-                nextBtn.disabled = currentPage === totalPages;
+                prevBtn.disabled = (currentPage === 1);
+                nextBtn.disabled = (currentPage === totalPages);
             }).catch(function() {
-                showToast('មិនអាចបង្ហាញទំព័រនេះបានទេ');
+                showToast('មិនអាចបង្ហាញទំព័រនេះបានទេ', 'error');
             });
         }
 
         pdfjsLib.getDocument(PDF_URL).promise.then(function(doc) {
             pdfDoc = doc;
             totalPages = doc.numPages;
-            totalPagesSpan.textContent = totalPages;
+            totalPagesDisplay.textContent = totalPages;
             pageInput.max = totalPages;
             currentPage = 1;
             renderPage(currentPage);
         }).catch(function() {
-            showToast('មិនអាចផ្ទុកឯកសារ PDF បានទេ');
+            showToast('មិនអាចផ្ទុកឯកសារ PDF បានទេ!', 'error');
         });
 
         function goToPage() {
@@ -381,18 +441,18 @@
             let val = parseInt(pageInput.value);
             if (isNaN(val) || val < 1) val = 1;
             if (val > totalPages) val = totalPages;
-
-            let target = val + OFFSET;
-            if (target > totalPages) target = totalPages;
-
-            if (target === currentPage) {
-                showToast(`កំពុងនៅទំព័រ ${target} រួចហើយ`);
+            
+            let targetPage = val + PAGE_OFFSET;
+            if (targetPage > totalPages) targetPage = totalPages;
+            
+            if (targetPage === currentPage) {
+                showToast(`កំពុងនៅទំព័រ ${targetPage} រួចហើយ`, 'warning');
                 return;
             }
-
-            currentPage = target;
+            
+            currentPage = targetPage;
             renderPage(currentPage);
-            showToast(`ទៅទំព័រ ${currentPage} (${val} +${OFFSET})`);
+            showToast(`📄 ទំព័រ ${currentPage} (ស្វែងរក ${val} +${PAGE_OFFSET})`, 'success');
         }
 
         goBtn.addEventListener('click', goToPage);
@@ -420,14 +480,18 @@
 
         document.addEventListener('keydown', function(e) {
             if (e.target.tagName === 'INPUT') return;
-            if (e.key === 'ArrowLeft' && currentPage > 1) {
+            if (e.key === 'ArrowLeft') {
                 e.preventDefault();
-                currentPage--;
-                renderPage(currentPage);
-            } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPage(currentPage);
+                }
+            } else if (e.key === 'ArrowRight') {
                 e.preventDefault();
-                currentPage++;
-                renderPage(currentPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderPage(currentPage);
+                }
             }
         });
 
