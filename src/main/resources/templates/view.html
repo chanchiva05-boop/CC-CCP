@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>📖 អាន PDF</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 30px auto; padding: 20px; }
+        .nav { display: flex; gap: 15px; margin-bottom: 20px; }
+        .page-container { text-align: center; }
+        .page-container img { max-width: 100%; border: 1px solid #ddd; margin: 10px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .btn-back { background: #6c757d; color: white; }
+        .btn-download { background: #28a745; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <a href="/" class="btn btn-back">⬅️ ត្រឡប់ក្រោយ</a>
+        <a th:href="@{/download/{filename}(filename=${filename})}" class="btn btn-download">⬇️ ទាញយក PDF</a>
+        <span style="margin-left:auto; color:#888;">📄 <span th:text="${filename}"></span></span>
+    </div>
+
+    <div class="page-container">
+        <div th:each="img : ${images}">
+            <img th:src="'data:image/png;base64,' + ${img}" alt="Page">
+        </div>
+    </div>
+
+</body>
+</html>
