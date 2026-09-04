@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Automatic PDF Library">
+<title>PDF Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">PDF</div>
+    <div><b>PDF Library</b><small>Legal Documents Collection</small></div>
+  </div>
+  <button id="theme" class="theme">☾</button>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <span> DIGITAL LIBRARY</span>
+    <h1>បណ្ណាល័យឯកសារ PDF</h1>
+    <p>ឯកសារដែលដាក់ក្នុង <code>pdfs/</code> នឹងបង្ហាញដោយស្វ័យប្រវត្តិ។</p>
+    <div class="search"><span>⌕</span><input id="search" placeholder="ស្វែងរកឯកសារ..." autocomplete="off"></div>
+  </section>
+
+  <div class="bar">
+    <div><h2>ឯកសារទាំងអស់</h2><small id="count">កំពុងផ្ទុក...</small></div>
+    <button id="refresh" class="refresh">↻ Refresh</button>
+  </div>
+
+  <section id="grid" class="grid"></section>
+  <section id="empty" class="empty hidden">
+    <div>📄</div><h3>មិនទាន់មាន PDF</h3>
+    <p>ដាក់ឯកសារ <b>.pdf</b> ចូលក្នុង folder <b>pdfs/</b> រួចចុច Refresh។</p>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden">
+  <div class="modalbar">
+    <div><b id="readerTitle"></b><small>PDF Reader</small></div>
+    <div class="actions"><a id="download" class="btn secondary" target="_blank">⬇ Download</a><button id="close" class="close">✕</button></div>
+  </div>
+  <iframe id="reader"></iframe>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
