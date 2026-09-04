@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>📚 PDF Reader</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 50px auto; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        .upload-form { margin: 30px 0; padding: 20px; background: #f5f5f5; border-radius: 10px; }
+        .file-list { list-style: none; padding: 0; }
+        .file-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #ddd; }
+        .file-item:hover { background: #f9f9f9; }
+        .btn { padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .btn-upload { background: #28a745; color: white; }
+        .btn-view { background: #007bff; color: white; }
+        .btn-download { background: #17a2b8; color: white; }
+        .btn-delete { background: #dc3545; color: white; }
+        input[type="file"] { padding: 10px; }
+    </style>
+</head>
+<body>
 
+    <div class="header">
+        <h1>📚 PDF Reader</h1>
+        <span>PDFs: <span th:text="${files.size()}">0</span></span>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="upload-form">
+        <form method="post" action="/upload" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".pdf" required>
+            <button type="submit" class="btn btn-upload">📤 Upload</button>
+        </form>
+        <small>💡 Upload PDF ថ្មី វានឹងបង្ហាញភ្លាមៗ</small>
+    </div>
+
+    <!-- បញ្ជីឯកសារ -->
+    <ul class="file-list">
+        <li th:each="file : ${files}" class="file-item">
+            <span>📄 <span th:text="${file}"></span></span>
+            <span>
+                <a th:href="@{/view/{filename}(filename=${file})}" class="btn btn-view">📖 អាន</a>
+                <a th:href="@{/download/{filename}(filename=${file})}" class="btn btn-download">⬇️ ទាញយក</a>
+                <form method="post" th:action="@{/delete/{filename}(filename=${file})}" style="display:inline;">
+                    <button type="submit" class="btn btn-delete" onclick="return confirm('លុប?')">🗑️</button>
+                </form>
+            </span>
+        </li>
+        <li th:if="${files.isEmpty()}" style="text-align:center; color:gray; padding:50px;">
+            ❌ មិនទាន់មាន PDF ទេ<br>
+            <small>សូម Upload ឯកសារខាងលើ</small>
+        </li>
+    </ul>
+
+    <footer style="margin-top:40px; border-top:1px solid #ddd; padding-top:20px; text-align:center; color:#888;">
+        💡 ដាក់ PDF ចូលក្នុង Folder: <code>./src/main/webapp/pdfs/</code>
+    </footer>
+</body>
+</html>
