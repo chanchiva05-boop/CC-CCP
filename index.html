@@ -220,7 +220,6 @@
   }
   input::placeholder { color: var(--text-light); font-weight: 400; }
 
-  /* ============ FILE DROP (លំនាំដើម ស្រាល) ============ */
   .file-drop {
     position: relative;
     border: 2px dashed var(--border);
@@ -279,7 +278,6 @@
   }
   .thumbs-header .clear-all:hover { background: var(--bg-danger-hover); }
 
-  /* ============ THUMBS (ស្រាល គ្មាន animation) ============ */
   .thumbs {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -974,6 +972,14 @@
 
   <!-- Split Panel -->
   <div class="panel" id="panelSplit">
+    <!-- ✅ បន្ថែមប្រអប់ឈ្មោះឯកសារ ដូច Convert និង Merge -->
+    <div class="form-group">
+      <label for="splitName" data-i18n="label_split_name">ឈ្មោះឯកសារចុងក្រោយ</label>
+      <div class="input-wrap">
+        <input type="text" id="splitName" value="split-document" autocomplete="off">
+      </div>
+    </div>
+
     <div class="form-group">
       <label data-i18n="label_select_pdf_one">ជ្រើសរើសឯកសារ PDF តែមួយ</label>
       <div class="file-drop" id="splitDrop" onclick="document.getElementById('splitInput').click()">
@@ -1027,7 +1033,7 @@
 
       <div id="eachModeOptions" style="display:none;">
         <div style="margin-bottom:18px;padding:14px;background:var(--bg-info);border-radius:var(--radius-sm);border:1px solid #a5f3fc;font-size:13px;color:var(--text-mid);font-weight:500;">
-          <span data-i18n="each_info">បំបែករាល់ទំព័រជា PDF ដោយឡែកៗ ទាញយកជា ZIP file។</span>
+          <span data-i18n="each_info">បំបែករាល់ទំព័រជា PDF ដោយឡែកៗ ទាញយកជា ZIP file។ ឈ្មោះឯកសារនីមួយៗនឹងមានលេខទំព័រ។</span>
         </div>
       </div>
     </div>
@@ -1148,6 +1154,7 @@ const i18n = {
     tab_history: 'ប្រវត្តិ',
     label_pdf_name: 'ឈ្មោះឯកសារ PDF',
     label_merged_name: 'ឈ្មោះឯកសារចុងក្រោយ',
+    label_split_name: 'ឈ្មោះឯកសារចុងក្រោយ',   /* ✅ ថ្មី */
     label_select_img: 'ជ្រើសរើសរូបភាព',
     label_select_pdfs: 'ជ្រើសរើសឯកសារ PDF',
     label_select_pdf_one: 'ជ្រើសរើសឯកសារ PDF តែមួយ',
@@ -1187,7 +1194,7 @@ const i18n = {
     label_split_mode: 'របៀបបំបែក',
     mode_range: 'ជ្រើសជួរទំព័រ',
     mode_each: 'បំបែករាល់ទំព័រ',
-    each_info: 'បំបែករាល់ទំព័រជា PDF ដោយឡែកៗ ទាញយកជា ZIP file។',
+    each_info: 'បំបែករាល់ទំព័រជា PDF ដោយឡែកៗ ទាញយកជា ZIP file។ ឈ្មោះឯកសារនីមួយៗនឹងមានលេខទំព័រ។',
     crop_title: 'Crop រូបភាព',
     crop_free: '🆓 សេរី',
     crop_reset: '🔄 កំណត់ឡើងវិញ',
@@ -1207,6 +1214,7 @@ const i18n = {
     tab_history: 'History',
     label_pdf_name: 'PDF file name',
     label_merged_name: 'Output file name',
+    label_split_name: 'Output file name',   /* ✅ ថ្មី */
     label_select_img: 'Select images',
     label_select_pdfs: 'Select PDF files',
     label_select_pdf_one: 'Select one PDF file',
@@ -1246,7 +1254,7 @@ const i18n = {
     label_split_mode: 'Split mode',
     mode_range: 'Page range',
     mode_each: 'Split each page',
-    each_info: 'Split each page as a separate PDF, download as ZIP.',
+    each_info: 'Split each page as a separate PDF, download as ZIP. Each file will have a page number.',
     crop_title: 'Crop image',
     crop_free: '🆓 Free',
     crop_reset: '🔄 Reset',
@@ -1363,8 +1371,6 @@ function renderHistory() {
     return;
   }
   const iconMap = { convert: '🖼️', merge: '📎', split: '✂️' };
-
-  // ប្រើ DocumentFragment សង់ DOM លឿន
   const frag = document.createDocumentFragment();
   const list = document.createElement('div');
   list.className = 'history-list';
@@ -1394,23 +1400,18 @@ function renderHistory() {
   el.innerHTML = '';
   el.appendChild(frag);
 
-  // Item click → Preview
   el.querySelectorAll('.history-item').forEach(item => {
     item.addEventListener('click', (e) => {
       if (e.target.closest('.hist-btn')) return;
-      const id = Number(item.dataset.id);
-      openHistoryPreview(id);
+      openHistoryPreview(Number(item.dataset.id));
     });
   });
-
-  // Action buttons
   el.querySelectorAll('.hist-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const id = Number(btn.dataset.id);
       if (btn.dataset.action === 'del') {
-        const h2 = loadHistory().filter(i => i.id !== id);
-        saveHistory(h2);
+        saveHistory(loadHistory().filter(i => i.id !== id));
         renderHistory();
       } else if (btn.dataset.action === 'download') {
         downloadHistory(id);
@@ -1489,7 +1490,6 @@ async function openPdfPreview(blob, name) {
       await page.render({ canvasContext: ctx, viewport }).promise;
       wrap.appendChild(canvas);
     }
-
     if (totalPages > maxPages) {
       const info = document.createElement('div');
       info.style.cssText = 'color:#cbd5e1;text-align:center;padding:12px;font-size:13px;';
@@ -1686,46 +1686,30 @@ function showTempMessage(type, msg) {
   setTimeout(() => { el.textContent = prev; el.classList.remove('success'); }, 2000);
 }
 
-/* ============================================================
-   DRAG & DROP ស្រាល - ប្រើលំនាំដើម HTML5
-   ============================================================ */
-// ចាប់ drop តែលើ .file-drop ផ្ទាល់ (គ្មាន child issue)
+/* ==================== FILE DROP ==================== */
 function attachFileDrop(dropEl, onFiles) {
-  let dragCount = 0;   // រាប់ dragenter/dragleave ដើម្បីបញ្ចៀស flicker
-
+  let dragCount = 0;
   dropEl.addEventListener('dragenter', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     dragCount++;
     if (dragCount === 1) dropEl.classList.add('dragover');
   });
-
   dropEl.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     e.dataTransfer.dropEffect = 'copy';
   });
-
   dropEl.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     dragCount--;
-    if (dragCount <= 0) {
-      dragCount = 0;
-      dropEl.classList.remove('dragover');
-    }
+    if (dragCount <= 0) { dragCount = 0; dropEl.classList.remove('dragover'); }
   });
-
   dropEl.addEventListener('drop', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     dragCount = 0;
     dropEl.classList.remove('dragover');
     const files = Array.from(e.dataTransfer.files || []);
     if (files.length) onFiles(files);
   });
-
-  // បង្ការ default នៅ level document (កុំឲ្យ browser បើក file)
   ['dragenter','dragover','drop'].forEach(evt => {
     document.addEventListener(evt, (e) => {
       if (!e.target.closest('.file-drop')) return;
@@ -1756,8 +1740,6 @@ let uid = 0;
 let dragSrcId = null;
 
 fileInput.addEventListener('change', (e) => addFiles(Array.from(e.target.files)));
-
-// ភ្ជាប់ drop handler
 attachFileDrop(fileDrop, (files) => addFiles(files));
 
 clearAllBtn.addEventListener('click', () => {
@@ -1769,12 +1751,8 @@ async function addFiles(files) {
   const imgs = files.filter(f => f.type.startsWith('image/'));
   if (imgs.length === 0) return;
 
-  // បង្ហាញ loading បើមានច្រើន
-  if (imgs.length > 20) {
-    statusEl.textContent = `⏳ កំពុងអាន ${imgs.length} រូបភាព...`;
-  }
+  if (imgs.length > 20) statusEl.textContent = `⏳ កំពុងអាន ${imgs.length} រូបភាព...`;
 
-  // ប្រើ Promise.all អានរូបស្របគ្នា (លឿនជាង)
   const newItems = [];
   for (const file of imgs) {
     const src = await readAsDataURL(file);
@@ -1782,8 +1760,6 @@ async function addFiles(files) {
     newItems.push({ id: uid++, file, src, rotation: 0, crop: null, naturalW: dim.w, naturalH: dim.h });
   }
   images = images.concat(newItems);
-
-  // Render តែម្តង
   renderThumbs();
   fileInput.value = '';
   statusEl.textContent = '';
@@ -1805,7 +1781,6 @@ function getImageSize(src) {
 }
 
 function renderThumbs() {
-  // ប្រើ DocumentFragment សង់ DOM លឿន
   const frag = document.createDocumentFragment();
   images.forEach((item, idx) => {
     const div = document.createElement('div');
@@ -1835,7 +1810,6 @@ function renderThumbs() {
   });
   thumbsEl.innerHTML = '';
   thumbsEl.appendChild(frag);
-
   convertBtn.disabled = images.length === 0;
   thumbsHeader.classList.toggle('show', images.length > 0);
   if (images.length > 0) imgCount.textContent = images.length;
@@ -1872,7 +1846,6 @@ function onDrop(e) {
   renderThumbs();
 }
 
-/* ============ Touch drag ============ */
 function addTouchDrag(el, id, inputToBlur, collection) {
   let touchDragEl = null;
   let holdTimer = null;
@@ -1942,7 +1915,6 @@ function handleAction(id, act) {
   renderThumbs();
 }
 
-/* ============ Crop ============ */
 let cropper = null;
 let cropTarget = null;
 function openCrop(item) {
@@ -2047,9 +2019,7 @@ convertBtn.addEventListener('click', async () => {
     setResult('convert', blob, fileName);
     showResultCard('convert', fileName);
     resetBtn.classList.add('show');
-
     await addToHistory({ type: 'convert', name: fileName, pages: images.length, blob });
-
   } catch (err) {
     console.error(err);
     statusEl.textContent = '❌ ' + err.message;
@@ -2141,10 +2111,7 @@ clearPdfsBtn.addEventListener('click', () => {
 async function addPdfs(files) {
   const pdfFiles = files.filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
   if (pdfFiles.length === 0) return;
-
-  if (pdfFiles.length > 10) {
-    mergeStatus.textContent = `⏳ កំពុងអាន ${pdfFiles.length} ឯកសារ...`;
-  }
+  if (pdfFiles.length > 10) mergeStatus.textContent = `⏳ កំពុងអាន ${pdfFiles.length} ឯកសារ...`;
 
   for (const file of pdfFiles) {
     let pageCount = null;
@@ -2263,9 +2230,7 @@ mergeBtn.addEventListener('click', async () => {
     setResult('merge', blob, fileName);
     showResultCard('merge', fileName);
     resetMergeBtn.classList.add('show');
-
     await addToHistory({ type: 'merge', name: fileName, pages: totalPages, blob });
-
   } catch (err) {
     mergeStatus.textContent = '❌ ' + (err.message || 'Error');
     mergeStatus.classList.add('error');
@@ -2318,6 +2283,9 @@ const skipPages = document.getElementById('skipPages');
 const rangeModeOptions = document.getElementById('rangeModeOptions');
 const eachModeOptions = document.getElementById('eachModeOptions');
 
+// ✅ បន្ថែមប្រអប់ឈ្មោះ
+const splitNameInput = document.getElementById('splitName');
+
 let splitFile = null;
 let splitDoc = null;
 let splitPageCount = 0;
@@ -2348,6 +2316,12 @@ async function loadSplitFile(file) {
     rangeTo.max = splitPageCount;
     rangeFrom.value = 1;
     rangeTo.value = splitPageCount;
+
+    // ✅ Auto-fill ឈ្មោះពីឈ្មោះ file (លុប .pdf ចេញ)
+    if (!splitNameInput.value || splitNameInput.value === 'split-document') {
+      splitNameInput.value = file.name.replace(/\.pdf$/i, '') + '-split';
+    }
+
     splitBtn.disabled = false;
     splitStatus.textContent = '';
   } catch (err) {
@@ -2454,7 +2428,8 @@ splitBtn.addEventListener('click', async () => {
 });
 
 async function splitRange(pages) {
-  const baseName = splitFile.name.replace(/\.pdf$/i, '');
+  // ✅ ប្រើឈ្មោះពី input
+  const name = splitNameInput.value.trim() || 'split-document';
   updateSplitProgress(15);
   const newDoc = await PDFDocument.create();
   const copiedPages = await newDoc.copyPages(splitDoc, pages);
@@ -2463,7 +2438,7 @@ async function splitRange(pages) {
   const bytes = await newDoc.save();
   updateSplitProgress(100);
   const blob = new Blob([bytes], { type: 'application/pdf' });
-  const fileName = `${baseName}-split.pdf`;
+  const fileName = `${name}.pdf`;
   setResult('split', blob, fileName);
   showResultCard('split', fileName);
   resetSplitBtn.classList.add('show');
@@ -2471,24 +2446,25 @@ async function splitRange(pages) {
 }
 
 async function splitEachPage() {
-  const baseName = splitFile.name.replace(/\.pdf$/i, '');
+  // ✅ ប្រើឈ្មោះពី input ជា folder/file prefix
+  const name = splitNameInput.value.trim() || 'split-document';
   const total = splitPageCount;
   await loadJSZip();
   const zip = new JSZip();
-  const folder = zip.folder(`${baseName}-split`);
+  const folder = zip.folder(name);
   for (let i = 0; i < total; i++) {
     const newDoc = await PDFDocument.create();
     const [page] = await newDoc.copyPages(splitDoc, [i]);
     newDoc.addPage(page);
     const bytes = await newDoc.save();
-    folder.file(`page-${String(i + 1).padStart(3, '0')}.pdf`, bytes);
+    folder.file(`${name}-page-${String(i + 1).padStart(3, '0')}.pdf`, bytes);
     updateSplitProgress(Math.round(((i + 1) / total) * 90));
     if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
   }
   updateSplitProgress(95);
   const zipBlob = await zip.generateAsync({ type: 'blob' });
   updateSplitProgress(100);
-  const fileName = `${baseName}-split.zip`;
+  const fileName = `${name}.zip`;
   setResult('split', zipBlob, fileName);
   showResultCard('split', fileName);
   resetSplitBtn.classList.add('show');
@@ -2511,6 +2487,7 @@ resetSplitBtn.addEventListener('click', () => {
   splitFile = null; splitDoc = null; splitPageCount = 0;
   splitInput.value = '';
   rangeFrom.value = 1; rangeTo.value = 1; skipPages.value = '';
+  splitNameInput.value = 'split-document';   // ✅ Reset ឈ្មោះ
   splitInfo.style.display = 'none';
   splitOptions.style.display = 'none';
   clearResult('split');
