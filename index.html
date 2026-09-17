@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ឧបករណ៍ PDF</title>
+<title>PDF KH</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
@@ -487,10 +487,10 @@
     text-transform: uppercase; letter-spacing: 0.5px;
     margin-bottom: 10px; text-align: center;
   }
-  .share-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .share-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .share-option {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 10px 6px; background: var(--bg-soft);
+    padding: 12px 6px; background: var(--bg-soft);
     border: 1px solid var(--border); border-radius: 10px;
     cursor: pointer; font-family: inherit; font-size: 11px;
     font-weight: 600; color: var(--text-mid);
@@ -770,7 +770,7 @@
     .panel { padding: 20px 18px 24px; }
     .thumbs { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
     .thumb .img-wrap { height: 100px; }
-    .share-options { grid-template-columns: repeat(4, 1fr); }
+    .share-options { grid-template-columns: repeat(3, 1fr); }
     .result-actions { grid-template-columns: 1fr; }
     .modal-box { padding: 16px; border-radius: 16px; }
   }
@@ -863,15 +863,10 @@
         </button>
       </div>
       <div class="share-menu" id="convertShareMenu">
-        <div class="share-title" data-i18n="share_title">ជ្រើសរើសវិធីចែករំលែក</div>
+        <div class="share-title" data-i18n="share_title">ចែករំលែកជា File</div>
         <div class="share-options">
-          <button class="share-option" data-share="native" data-result="convert"><span class="share-icon">📱</span><span data-i18n="sh_native">ឧបករណ៍</span></button>
-          <button class="share-option" data-share="whatsapp" data-result="convert"><span class="share-icon">💬</span><span>WhatsApp</span></button>
-          <button class="share-option" data-share="telegram" data-result="convert"><span class="share-icon">✈️</span><span>Telegram</span></button>
-          <button class="share-option" data-share="email" data-result="convert"><span class="share-icon">✉️</span><span>Email</span></button>
-          <button class="share-option" data-share="facebook" data-result="convert"><span class="share-icon">📘</span><span>Facebook</span></button>
-          <button class="share-option" data-share="copy" data-result="convert"><span class="share-icon">📋</span><span data-i18n="sh_copy">ចម្លងតំណ</span></button>
-          <button class="share-option" data-share="print" data-result="convert"><span class="share-icon">🖨️</span><span data-i18n="sh_print">បោះពុម្ព</span></button>
+          <button class="share-option" data-share="native" data-result="convert"><span class="share-icon">📤</span><span data-i18n="sh_native">ចែករំលែក</span></button>
+          <button class="share-option" data-share="save" data-result="convert"><span class="share-icon">💾</span><span data-i18n="sh_save">រក្សាទុក</span></button>
           <button class="share-option" data-share="open" data-result="convert"><span class="share-icon">👁️</span><span data-i18n="sh_open">មើល</span></button>
         </div>
       </div>
@@ -943,15 +938,10 @@
         </button>
       </div>
       <div class="share-menu" id="mergeShareMenu">
-        <div class="share-title" data-i18n="share_title">ជ្រើសរើសវិធីចែករំលែក</div>
+        <div class="share-title" data-i18n="share_title">ចែករំលែកជា File</div>
         <div class="share-options">
-          <button class="share-option" data-share="native" data-result="merge"><span class="share-icon">📱</span><span data-i18n="sh_native">ឧបករណ៍</span></button>
-          <button class="share-option" data-share="whatsapp" data-result="merge"><span class="share-icon">💬</span><span>WhatsApp</span></button>
-          <button class="share-option" data-share="telegram" data-result="merge"><span class="share-icon">✈️</span><span>Telegram</span></button>
-          <button class="share-option" data-share="email" data-result="merge"><span class="share-icon">✉️</span><span>Email</span></button>
-          <button class="share-option" data-share="facebook" data-result="merge"><span class="share-icon">📘</span><span>Facebook</span></button>
-          <button class="share-option" data-share="copy" data-result="merge"><span class="share-icon">📋</span><span data-i18n="sh_copy">ចម្លងតំណ</span></button>
-          <button class="share-option" data-share="print" data-result="merge"><span class="share-icon">🖨️</span><span data-i18n="sh_print">បោះពុម្ព</span></button>
+          <button class="share-option" data-share="native" data-result="merge"><span class="share-icon">📤</span><span data-i18n="sh_native">ចែករំលែក</span></button>
+          <button class="share-option" data-share="save" data-result="merge"><span class="share-icon">💾</span><span data-i18n="sh_save">រក្សាទុក</span></button>
           <button class="share-option" data-share="open" data-result="merge"><span class="share-icon">👁️</span><span data-i18n="sh_open">មើល</span></button>
         </div>
       </div>
@@ -972,7 +962,6 @@
 
   <!-- Split Panel -->
   <div class="panel" id="panelSplit">
-    <!-- ✅ បន្ថែមប្រអប់ឈ្មោះឯកសារ ដូច Convert និង Merge -->
     <div class="form-group">
       <label for="splitName" data-i18n="label_split_name">ឈ្មោះឯកសារចុងក្រោយ</label>
       <div class="input-wrap">
@@ -1063,15 +1052,10 @@
         </button>
       </div>
       <div class="share-menu" id="splitShareMenu">
-        <div class="share-title" data-i18n="share_title">ជ្រើសរើសវិធីចែករំលែក</div>
+        <div class="share-title" data-i18n="share_title">ចែករំលែកជា File</div>
         <div class="share-options">
-          <button class="share-option" data-share="native" data-result="split"><span class="share-icon">📱</span><span data-i18n="sh_native">ឧបករណ៍</span></button>
-          <button class="share-option" data-share="whatsapp" data-result="split"><span class="share-icon">💬</span><span>WhatsApp</span></button>
-          <button class="share-option" data-share="telegram" data-result="split"><span class="share-icon">✈️</span><span>Telegram</span></button>
-          <button class="share-option" data-share="email" data-result="split"><span class="share-icon">✉️</span><span>Email</span></button>
-          <button class="share-option" data-share="facebook" data-result="split"><span class="share-icon">📘</span><span>Facebook</span></button>
-          <button class="share-option" data-share="copy" data-result="split"><span class="share-icon">📋</span><span data-i18n="sh_copy">ចម្លងតំណ</span></button>
-          <button class="share-option" data-share="print" data-result="split"><span class="share-icon">🖨️</span><span data-i18n="sh_print">បោះពុម្ព</span></button>
+          <button class="share-option" data-share="native" data-result="split"><span class="share-icon">📤</span><span data-i18n="sh_native">ចែករំលែក</span></button>
+          <button class="share-option" data-share="save" data-result="split"><span class="share-icon">💾</span><span data-i18n="sh_save">រក្សាទុក</span></button>
           <button class="share-option" data-share="open" data-result="split"><span class="share-icon">👁️</span><span data-i18n="sh_open">មើល</span></button>
         </div>
       </div>
@@ -1143,6 +1127,138 @@
 const { jsPDF } = window.jspdf;
 const { PDFDocument } = PDFLib;
 
+/* ============================================================
+   INDEXEDDB — ជំនួស localStorage សម្រាប់ history
+   ចំណុះធំជាង 100x — រក្សាទុក Blob ដោយផ្ទាល់
+   ============================================================ */
+const DB_NAME = 'pdfToolsDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'history';
+const MAX_HISTORY = 50;
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if (db) return resolve(db);
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => {
+      db = req.result;
+      resolve(db);
+    };
+    req.onupgradeneeded = (e) => {
+      const database = e.target.result;
+      if (!database.objectStoreNames.contains(STORE_NAME)) {
+        const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+        store.createIndex('date', 'date', { unique: false });
+      }
+    };
+  });
+}
+
+async function dbAdd(entry) {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.add(entry);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function dbGetAll() {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+    req.onsuccess = () => {
+      // តម្រៀបតាម date ចុះក្រោម
+      const arr = req.result.sort((a, b) => new Date(b.date) - new Date(a.date));
+      resolve(arr);
+    };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function dbGet(id) {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.get(id);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function dbDelete(id) {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function dbClear() {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.clear();
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function dbCount() {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.count();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// លុបចាស់បំផុត ពេលលើស 50
+async function dbTrim() {
+  const all = await dbGetAll();
+  if (all.length <= MAX_HISTORY) return;
+  const toDelete = all.slice(MAX_HISTORY);
+  for (const item of toDelete) {
+    await dbDelete(item.id);
+  }
+}
+
+async function addToHistory(entry) {
+  try {
+    await dbAdd({
+      type: entry.type,
+      name: entry.name,
+      size: entry.blob.size,
+      pages: entry.pages || 0,
+      mime: entry.blob.type || 'application/pdf',
+      date: new Date().toISOString(),
+      blob: entry.blob           // ✅ រក្សាទុក Blob ដោយផ្ទាល់
+    });
+    await dbTrim();
+    await renderHistory();
+  } catch (err) {
+    console.error('History save failed:', err);
+    // បើ IndexedDB fail → try cleanup ចាស់ៗ
+    try {
+      const all = await dbGetAll();
+      for (const item of all.slice(20)) await dbDelete(item.id);
+    } catch (e2) {}
+  }
+}
+
 /* ==================== I18N ==================== */
 const i18n = {
   km: {
@@ -1154,7 +1270,7 @@ const i18n = {
     tab_history: 'ប្រវត្តិ',
     label_pdf_name: 'ឈ្មោះឯកសារ PDF',
     label_merged_name: 'ឈ្មោះឯកសារចុងក្រោយ',
-    label_split_name: 'ឈ្មោះឯកសារចុងក្រោយ',   /* ✅ ថ្មី */
+    label_split_name: 'ឈ្មោះឯកសារចុងក្រោយ',
     label_select_img: 'ជ្រើសរើសរូបភាព',
     label_select_pdfs: 'ជ្រើសរើសឯកសារ PDF',
     label_select_pdf_one: 'ជ្រើសរើសឯកសារ PDF តែមួយ',
@@ -1183,10 +1299,9 @@ const i18n = {
     merge_ready: 'ឯកសារ PDF ត្រូវបានបញ្ចូលគ្នាហើយ',
     split_success: 'បំបែកជោគជ័យ!',
     split_ready: 'ឯកសារ PDF ត្រូវបានបំបែកហើយ',
-    share_title: 'ជ្រើសរើសវិធីចែករំលែក',
-    sh_native: 'ឧបករណ៍',
-    sh_copy: 'ចម្លងតំណ',
-    sh_print: 'បោះពុម្ព',
+    share_title: 'ចែករំលែកជា File',
+    sh_native: 'ចែករំលែក',
+    sh_save: 'រក្សាទុក',
     sh_open: 'មើល',
     label_from: 'ចាប់ពីទំព័រ',
     label_to: 'ដល់ទំព័រ',
@@ -1202,7 +1317,9 @@ const i18n = {
     preview_loading: 'កំពុងផ្ទុក PDF...',
     history_empty: 'មិនមានប្រវត្តិនៅឡើយទេ',
     pages: 'ទំព័រ',
-    msg_copied: '✅ បានចម្លងតំណ',
+    msg_shared: '✅ បានចែករំលែក',
+    msg_saved: '✅ បានរក្សាទុក',
+    msg_share_failed: 'មិនអាចចែករំលែកបានទេ',
     confirm_clear: 'លុបប្រវត្តិទាំងអស់?'
   },
   en: {
@@ -1214,7 +1331,7 @@ const i18n = {
     tab_history: 'History',
     label_pdf_name: 'PDF file name',
     label_merged_name: 'Output file name',
-    label_split_name: 'Output file name',   /* ✅ ថ្មី */
+    label_split_name: 'Output file name',
     label_select_img: 'Select images',
     label_select_pdfs: 'Select PDF files',
     label_select_pdf_one: 'Select one PDF file',
@@ -1243,10 +1360,9 @@ const i18n = {
     merge_ready: 'PDFs have been merged',
     split_success: 'Split!',
     split_ready: 'PDF has been split',
-    share_title: 'Choose how to share',
-    sh_native: 'Device',
-    sh_copy: 'Copy link',
-    sh_print: 'Print',
+    share_title: 'Share as File',
+    sh_native: 'Share',
+    sh_save: 'Save',
     sh_open: 'View',
     label_from: 'From page',
     label_to: 'To page',
@@ -1262,7 +1378,9 @@ const i18n = {
     preview_loading: 'Loading PDF...',
     history_empty: 'No history yet',
     pages: 'pages',
-    msg_copied: '✅ Link copied',
+    msg_shared: '✅ Shared',
+    msg_saved: '✅ Saved',
+    msg_share_failed: 'Cannot share file',
     confirm_clear: 'Clear all history?'
   }
 };
@@ -1307,32 +1425,7 @@ themeToggle.addEventListener('click', () => {
   applyTheme();
 });
 
-/* ==================== HISTORY ==================== */
-function loadHistory() {
-  try { return JSON.parse(localStorage.getItem('pdf_history')) || []; }
-  catch { return []; }
-}
-function saveHistory(h) { localStorage.setItem('pdf_history', JSON.stringify(h)); }
-
-async function addToHistory(entry) {
-  const h = loadHistory();
-  const blob = entry.blob;
-  const b64 = await blobToBase64(blob);
-  h.unshift({
-    id: Date.now(),
-    type: entry.type,
-    name: entry.name,
-    size: blob.size,
-    pages: entry.pages || 0,
-    mime: blob.type || 'application/pdf',
-    date: new Date().toISOString(),
-    blobData: b64
-  });
-  if (h.length > 50) h.length = 50;
-  saveHistory(h);
-  renderHistory();
-}
-
+/* ==================== HISTORY RENDER ==================== */
 function formatSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -1357,11 +1450,19 @@ function escapeHtml(s) {
   }[c]));
 }
 
-function renderHistory() {
+async function renderHistory() {
   const el = document.getElementById('historyContent');
   if (!el) return;
   const dict = i18n[currentLang];
-  const h = loadHistory();
+
+  let h = [];
+  try { h = await dbGetAll(); }
+  catch (err) {
+    console.error(err);
+    el.innerHTML = `<div class="empty-state"><div>❌ ${err.message}</div></div>`;
+    return;
+  }
+
   if (h.length === 0) {
     el.innerHTML = `
       <div class="empty-state">
@@ -1370,6 +1471,7 @@ function renderHistory() {
       </div>`;
     return;
   }
+
   const iconMap = { convert: '🖼️', merge: '📎', split: '✂️' };
   const frag = document.createDocumentFragment();
   const list = document.createElement('div');
@@ -1407,24 +1509,23 @@ function renderHistory() {
     });
   });
   el.querySelectorAll('.hist-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const id = Number(btn.dataset.id);
       if (btn.dataset.action === 'del') {
-        saveHistory(loadHistory().filter(i => i.id !== id));
+        await dbDelete(id);
         renderHistory();
       } else if (btn.dataset.action === 'download') {
-        downloadHistory(id);
+        await downloadHistory(id);
       }
     });
   });
 }
 
-function downloadHistory(id) {
-  const item = loadHistory().find(i => i.id === id);
+async function downloadHistory(id) {
+  const item = await dbGet(id);
   if (!item) return;
-  const blob = base64ToBlob(item.blobData, item.mime);
-  const url = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(item.blob);
   const a = document.createElement('a');
   a.href = url;
   a.download = item.name;
@@ -1434,27 +1535,12 @@ function downloadHistory(id) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+document.getElementById('clearHistoryBtn').addEventListener('click', async () => {
   if (confirm(i18n[currentLang].confirm_clear)) {
-    saveHistory([]);
+    await dbClear();
     renderHistory();
   }
 });
-
-/* ==================== BASE64 ==================== */
-function blobToBase64(blob) {
-  return new Promise((resolve) => {
-    const r = new FileReader();
-    r.onloadend = () => resolve(r.result.split(',')[1]);
-    r.readAsDataURL(blob);
-  });
-}
-function base64ToBlob(b64, mime) {
-  const byteChars = atob(b64);
-  const arr = new Uint8Array(byteChars.length);
-  for (let i = 0; i < byteChars.length; i++) arr[i] = byteChars.charCodeAt(i);
-  return new Blob([arr], { type: mime });
-}
 
 /* ==================== PREVIEW ==================== */
 const previewModal = document.getElementById('previewModal');
@@ -1528,15 +1614,14 @@ previewModal.addEventListener('click', (e) => {
   }
 });
 
-function openHistoryPreview(id) {
-  const item = loadHistory().find(i => i.id === id);
+async function openHistoryPreview(id) {
+  const item = await dbGet(id);
   if (!item) return;
   if (item.mime === 'application/zip') {
-    downloadHistory(id);
+    await downloadHistory(id);
     return;
   }
-  const blob = base64ToBlob(item.blobData, item.mime);
-  openPdfPreview(blob, item.name);
+  openPdfPreview(item.blob, item.name);
 }
 
 /* ==================== RESULT STATE ==================== */
@@ -1633,49 +1718,48 @@ document.querySelectorAll('.share-option').forEach(btn => {
 async function handleShare(type, shareType) {
   const r = results[type];
   if (!r.blob) return;
+
+  const dict = i18n[currentLang];
   const file = new File([r.blob], r.name, { type: r.blob.type || 'application/pdf' });
 
   if (shareType === 'native') {
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: r.name }); }
-      catch (err) { if (err.name !== 'AbortError') alert('Cannot share'); }
-    } else if (navigator.share) {
-      try { await navigator.share({ title: r.name, url: r.url }); }
-      catch (err) { if (err.name !== 'AbortError') alert('Cannot share'); }
-    } else {
-      alert('Device does not support native share');
-    }
-    return;
-  }
-
-  if (shareType === 'copy') {
-    try {
-      if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(r.url);
-      else {
-        const ta = document.createElement('textarea');
-        ta.value = r.url; ta.style.position = 'fixed'; ta.style.opacity = '0';
-        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-        document.body.removeChild(ta);
+      try {
+        await navigator.share({ files: [file], title: r.name, text: r.name });
+        showTempMessage(type, dict.msg_shared);
+      } catch (err) {
+        if (err.name !== 'AbortError') showTempMessage(type, dict.msg_share_failed);
       }
-      showTempMessage(type, i18n[currentLang].msg_copied);
-    } catch { alert('Cannot copy'); }
+    } else if (navigator.share) {
+      try {
+        await navigator.share({ files: [file] });
+        showTempMessage(type, dict.msg_shared);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          downloadResult(type);
+          showTempMessage(type, dict.msg_saved);
+        }
+      }
+    } else {
+      downloadResult(type);
+      showTempMessage(type, dict.msg_saved);
+    }
+    document.getElementById(`${type}ShareMenu`).classList.remove('show');
     return;
   }
 
-  if (shareType === 'print') {
-    const w = window.open(r.url, '_blank');
-    if (w) w.addEventListener('load', () => { try { w.print(); } catch(e) {} });
+  if (shareType === 'save') {
+    downloadResult(type);
+    showTempMessage(type, dict.msg_saved);
+    document.getElementById(`${type}ShareMenu`).classList.remove('show');
     return;
   }
-  if (shareType === 'open') { window.open(r.url, '_blank'); return; }
 
-  const t = encodeURIComponent(r.name);
-  const u = encodeURIComponent(r.url);
-  if (shareType === 'whatsapp') window.open(`https://wa.me/?text=${t}%20${u}`, '_blank');
-  else if (shareType === 'telegram') window.open(`https://t.me/share/url?url=${u}&text=${t}`, '_blank');
-  else if (shareType === 'email') window.open(`mailto:?subject=${t}&body=${u}`, '_blank');
-  else if (shareType === 'facebook') window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`, '_blank');
-  document.getElementById(`${type}ShareMenu`).classList.remove('show');
+  if (shareType === 'open') {
+    window.open(r.url, '_blank');
+    document.getElementById(`${type}ShareMenu`).classList.remove('show');
+    return;
+  }
 }
 
 function showTempMessage(type, msg) {
@@ -1750,7 +1834,6 @@ clearAllBtn.addEventListener('click', () => {
 async function addFiles(files) {
   const imgs = files.filter(f => f.type.startsWith('image/'));
   if (imgs.length === 0) return;
-
   if (imgs.length > 20) statusEl.textContent = `⏳ កំពុងអាន ${imgs.length} រូបភាព...`;
 
   const newItems = [];
@@ -2282,8 +2365,6 @@ const rangeTo = document.getElementById('rangeTo');
 const skipPages = document.getElementById('skipPages');
 const rangeModeOptions = document.getElementById('rangeModeOptions');
 const eachModeOptions = document.getElementById('eachModeOptions');
-
-// ✅ បន្ថែមប្រអប់ឈ្មោះ
 const splitNameInput = document.getElementById('splitName');
 
 let splitFile = null;
@@ -2317,7 +2398,6 @@ async function loadSplitFile(file) {
     rangeFrom.value = 1;
     rangeTo.value = splitPageCount;
 
-    // ✅ Auto-fill ឈ្មោះពីឈ្មោះ file (លុប .pdf ចេញ)
     if (!splitNameInput.value || splitNameInput.value === 'split-document') {
       splitNameInput.value = file.name.replace(/\.pdf$/i, '') + '-split';
     }
@@ -2428,7 +2508,6 @@ splitBtn.addEventListener('click', async () => {
 });
 
 async function splitRange(pages) {
-  // ✅ ប្រើឈ្មោះពី input
   const name = splitNameInput.value.trim() || 'split-document';
   updateSplitProgress(15);
   const newDoc = await PDFDocument.create();
@@ -2446,7 +2525,6 @@ async function splitRange(pages) {
 }
 
 async function splitEachPage() {
-  // ✅ ប្រើឈ្មោះពី input ជា folder/file prefix
   const name = splitNameInput.value.trim() || 'split-document';
   const total = splitPageCount;
   await loadJSZip();
@@ -2487,7 +2565,7 @@ resetSplitBtn.addEventListener('click', () => {
   splitFile = null; splitDoc = null; splitPageCount = 0;
   splitInput.value = '';
   rangeFrom.value = 1; rangeTo.value = 1; skipPages.value = '';
-  splitNameInput.value = 'split-document';   // ✅ Reset ឈ្មោះ
+  splitNameInput.value = 'split-document';
   splitInfo.style.display = 'none';
   splitOptions.style.display = 'none';
   clearResult('split');
