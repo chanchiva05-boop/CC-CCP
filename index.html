@@ -46,9 +46,7 @@
     --text-dark: #1e293b;
     --text-mid: #475569;
     --text-light: #94a3b8;
-
     --border: #e2e8f0;
-
     --radius: 16px;
     --radius-sm: 10px;
   }
@@ -69,11 +67,9 @@
     --bg-info: linear-gradient(135deg, #083344, #164e63);
     --bg-skip: #422006;
     --bg-preview: #0f172a;
-
     --text-dark: #f1f5f9;
     --text-mid: #cbd5e1;
     --text-light: #94a3b8;
-
     --border: #334155;
   }
 
@@ -100,18 +96,14 @@
     gap: 8px;
   }
   .top-btn {
-    width: 44px;
-    height: 44px;
+    width: 44px; height: 44px;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.4);
-    color: #fff;
-    font-size: 18px;
+    color: #fff; font-size: 18px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     transition: background 0.2s, transform 0.15s;
   }
   .top-btn:hover { background: rgba(255, 255, 255, 0.4); }
@@ -131,13 +123,10 @@
 
   .header { text-align: center; padding: 32px 32px 20px; }
   .header .icon-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center;
     width: 68px; height: 68px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-radius: 20px;
-    font-size: 32px;
+    border-radius: 20px; font-size: 32px;
     margin-bottom: 14px;
     box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
   }
@@ -145,8 +134,7 @@
   .header p { color: var(--text-light); font-size: 13px; }
 
   .tabs {
-    display: flex;
-    gap: 6px;
+    display: flex; gap: 6px;
     padding: 0 32px 24px;
     border-bottom: 1px solid var(--border);
     overflow-x: auto;
@@ -154,21 +142,14 @@
   }
   .tabs::-webkit-scrollbar { display: none; }
   .tab {
-    flex: 1;
-    min-width: 100px;
+    flex: 1; min-width: 100px;
     padding: 12px 8px;
     background: var(--bg-tab);
     border: 2px solid transparent;
     border-radius: 12px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-mid);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    color: var(--text-mid); cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
     transition: background 0.2s, color 0.2s, transform 0.15s;
   }
   .tab:hover { background: var(--bg-tab-hover); color: var(--primary); }
@@ -195,27 +176,21 @@
   .panel { padding: 28px 32px 32px; display: none; }
   .panel.active {
     display: block;
-    animation: panelIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: panelIn 0.3s ease;
   }
   @keyframes panelIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   .form-group { margin-bottom: 22px; }
   .form-group label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
     margin-bottom: 10px;
-    color: var(--text-mid);
-    font-weight: 600;
-    font-size: 14px;
+    color: var(--text-mid); font-weight: 600; font-size: 14px;
   }
   .form-group label::before {
-    content: '';
-    width: 4px;
-    height: 16px;
+    content: ''; width: 4px; height: 16px;
     background: linear-gradient(180deg, var(--primary), var(--secondary));
     border-radius: 4px;
   }
@@ -223,13 +198,9 @@
   .input-wrap { position: relative; }
   .input-wrap::after {
     content: '📝';
-    position: absolute;
-    right: 16px;
-    top: 50%;
+    position: absolute; right: 16px; top: 50%;
     transform: translateY(-50%);
-    font-size: 18px;
-    pointer-events: none;
-    opacity: 0.5;
+    font-size: 18px; pointer-events: none; opacity: 0.5;
   }
 
   input[type="text"], input[type="number"] {
@@ -237,22 +208,19 @@
     padding: 14px 48px 14px 16px;
     border: 2px solid var(--border);
     border-radius: var(--radius-sm);
-    font-size: 16px;
-    font-family: inherit;
-    background: var(--bg-input);
-    color: var(--text-dark);
+    font-size: 16px; font-family: inherit;
+    background: var(--bg-input); color: var(--text-dark);
     transition: border-color 0.2s, box-shadow 0.2s;
-    -webkit-user-select: text;
-    user-select: text;
+    -webkit-user-select: text; user-select: text;
     font-weight: 500;
   }
   input[type="text"]:focus, input[type="number"]:focus {
-    outline: none;
-    border-color: var(--primary);
+    outline: none; border-color: var(--primary);
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
   }
   input::placeholder { color: var(--text-light); font-weight: 400; }
 
+  /* ============ FILE DROP (លំនាំដើម ស្រាល) ============ */
   .file-drop {
     position: relative;
     border: 2px dashed var(--border);
@@ -261,41 +229,23 @@
     text-align: center;
     cursor: pointer;
     background: var(--bg-softer);
-    transition: border-color 0.2s, background 0.2s, transform 0.2s;
-    overflow: hidden;
+    transition: border-color 0.2s, background 0.2s;
   }
   .file-drop:hover { border-color: var(--primary); background: var(--bg-tab-hover); }
   .file-drop.dragover {
     border-color: var(--primary);
     background: var(--bg-tab-hover);
-    transform: scale(1.01);
-  }
-  .file-drop.dragover::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(99,102,241,0.15), transparent 70%);
-    animation: pulse 1.5s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
   }
   .file-drop input { display: none; }
   .file-drop .drop-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center;
     width: 60px; height: 60px;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: 50%;
-    font-size: 28px;
+    border-radius: 50%; font-size: 28px;
     margin-bottom: 12px;
     color: #fff;
     box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
-    transition: transform 0.3s;
   }
-  .file-drop.dragover .drop-icon { transform: scale(1.15) rotate(-8deg); }
   .file-drop .drop-icon.merge {
     background: linear-gradient(135deg, #ef4444, #dc2626);
     box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
@@ -309,41 +259,27 @@
 
   .thumbs-header {
     display: none;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    margin-bottom: 12px;
-    padding: 0 4px;
+    justify-content: space-between; align-items: center;
+    margin-top: 20px; margin-bottom: 12px; padding: 0 4px;
   }
   .thumbs-header.show { display: flex; }
   .thumbs-header .count { font-size: 13px; color: var(--text-mid); font-weight: 600; }
   .thumbs-header .count span {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 7px;
-    background: var(--primary);
-    color: #fff;
-    border-radius: 11px;
-    font-size: 12px;
-    margin-left: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 22px; padding: 0 7px;
+    background: var(--primary); color: #fff;
+    border-radius: 11px; font-size: 12px; margin-left: 6px;
   }
   .thumbs-header .clear-all {
-    background: none;
-    border: none;
-    color: var(--danger);
-    font-size: 13px;
-    cursor: pointer;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-family: inherit;
+    background: none; border: none; color: var(--danger);
+    font-size: 13px; cursor: pointer;
+    padding: 4px 10px; border-radius: 6px;
+    font-weight: 600; font-family: inherit;
     transition: background 0.15s;
   }
   .thumbs-header .clear-all:hover { background: var(--bg-danger-hover); }
 
+  /* ============ THUMBS (ស្រាល គ្មាន animation) ============ */
   .thumbs {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -356,24 +292,20 @@
     overflow: hidden;
     background: var(--bg-card);
     cursor: grab;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color 0.15s;
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
-    animation: thumbIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-  }
-  @keyframes thumbIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to   { opacity: 1; transform: scale(1); }
   }
   .thumb:active { cursor: grabbing; }
-  .thumb:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .thumb:hover { border-color: var(--primary); }
   .thumb.dragging { opacity: 0.4; border-color: var(--primary); border-style: dashed; }
   .thumb.drag-over { border-color: var(--secondary); border-style: dashed; background: rgba(236, 72, 153, 0.08); }
   .thumb .img-wrap {
     width: 100%; height: 120px;
     display: flex; align-items: center; justify-content: center;
-    background: var(--bg-preview); overflow: hidden; pointer-events: none;
+    background: var(--bg-preview);
+    overflow: hidden; pointer-events: none;
   }
   .thumb img { max-width: 100%; max-height: 100%; display: block; pointer-events: none; }
   .thumb .num {
@@ -388,7 +320,8 @@
   .thumb .drag-hint {
     position: absolute; top: 8px; right: 8px;
     background: rgba(15, 23, 42, 0.7); color: #fff;
-    font-size: 12px; width: 22px; height: 22px; border-radius: 50%;
+    font-size: 12px; width: 22px; height: 22px;
+    border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     z-index: 2; pointer-events: none;
   }
@@ -399,13 +332,13 @@
   }
   .thumb .actions button {
     background: none; border: none; cursor: pointer;
-    font-size: 16px; width: 32px; height: 32px; border-radius: 8px;
+    font-size: 16px; width: 32px; height: 32px;
+    border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, transform 0.15s;
+    transition: background 0.15s;
     color: var(--text-mid);
   }
   .thumb .actions button:hover { background: var(--bg-action-hover); }
-  .thumb .actions button:active { transform: scale(0.9); }
   .thumb .actions button[data-act="del"]:hover { background: var(--bg-danger-hover); }
 
   .pdf-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
@@ -417,12 +350,11 @@
     border-radius: var(--radius-sm);
     background: var(--bg-card);
     cursor: grab;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color 0.15s;
     -webkit-user-select: none; user-select: none;
-    animation: thumbIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) backwards;
   }
   .pdf-item:active { cursor: grabbing; }
-  .pdf-item:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .pdf-item:hover { border-color: var(--primary); }
   .pdf-item.dragging { opacity: 0.4; border-color: var(--primary); border-style: dashed; }
   .pdf-item.drag-over { border-color: var(--secondary); border-style: dashed; background: rgba(236, 72, 153, 0.08); }
   .pdf-item .pdf-icon {
@@ -497,13 +429,12 @@
     background: var(--bg-result);
     border: 2px solid #86efac;
     border-radius: var(--radius);
-    animation: resultIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: resultIn 0.3s ease;
   }
   .result-card.show { display: block; }
   @keyframes resultIn {
-    0%   { opacity: 0; transform: scale(0.9); }
-    60%  { transform: scale(1.02); }
-    100% { opacity: 1; transform: scale(1); }
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
   .result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
   .result-header .check-icon {
@@ -513,12 +444,6 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 24px; color: #fff;
     box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
-    animation: checkPop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  @keyframes checkPop {
-    0% { transform: scale(0); }
-    60% { transform: scale(1.15); }
-    100% { transform: scale(1); }
   }
   .result-header .result-title { flex: 1; min-width: 0; }
   .result-header .result-title h3 { font-size: 16px; font-weight: 700; color: var(--success-dark); margin-bottom: 4px; }
@@ -557,7 +482,6 @@
     display: none; margin-top: 12px; padding: 12px;
     background: var(--bg-card); border: 2px solid var(--border);
     border-radius: var(--radius-sm);
-    animation: resultIn 0.25s ease;
   }
   .share-menu.show { display: block; }
   .share-menu .share-title {
@@ -572,10 +496,9 @@
     border: 1px solid var(--border); border-radius: 10px;
     cursor: pointer; font-family: inherit; font-size: 11px;
     font-weight: 600; color: var(--text-mid);
-    transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    transition: background 0.15s, border-color 0.15s;
   }
   .share-option:hover { background: var(--bg-action-hover); border-color: var(--primary); }
-  .share-option:active { transform: scale(0.95); }
   .share-option .share-icon { font-size: 22px; line-height: 1; }
 
   .progress-wrap { margin-top: 18px; display: none; }
@@ -620,22 +543,15 @@
   body.dark .hint-bar { color: #fbbf24; }
   .hint-bar.show { display: flex; }
 
-  /* ==================== HISTORY PANEL ==================== */
-  .history-list {
-    display: flex; flex-direction: column; gap: 10px;
-  }
+  .history-list { display: flex; flex-direction: column; gap: 10px; }
   .history-item {
     display: flex; align-items: center; gap: 12px;
     padding: 12px; background: var(--bg-softer);
     border: 2px solid var(--border); border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: border-color 0.15s, transform 0.15s;
-    animation: thumbIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    transition: border-color 0.15s;
   }
-  .history-item:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-  }
+  .history-item:hover { border-color: var(--primary); }
   .history-item .hist-icon {
     flex-shrink: 0; width: 44px; height: 44px;
     border-radius: 10px;
@@ -663,13 +579,12 @@
     border-radius: 8px; cursor: pointer; font-size: 15px;
     color: var(--text-mid);
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, color 0.15s, transform 0.15s;
+    transition: background 0.15s, color 0.15s;
   }
   .history-item .hist-btn:hover {
     background: var(--primary); color: #fff;
     border-color: var(--primary);
   }
-  .history-item .hist-btn:active { transform: scale(0.9); }
   .history-item .hist-btn.danger:hover {
     background: var(--danger); border-color: var(--danger);
   }
@@ -693,26 +608,18 @@
     display: block; opacity: 0.5;
   }
 
-  /* ==================== PDF PREVIEW MODAL ==================== */
   .preview-modal {
     display: none; position: fixed; inset: 0;
     background: rgba(15, 23, 42, 0.92);
-    backdrop-filter: blur(6px);
     z-index: 1100; align-items: center; justify-content: center;
     padding: 16px;
   }
-  .preview-modal.active { display: flex; animation: modalIn 0.3s; }
-  @keyframes modalIn { from { opacity: 0; } to { opacity: 1; } }
+  .preview-modal.active { display: flex; }
   .preview-modal-box {
     background: var(--bg-card); border-radius: 20px;
     width: 100%; max-width: 900px; height: 92vh;
     display: flex; flex-direction: column; overflow: hidden;
     box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-    animation: modalBoxIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  @keyframes modalBoxIn {
-    from { opacity: 0; transform: scale(0.95) translateY(20px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
   }
   .preview-modal-header {
     display: flex; justify-content: space-between; align-items: center;
@@ -763,7 +670,6 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ==================== CROP MODAL ==================== */
   .modal {
     display: none; position: fixed; inset: 0;
     background: rgba(15, 23, 42, 0.85);
@@ -823,7 +729,7 @@
     padding: 12px 26px; border: none; border-radius: 10px;
     font-size: 14px; font-weight: 700; font-family: inherit;
     cursor: pointer;
-    transition: background 0.15s, box-shadow 0.15s;
+    transition: background 0.15s;
     display: flex; align-items: center; gap: 6px;
   }
   .btn-cancel { background: var(--bg-soft); color: var(--text-mid); }
@@ -845,10 +751,6 @@
     width: 12px !important; height: 12px !important;
     opacity: 1 !important; border-radius: 50%;
   }
-  .cropper-point.point-se { right: -7px !important; bottom: -7px !important; }
-  .cropper-point.point-sw { left: -7px !important; bottom: -7px !important; }
-  .cropper-point.point-nw { left: -7px !important; top: -7px !important; }
-  .cropper-point.point-ne { right: -7px !important; top: -7px !important; }
   .cropper-canvas, .cropper-canvas img { cursor: default !important; }
   .cropper-drag-box { cursor: default !important; }
   .cropper-crop-box { cursor: move !important; }
@@ -910,7 +812,7 @@
     </button>
   </div>
 
-  <!-- ===================== PANEL 1: Convert ===================== -->
+  <!-- Convert Panel -->
   <div class="panel active" id="panelConvert">
     <div class="form-group">
       <label for="pdfName" data-i18n="label_pdf_name">ឈ្មោះឯកសារ PDF</label>
@@ -990,7 +892,7 @@
     <div class="status" id="status"></div>
   </div>
 
-  <!-- ===================== PANEL 2: Merge ===================== -->
+  <!-- Merge Panel -->
   <div class="panel" id="panelMerge">
     <div class="form-group">
       <label for="mergedName" data-i18n="label_merged_name">ឈ្មោះឯកសារចុងក្រោយ</label>
@@ -1070,7 +972,7 @@
     <div class="status" id="mergeStatus"></div>
   </div>
 
-  <!-- ===================== PANEL 3: Split ===================== -->
+  <!-- Split Panel -->
   <div class="panel" id="panelSplit">
     <div class="form-group">
       <label data-i18n="label_select_pdf_one">ជ្រើសរើសឯកសារ PDF តែមួយ</label>
@@ -1182,14 +1084,14 @@
     <div class="status" id="splitStatus"></div>
   </div>
 
-  <!-- ===================== PANEL 4: History ===================== -->
+  <!-- History Panel -->
   <div class="panel" id="panelHistory">
     <div id="historyContent"></div>
     <button class="btn-clear-history" id="clearHistoryBtn" data-i18n="btn_clear_history">🗑️ លុបប្រវត្តិទាំងអស់</button>
   </div>
 </div>
 
-<!-- ==================== PDF PREVIEW MODAL ==================== -->
+<!-- Preview Modal -->
 <div class="preview-modal" id="previewModal">
   <div class="preview-modal-box">
     <div class="preview-modal-header">
@@ -1208,7 +1110,7 @@
   </div>
 </div>
 
-<!-- ==================== CROP MODAL ==================== -->
+<!-- Crop Modal -->
 <div class="modal" id="cropModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -1235,9 +1137,7 @@
 const { jsPDF } = window.jspdf;
 const { PDFDocument } = PDFLib;
 
-/* =========================================================
-   I18N
-   ========================================================= */
+/* ==================== I18N ==================== */
 const i18n = {
   km: {
     title: 'ឧបករណ៍ PDF',
@@ -1294,7 +1194,6 @@ const i18n = {
     crop_hint: '💡 ទាញជ្រុង ⚪ ឬ គែម ដើម្បីកាត់',
     preview_loading: 'កំពុងផ្ទុក PDF...',
     history_empty: 'មិនមានប្រវត្តិនៅឡើយទេ',
-    history_title: 'ប្រវត្តិឯកសារ',
     pages: 'ទំព័រ',
     msg_copied: '✅ បានចម្លងតំណ',
     confirm_clear: 'លុបប្រវត្តិទាំងអស់?'
@@ -1354,7 +1253,6 @@ const i18n = {
     crop_hint: '💡 Drag corners ⚪ or edges to crop',
     preview_loading: 'Loading PDF...',
     history_empty: 'No history yet',
-    history_title: 'File history',
     pages: 'pages',
     msg_copied: '✅ Link copied',
     confirm_clear: 'Clear all history?'
@@ -1380,9 +1278,7 @@ document.getElementById('langToggle').addEventListener('click', () => {
   applyLang();
 });
 
-/* =========================================================
-   DARK MODE
-   ========================================================= */
+/* ==================== DARK MODE ==================== */
 const themeToggle = document.getElementById('themeToggle');
 let currentTheme = localStorage.getItem('pdf_theme') || 'light';
 
@@ -1403,9 +1299,7 @@ themeToggle.addEventListener('click', () => {
   applyTheme();
 });
 
-/* =========================================================
-   HISTORY (LocalStorage)
-   ========================================================= */
+/* ==================== HISTORY ==================== */
 function loadHistory() {
   try { return JSON.parse(localStorage.getItem('pdf_history')) || []; }
   catch { return []; }
@@ -1469,8 +1363,17 @@ function renderHistory() {
     return;
   }
   const iconMap = { convert: '🖼️', merge: '📎', split: '✂️' };
-  el.innerHTML = '<div class="history-list">' + h.map(item => `
-    <div class="history-item" data-id="${item.id}">
+
+  // ប្រើ DocumentFragment សង់ DOM លឿន
+  const frag = document.createDocumentFragment();
+  const list = document.createElement('div');
+  list.className = 'history-list';
+
+  h.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.dataset.id = item.id;
+    div.innerHTML = `
       <div class="hist-icon ${item.type}">${iconMap[item.type] || '📄'}</div>
       <div class="hist-info">
         <div class="hist-name">${escapeHtml(item.name)}</div>
@@ -1483,10 +1386,13 @@ function renderHistory() {
       </div>
       <div class="hist-actions">
         <button class="hist-btn" data-action="download" data-id="${item.id}" title="${dict.btn_download}">⬇️</button>
-        <button class="hist-btn danger" data-action="del" data-id="${item.id}" title="លុប">🗑️</button>
-      </div>
-    </div>
-  `).join('') + '</div>';
+        <button class="hist-btn danger" data-action="del" data-id="${item.id}" title="Delete">🗑️</button>
+      </div>`;
+    list.appendChild(div);
+  });
+  frag.appendChild(list);
+  el.innerHTML = '';
+  el.appendChild(frag);
 
   // Item click → Preview
   el.querySelectorAll('.history-item').forEach(item => {
@@ -1534,9 +1440,7 @@ document.getElementById('clearHistoryBtn').addEventListener('click', () => {
   }
 });
 
-/* =========================================================
-   BASE64 HELPERS
-   ========================================================= */
+/* ==================== BASE64 ==================== */
 function blobToBase64(blob) {
   return new Promise((resolve) => {
     const r = new FileReader();
@@ -1551,9 +1455,7 @@ function base64ToBlob(b64, mime) {
   return new Blob([arr], { type: mime });
 }
 
-/* =========================================================
-   PDF PREVIEW MODAL
-   ========================================================= */
+/* ==================== PREVIEW ==================== */
 const previewModal = document.getElementById('previewModal');
 const previewBody = document.getElementById('previewBody');
 const previewTitle = document.getElementById('previewTitle');
@@ -1630,7 +1532,6 @@ function openHistoryPreview(id) {
   const item = loadHistory().find(i => i.id === id);
   if (!item) return;
   if (item.mime === 'application/zip') {
-    // ZIP — ទាញយកផ្ទាល់
     downloadHistory(id);
     return;
   }
@@ -1638,9 +1539,7 @@ function openHistoryPreview(id) {
   openPdfPreview(blob, item.name);
 }
 
-/* =========================================================
-   RESULT STATE
-   ========================================================= */
+/* ==================== RESULT STATE ==================== */
 const results = {
   convert: { blob: null, name: '', url: null },
   merge:   { blob: null, name: '', url: null },
@@ -1675,16 +1574,14 @@ function hideResultCard(type) {
 function fireConfetti() {
   if (typeof confetti !== 'function') return;
   confetti({
-    particleCount: 80,
-    spread: 70,
+    particleCount: 60,
+    spread: 60,
     origin: { y: 0.6 },
     colors: ['#6366f1', '#ec4899', '#10b981', '#f59e0b']
   });
 }
 
-/* =========================================================
-   TABS
-   ========================================================= */
+/* ==================== TABS ==================== */
 const tabs = document.querySelectorAll('.tab');
 const panels = {
   convert: document.getElementById('panelConvert'),
@@ -1703,9 +1600,7 @@ tabs.forEach(tab => {
   });
 });
 
-/* =========================================================
-   DOWNLOAD / SHARE
-   ========================================================= */
+/* ==================== DOWNLOAD / SHARE ==================== */
 document.querySelectorAll('.result-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const type = btn.dataset.result;
@@ -1791,9 +1686,55 @@ function showTempMessage(type, msg) {
   setTimeout(() => { el.textContent = prev; el.classList.remove('success'); }, 2000);
 }
 
-/* =========================================================
-   PART 1: CONVERT
-   ========================================================= */
+/* ============================================================
+   DRAG & DROP ស្រាល - ប្រើលំនាំដើម HTML5
+   ============================================================ */
+// ចាប់ drop តែលើ .file-drop ផ្ទាល់ (គ្មាន child issue)
+function attachFileDrop(dropEl, onFiles) {
+  let dragCount = 0;   // រាប់ dragenter/dragleave ដើម្បីបញ្ចៀស flicker
+
+  dropEl.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCount++;
+    if (dragCount === 1) dropEl.classList.add('dragover');
+  });
+
+  dropEl.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'copy';
+  });
+
+  dropEl.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCount--;
+    if (dragCount <= 0) {
+      dragCount = 0;
+      dropEl.classList.remove('dragover');
+    }
+  });
+
+  dropEl.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCount = 0;
+    dropEl.classList.remove('dragover');
+    const files = Array.from(e.dataTransfer.files || []);
+    if (files.length) onFiles(files);
+  });
+
+  // បង្ការ default នៅ level document (កុំឲ្យ browser បើក file)
+  ['dragenter','dragover','drop'].forEach(evt => {
+    document.addEventListener(evt, (e) => {
+      if (!e.target.closest('.file-drop')) return;
+      e.preventDefault();
+    });
+  });
+}
+
+/* ==================== PART 1: CONVERT ==================== */
 const fileInput = document.getElementById('fileInput');
 const fileDrop = document.getElementById('fileDrop');
 const thumbsEl = document.getElementById('thumbs');
@@ -1815,13 +1756,10 @@ let uid = 0;
 let dragSrcId = null;
 
 fileInput.addEventListener('change', (e) => addFiles(Array.from(e.target.files)));
-fileDrop.addEventListener('dragover', (e) => { e.preventDefault(); fileDrop.classList.add('dragover'); });
-fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
-fileDrop.addEventListener('drop', (e) => {
-  e.preventDefault();
-  fileDrop.classList.remove('dragover');
-  addFiles(Array.from(e.dataTransfer.files));
-});
+
+// ភ្ជាប់ drop handler
+attachFileDrop(fileDrop, (files) => addFiles(files));
+
 clearAllBtn.addEventListener('click', () => {
   if (images.length === 0) return;
   if (confirm('លុបរូបភាពទាំងអស់?')) { images = []; renderThumbs(); }
@@ -1829,14 +1767,28 @@ clearAllBtn.addEventListener('click', () => {
 
 async function addFiles(files) {
   const imgs = files.filter(f => f.type.startsWith('image/'));
+  if (imgs.length === 0) return;
+
+  // បង្ហាញ loading បើមានច្រើន
+  if (imgs.length > 20) {
+    statusEl.textContent = `⏳ កំពុងអាន ${imgs.length} រូបភាព...`;
+  }
+
+  // ប្រើ Promise.all អានរូបស្របគ្នា (លឿនជាង)
+  const newItems = [];
   for (const file of imgs) {
     const src = await readAsDataURL(file);
     const dim = await getImageSize(src);
-    images.push({ id: uid++, file, src, rotation: 0, crop: null, naturalW: dim.w, naturalH: dim.h });
+    newItems.push({ id: uid++, file, src, rotation: 0, crop: null, naturalW: dim.w, naturalH: dim.h });
   }
+  images = images.concat(newItems);
+
+  // Render តែម្តង
   renderThumbs();
   fileInput.value = '';
+  statusEl.textContent = '';
 }
+
 function readAsDataURL(file) {
   return new Promise(res => {
     const r = new FileReader();
@@ -1853,17 +1805,17 @@ function getImageSize(src) {
 }
 
 function renderThumbs() {
-  thumbsEl.innerHTML = '';
+  // ប្រើ DocumentFragment សង់ DOM លឿន
+  const frag = document.createDocumentFragment();
   images.forEach((item, idx) => {
     const div = document.createElement('div');
     div.className = 'thumb';
     div.draggable = true;
     div.dataset.id = item.id;
-    div.style.animationDelay = (idx * 0.03) + 's';
     div.innerHTML = `
       <span class="num">${idx + 1}</span>
       <span class="drag-hint">✥</span>
-      <div class="img-wrap"><img src="${item.src}" style="transform: rotate(${item.rotation}deg);"></div>
+      <div class="img-wrap"><img src="${item.src}" style="transform: rotate(${item.rotation}deg);" loading="lazy"></div>
       <div class="actions">
         <button data-act="rotl">↺</button>
         <button data-act="rotr">↻</button>
@@ -1879,8 +1831,11 @@ function renderThumbs() {
     div.addEventListener('dragleave', onDragLeave);
     div.addEventListener('drop', onDrop);
     addTouchDrag(div, item.id, pdfNameInput, 'images');
-    thumbsEl.appendChild(div);
+    frag.appendChild(div);
   });
+  thumbsEl.innerHTML = '';
+  thumbsEl.appendChild(frag);
+
   convertBtn.disabled = images.length === 0;
   thumbsHeader.classList.toggle('show', images.length > 0);
   if (images.length > 0) imgCount.textContent = images.length;
@@ -1917,6 +1872,7 @@ function onDrop(e) {
   renderThumbs();
 }
 
+/* ============ Touch drag ============ */
 function addTouchDrag(el, id, inputToBlur, collection) {
   let touchDragEl = null;
   let holdTimer = null;
@@ -1933,7 +1889,7 @@ function addTouchDrag(el, id, inputToBlur, collection) {
         inputToBlur.setAttribute('readonly', 'readonly');
         inputToBlur.setAttribute('inputmode', 'none');
       }
-    }, 300);
+    }, 250);
   }, { passive: true });
   el.addEventListener('touchmove', (e) => {
     if (!touchDragEl) {
@@ -1986,6 +1942,7 @@ function handleAction(id, act) {
   renderThumbs();
 }
 
+/* ============ Crop ============ */
 let cropper = null;
 let cropTarget = null;
 function openCrop(item) {
@@ -2082,7 +2039,7 @@ convertBtn.addEventListener('click', async () => {
       const y = (pageH - h) / 2;
       pdf.addImage(dataUrl, 'JPEG', x, y, w, h);
       updateProgress(Math.round(((i + 1) / images.length) * 100));
-      await new Promise(r => setTimeout(r, 20));
+      if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
     }
 
     const blob = pdf.output('blob');
@@ -2150,12 +2107,10 @@ async function processImage(item) {
   ctx.translate(cw / 2, ch / 2);
   ctx.rotate(rad);
   ctx.drawImage(base, sx, sy, sw, sh, -sw / 2, -sh / 2, sw, sh);
-  return canvas.toDataURL('image/jpeg', 0.92);
+  return canvas.toDataURL('image/jpeg', 0.9);
 }
 
-/* =========================================================
-   PART 2: MERGE
-   ========================================================= */
+/* ==================== PART 2: MERGE ==================== */
 const pdfInput = document.getElementById('pdfInput');
 const pdfDrop = document.getElementById('pdfDrop');
 const pdfList = document.getElementById('pdfList');
@@ -2176,13 +2131,8 @@ let pdfUid = 0;
 let pdfDragSrcId = null;
 
 pdfInput.addEventListener('change', (e) => addPdfs(Array.from(e.target.files)));
-pdfDrop.addEventListener('dragover', (e) => { e.preventDefault(); pdfDrop.classList.add('dragover'); });
-pdfDrop.addEventListener('dragleave', () => pdfDrop.classList.remove('dragover'));
-pdfDrop.addEventListener('drop', (e) => {
-  e.preventDefault();
-  pdfDrop.classList.remove('dragover');
-  addPdfs(Array.from(e.dataTransfer.files));
-});
+attachFileDrop(pdfDrop, (files) => addPdfs(files));
+
 clearPdfsBtn.addEventListener('click', () => {
   if (pdfs.length === 0) return;
   if (confirm('លុបឯកសារ PDF ទាំងអស់?')) { pdfs = []; renderPdfs(); }
@@ -2190,6 +2140,12 @@ clearPdfsBtn.addEventListener('click', () => {
 
 async function addPdfs(files) {
   const pdfFiles = files.filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+  if (pdfFiles.length === 0) return;
+
+  if (pdfFiles.length > 10) {
+    mergeStatus.textContent = `⏳ កំពុងអាន ${pdfFiles.length} ឯកសារ...`;
+  }
+
   for (const file of pdfFiles) {
     let pageCount = null;
     try {
@@ -2201,16 +2157,16 @@ async function addPdfs(files) {
   }
   renderPdfs();
   pdfInput.value = '';
+  mergeStatus.textContent = '';
 }
 
 function renderPdfs() {
-  pdfList.innerHTML = '';
+  const frag = document.createDocumentFragment();
   pdfs.forEach((item, idx) => {
     const div = document.createElement('div');
     div.className = 'pdf-item';
     div.draggable = true;
     div.dataset.id = item.id;
-    div.style.animationDelay = (idx * 0.03) + 's';
     div.innerHTML = `
       <span class="pdf-num">${idx + 1}</span>
       <div class="pdf-icon">📕</div>
@@ -2234,8 +2190,10 @@ function renderPdfs() {
     div.addEventListener('dragleave', onPdfDragLeave);
     div.addEventListener('drop', onPdfDrop);
     addTouchDrag(div, item.id, mergedNameInput, 'pdfs');
-    pdfList.appendChild(div);
+    frag.appendChild(div);
   });
+  pdfList.innerHTML = '';
+  pdfList.appendChild(frag);
   mergeBtn.disabled = pdfs.length < 2;
   pdfHeader.classList.toggle('show', pdfs.length > 0);
   if (pdfs.length > 0) pdfCount.textContent = pdfs.length;
@@ -2295,7 +2253,7 @@ mergeBtn.addEventListener('click', async () => {
       const copiedPages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
       copiedPages.forEach(p => mergedPdf.addPage(p));
       updateMergeProgress(Math.round(((i + 1) / total) * 90));
-      await new Promise(r => setTimeout(r, 30));
+      await new Promise(r => setTimeout(r, 20));
     }
     updateMergeProgress(95);
     const bytes = await mergedPdf.save();
@@ -2340,9 +2298,7 @@ function updateMergeProgress(p) {
   mergeProgressText.textContent = p + '%';
 }
 
-/* =========================================================
-   PART 3: SPLIT
-   ========================================================= */
+/* ==================== PART 3: SPLIT ==================== */
 const splitInput = document.getElementById('splitInput');
 const splitDrop = document.getElementById('splitDrop');
 const splitInfo = document.getElementById('splitInfo');
@@ -2371,12 +2327,8 @@ splitInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (file) loadSplitFile(file);
 });
-splitDrop.addEventListener('dragover', (e) => { e.preventDefault(); splitDrop.classList.add('dragover'); });
-splitDrop.addEventListener('dragleave', () => splitDrop.classList.remove('dragover'));
-splitDrop.addEventListener('drop', (e) => {
-  e.preventDefault();
-  splitDrop.classList.remove('dragover');
-  const file = Array.from(e.dataTransfer.files).find(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+attachFileDrop(splitDrop, (files) => {
+  const file = files.find(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
   if (file) loadSplitFile(file);
 });
 
@@ -2531,7 +2483,7 @@ async function splitEachPage() {
     const bytes = await newDoc.save();
     folder.file(`page-${String(i + 1).padStart(3, '0')}.pdf`, bytes);
     updateSplitProgress(Math.round(((i + 1) / total) * 90));
-    await new Promise(r => setTimeout(r, 20));
+    if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
   }
   updateSplitProgress(95);
   const zipBlob = await zip.generateAsync({ type: 'blob' });
@@ -2588,9 +2540,7 @@ function updateSplitProgress(p) {
   splitProgressText.textContent = p + '%';
 }
 
-/* =========================================================
-   INIT
-   ========================================================= */
+/* ==================== INIT ==================== */
 applyLang();
 applyTheme();
 renderHistory();
@@ -2600,4 +2550,4 @@ if (window.pdfjsLib) {
 }
 </script>
 </body>
-  </html>
+ </html>
