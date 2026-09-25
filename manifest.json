@@ -1,7 +1,7 @@
 {
   "name": "SpeedTest Pro",
   "short_name": "SpeedTest",
-  "description": "សាកល្បងល្បឿន Internet យ៉ាងត្រឹមត្រូវ",
+  "description": "សាកល្បងល្បឿន Internet",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
