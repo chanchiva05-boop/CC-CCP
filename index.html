@@ -2,2607 +2,1300 @@
 <html lang="km">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PDF KH</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfjs-dist/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.2/confetti.browser.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SpeedTest Pro</title>
+<meta name="description" content="សាកល្បងល្បឿន Internet យ៉ាងត្រឹមត្រូវ">
+<meta name="theme-color" content="#06060c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SpeedTest">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   :root {
-    --primary: #6366f1;
-    --primary-dark: #4f46e5;
-    --secondary: #ec4899;
-    --success: #10b981;
-    --success-dark: #059669;
-    --danger: #ef4444;
-    --merge: #ef4444;
-    --split: #06b6d4;
-    --split-dark: #0891b2;
-    --share: #3b82f6;
-    --accent: #f59e0b;
-
-    --bg-body: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-    --bg-card: #ffffff;
-    --bg-soft: #f8fafc;
-    --bg-softer: #fafbff;
-    --bg-input: #ffffff;
-    --bg-tab: #f8fafc;
-    --bg-tab-hover: #eef2ff;
-    --bg-action: #fafbfc;
-    --bg-action-hover: #eef2ff;
-    --bg-danger-hover: #fee2e2;
-    --bg-hint: #fef3c7;
-    --bg-result: linear-gradient(135deg, #f0fdf4, #ecfdf5);
-    --bg-info: linear-gradient(135deg, #ecfeff, #e0f2fe);
-    --bg-skip: #fef3c7;
-    --bg-preview: #f8fafc;
-
-    --text-dark: #1e293b;
-    --text-mid: #475569;
-    --text-light: #94a3b8;
-    --border: #e2e8f0;
-    --radius: 16px;
-    --radius-sm: 10px;
+    --bg: #06060c;
+    --surface: rgba(255, 255, 255, 0.025);
+    --surface-hi: rgba(255, 255, 255, 0.05);
+    --border: rgba(255, 255, 255, 0.06);
+    --border-hi: rgba(255, 255, 255, 0.12);
+    --text: #ffffff;
+    --text-dim: rgba(255, 255, 255, 0.45);
+    --text-mid: rgba(255, 255, 255, 0.7);
+    --cyan: #22d3ee;
+    --violet: #a855f7;
+    --pink: #f472b6;
+    --lime: #a3e635;
+    --orange: #fb923c;
+    --red: #f87171;
+    --green: #4ade80;
   }
 
-  body.dark {
-    --bg-body: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
-    --bg-card: #1e293b;
-    --bg-soft: #0f172a;
-    --bg-softer: #172033;
-    --bg-input: #0f172a;
-    --bg-tab: #0f172a;
-    --bg-tab-hover: #312e81;
-    --bg-action: #172033;
-    --bg-action-hover: #312e81;
-    --bg-danger-hover: #7f1d1d;
-    --bg-hint: #422006;
-    --bg-result: linear-gradient(135deg, #052e16, #064e3b);
-    --bg-info: linear-gradient(135deg, #083344, #164e63);
-    --bg-skip: #422006;
-    --bg-preview: #0f172a;
-    --text-dark: #f1f5f9;
-    --text-mid: #cbd5e1;
-    --text-light: #94a3b8;
-    --border: #334155;
-  }
+  html, body { height: 100%; }
 
-  html { scroll-behavior: smooth; }
   body {
-    font-family: 'Kantumruy Pro', 'Khmer OS', 'Khmer OS Battambang', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-    background: var(--bg-body);
-    background-attachment: fixed;
+    font-family: 'Space Grotesk', 'Kantumruy Pro', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
-    padding: 24px 16px;
-    -webkit-font-smoothing: antialiased;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    color: var(--text-dark);
-    transition: background 0.4s, color 0.3s;
-  }
-
-  .top-bar {
-    max-width: 820px;
-    margin: 0 auto 12px;
     display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-  .top-btn {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: #fff; font-size: 18px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s, transform 0.15s;
-  }
-  .top-btn:hover { background: rgba(255, 255, 255, 0.4); }
-  .top-btn:active { transform: scale(0.94); }
-  .top-btn .lang-label { font-size: 12px; font-weight: 700; font-family: inherit; }
-
-  .container {
-    background: var(--bg-card);
-    border-radius: 24px;
-    padding: 0;
-    max-width: 820px;
-    margin: 0 auto;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    transition: background 0.3s;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 16px;
+    overflow-x: hidden;
+    position: relative;
+    font-feature-settings: 'ss01', 'ss02';
   }
 
-  .header { text-align: center; padding: 32px 32px 20px; }
-  .header .icon-badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 68px; height: 68px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-radius: 20px; font-size: 32px;
-    margin-bottom: 14px;
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
-  }
-  .header h1 { color: var(--text-dark); font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-  .header p { color: var(--text-light); font-size: 13px; }
-
-  .tabs {
-    display: flex; gap: 6px;
-    padding: 0 32px 24px;
-    border-bottom: 1px solid var(--border);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    flex: 1; min-width: 100px;
-    padding: 12px 8px;
-    background: var(--bg-tab);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    font-family: inherit; font-size: 13px; font-weight: 600;
-    color: var(--text-mid); cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    transition: background 0.2s, color 0.2s, transform 0.15s;
-  }
-  .tab:hover { background: var(--bg-tab-hover); color: var(--primary); }
-  .tab:active { transform: scale(0.97); }
-  .tab .tab-icon { font-size: 20px; }
-  .tab.active {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: #fff;
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
-  }
-  .tab.active[data-tab="merge"] {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
-  }
-  .tab.active[data-tab="split"] {
-    background: linear-gradient(135deg, var(--split), var(--split-dark));
-    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.3);
-  }
-  .tab.active[data-tab="history"] {
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
   }
 
-  .panel { padding: 28px 32px 32px; display: none; }
-  .panel.active {
-    display: block;
-    animation: panelIn 0.3s ease;
-  }
-  @keyframes panelIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, #22d3ee, transparent 70%);
+    top: -200px; left: -150px;
+    animation: drift1 25s ease-in-out infinite;
   }
 
-  .form-group { margin-bottom: 22px; }
-  .form-group label {
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 10px;
-    color: var(--text-mid); font-weight: 600; font-size: 14px;
-  }
-  .form-group label::before {
-    content: ''; width: 4px; height: 16px;
-    background: linear-gradient(180deg, var(--primary), var(--secondary));
-    border-radius: 4px;
+  .orb-2 {
+    width: 450px; height: 450px;
+    background: radial-gradient(circle, #a855f7, transparent 70%);
+    bottom: -180px; right: -150px;
+    animation: drift2 30s ease-in-out infinite;
   }
 
-  .input-wrap { position: relative; }
-  .input-wrap::after {
-    content: '📝';
-    position: absolute; right: 16px; top: 50%;
-    transform: translateY(-50%);
-    font-size: 18px; pointer-events: none; opacity: 0.5;
+  .orb-3 {
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, #f472b6, transparent 70%);
+    top: 40%; left: 60%;
+    opacity: 0.25;
+    animation: drift3 35s ease-in-out infinite;
   }
 
-  input[type="text"], input[type="number"] {
+  @keyframes drift1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(80px, 60px) scale(1.15); }
+  }
+  @keyframes drift2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-70px, -80px) scale(1.1); }
+  }
+  @keyframes drift3 {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-45%, -55%) scale(1.2); }
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: overlay;
+  }
+
+  .app {
+    position: relative;
+    z-index: 2;
     width: 100%;
-    padding: 14px 48px 14px 16px;
-    border: 2px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-size: 16px; font-family: inherit;
-    background: var(--bg-input); color: var(--text-dark);
-    transition: border-color 0.2s, box-shadow 0.2s;
-    -webkit-user-select: text; user-select: text;
-    font-weight: 500;
+    max-width: 460px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 22px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.06) inset,
+      0 40px 100px -20px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(255,255,255,0.02);
+    animation: enter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  input[type="text"]:focus, input[type="number"]:focus {
-    outline: none; border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
-  }
-  input::placeholder { color: var(--text-light); font-weight: 400; }
 
-  .file-drop {
-    position: relative;
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 32px 20px;
-    text-align: center;
-    cursor: pointer;
-    background: var(--bg-softer);
-    transition: border-color 0.2s, background 0.2s;
+  @keyframes enter {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); filter: blur(8px); }
+    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
   }
-  .file-drop:hover { border-color: var(--primary); background: var(--bg-tab-hover); }
-  .file-drop.dragover {
-    border-color: var(--primary);
-    background: var(--bg-tab-hover);
-  }
-  .file-drop input { display: none; }
-  .file-drop .drop-icon {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 60px; height: 60px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: 50%; font-size: 28px;
-    margin-bottom: 12px;
-    color: #fff;
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
-  }
-  .file-drop .drop-icon.merge {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
-  }
-  .file-drop .drop-icon.split {
-    background: linear-gradient(135deg, var(--split), var(--split-dark));
-    box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
-  }
-  .file-drop .drop-title { color: var(--text-dark); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-  .file-drop .drop-sub { color: var(--text-light); font-size: 13px; }
 
-  .thumbs-header {
-    display: none;
-    justify-content: space-between; align-items: center;
-    margin-top: 20px; margin-bottom: 12px; padding: 0 4px;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 6px 20px;
   }
-  .thumbs-header.show { display: flex; }
-  .thumbs-header .count { font-size: 13px; color: var(--text-mid); font-weight: 600; }
-  .thumbs-header .count span {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-width: 22px; height: 22px; padding: 0 7px;
-    background: var(--primary); color: #fff;
-    border-radius: 11px; font-size: 12px; margin-left: 6px;
-  }
-  .thumbs-header .clear-all {
-    background: none; border: none; color: var(--danger);
-    font-size: 13px; cursor: pointer;
-    padding: 4px 10px; border-radius: 6px;
-    font-weight: 600; font-family: inherit;
-    transition: background 0.15s;
-  }
-  .thumbs-header .clear-all:hover { background: var(--bg-danger-hover); }
 
-  .thumbs {
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--violet) 50%, var(--pink) 100%);
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 14px;
-  }
-  .thumb {
+    place-items: center;
     position: relative;
-    border: 2px solid var(--border);
-    border-radius: var(--radius-sm);
     overflow: hidden;
-    background: var(--bg-card);
-    cursor: grab;
-    transition: border-color 0.15s;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
+    box-shadow:
+      0 8px 24px -6px rgba(34, 211, 238, 0.5),
+      0 0 0 1px rgba(255,255,255,0.1) inset;
   }
-  .thumb:active { cursor: grabbing; }
-  .thumb:hover { border-color: var(--primary); }
-  .thumb.dragging { opacity: 0.4; border-color: var(--primary); border-style: dashed; }
-  .thumb.drag-over { border-color: var(--secondary); border-style: dashed; background: rgba(236, 72, 153, 0.08); }
-  .thumb .img-wrap {
-    width: 100%; height: 120px;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--bg-preview);
-    overflow: hidden; pointer-events: none;
-  }
-  .thumb img { max-width: 100%; max-height: 100%; display: block; pointer-events: none; }
-  .thumb .num {
-    position: absolute; top: 8px; left: 8px;
-    background: var(--primary); color: #fff;
-    font-size: 11px; font-weight: 700;
-    min-width: 22px; height: 22px; padding: 0 6px;
-    border-radius: 11px;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 2; pointer-events: none;
-  }
-  .thumb .drag-hint {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(15, 23, 42, 0.7); color: #fff;
-    font-size: 12px; width: 22px; height: 22px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 2; pointer-events: none;
-  }
-  .thumb .actions {
-    display: flex; justify-content: space-around;
-    padding: 6px 4px; background: var(--bg-action);
-    border-top: 1px solid var(--border);
-  }
-  .thumb .actions button {
-    background: none; border: none; cursor: pointer;
-    font-size: 16px; width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
-    color: var(--text-mid);
-  }
-  .thumb .actions button:hover { background: var(--bg-action-hover); }
-  .thumb .actions button[data-act="del"]:hover { background: var(--bg-danger-hover); }
 
-  .pdf-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
-  .pdf-item {
+  .logo-mark::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 11px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.25), transparent 40%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .logo-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    z-index: 1;
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  .logo-text strong {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .logo-text span {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px 6px 8px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-mid);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    letter-spacing: 0.02em;
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+    animation: ping 2s ease-in-out infinite;
+  }
+
+  @keyframes ping {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+  }
+
+  .connection {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 22px;
+    transition: all 0.3s;
+  }
+
+  .connection:hover {
+    background: rgba(255,255,255,0.035);
+    border-color: var(--border-hi);
+  }
+
+  .conn-icon {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(34,211,238,0.15), rgba(168,85,247,0.15));
+    border: 1px solid rgba(34,211,238,0.2);
+    display: grid;
+    place-items: center;
+    color: var(--cyan);
+  }
+
+  .conn-icon svg { width: 16px; height: 16px; }
+
+  .conn-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .conn-label {
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .conn-value {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hero {
     position: relative;
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 16px;
-    border: 2px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
-    cursor: grab;
-    transition: border-color 0.15s;
-    -webkit-user-select: none; user-select: none;
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 26px;
   }
-  .pdf-item:active { cursor: grabbing; }
-  .pdf-item:hover { border-color: var(--primary); }
-  .pdf-item.dragging { opacity: 0.4; border-color: var(--primary); border-style: dashed; }
-  .pdf-item.drag-over { border-color: var(--secondary); border-style: dashed; background: rgba(236, 72, 153, 0.08); }
-  .pdf-item .pdf-icon {
-    flex-shrink: 0; width: 44px; height: 44px;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; color: #fff;
-    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
-  }
-  .pdf-item .pdf-info { flex: 1; min-width: 0; }
-  .pdf-item .pdf-name {
-    font-size: 14px; font-weight: 600; color: var(--text-dark);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    margin-bottom: 3px;
-  }
-  .pdf-item .pdf-meta { font-size: 12px; color: var(--text-light); display: flex; align-items: center; gap: 8px; }
-  .pdf-item .pdf-num {
-    position: absolute; top: -6px; left: -6px;
-    background: var(--primary); color: #fff;
-    font-size: 11px; font-weight: 700;
-    min-width: 22px; height: 22px; padding: 0 6px;
-    border-radius: 11px;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
-  }
-  .pdf-item .drag-handle { flex-shrink: 0; color: var(--text-light); font-size: 18px; padding: 4px; pointer-events: none; }
-  .pdf-item .remove-btn {
-    flex-shrink: 0; background: none; border: none;
-    width: 34px; height: 34px; border-radius: 8px;
-    cursor: pointer; font-size: 16px; color: var(--text-mid);
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, color 0.15s;
-  }
-  .pdf-item .remove-btn:hover { background: var(--bg-danger-hover); color: var(--danger); }
 
-  .btn-main {
-    width: 100%; padding: 16px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: #fff; border: none; border-radius: var(--radius-sm);
-    font-size: 16px; font-weight: 700; font-family: inherit;
-    cursor: pointer; margin-top: 14px;
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    transition: box-shadow 0.2s, transform 0.15s;
+  .gauge-box {
+    position: relative;
+    width: 280px;
+    height: 280px;
   }
-  .btn-main:hover:not(:disabled) { box-shadow: 0 10px 24px rgba(99, 102, 241, 0.4); }
-  .btn-main:active:not(:disabled) { transform: scale(0.98); }
-  .btn-main:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; background: #cbd5e1; }
-  .btn-main.merge { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3); }
-  .btn-main.merge:disabled { background: #cbd5e1; }
-  .btn-main.split { background: linear-gradient(135deg, var(--split), var(--split-dark)); box-shadow: 0 6px 16px rgba(6, 182, 212, 0.3); }
-  .btn-main.split:disabled { background: #cbd5e1; }
-  .btn-main .icon { font-size: 20px; }
 
-  .btn-reset {
-    width: 100%; padding: 15px;
-    background: var(--bg-card); color: var(--primary);
-    border: 2px solid var(--primary); border-radius: var(--radius-sm);
-    font-size: 15px; font-weight: 700; font-family: inherit;
-    cursor: pointer; margin-top: 12px;
-    display: none; align-items: center; justify-content: center; gap: 8px;
-    transition: background 0.2s, color 0.2s;
-  }
-  .btn-reset:hover { background: var(--primary); color: #fff; }
-  .btn-reset.show { display: flex; }
-  .btn-reset.split { color: var(--split); border-color: var(--split); }
-  .btn-reset.split:hover { background: var(--split); color: #fff; }
-
-  .result-card {
-    display: none; margin-top: 18px; padding: 20px;
-    background: var(--bg-result);
-    border: 2px solid #86efac;
-    border-radius: var(--radius);
-    animation: resultIn 0.3s ease;
-  }
-  .result-card.show { display: block; }
-  @keyframes resultIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .result-header .check-icon {
-    flex-shrink: 0; width: 46px; height: 46px;
-    background: linear-gradient(135deg, var(--success), var(--success-dark));
+  .gauge-box::before {
+    content: '';
+    position: absolute;
+    inset: 15%;
     border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; color: #fff;
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
-  }
-  .result-header .result-title { flex: 1; min-width: 0; }
-  .result-header .result-title h3 { font-size: 16px; font-weight: 700; color: var(--success-dark); margin-bottom: 4px; }
-  .result-header .result-title p { font-size: 13px; color: var(--success-dark); opacity: 0.85; font-weight: 500; }
-  .result-header .result-name {
-    font-size: 13px; color: var(--success-dark); font-weight: 600;
-    background: rgba(16, 185, 129, 0.15); padding: 4px 10px;
-    border-radius: 8px; display: inline-block; margin-top: 4px;
-    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    background: radial-gradient(circle, rgba(34,211,238,0.18), transparent 65%);
+    filter: blur(30px);
+    opacity: 0.7;
+    transition: opacity 0.5s;
   }
 
-  .result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .result-btn {
-    padding: 14px 16px; border: none; border-radius: var(--radius-sm);
-    font-family: inherit; font-size: 14px; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: box-shadow 0.2s, transform 0.15s;
-  }
-  .result-btn:active { transform: scale(0.97); }
-  .result-btn .icon { font-size: 18px; }
-  .result-btn.download {
-    background: linear-gradient(135deg, var(--success), var(--success-dark));
-    color: #fff; box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
-  }
-  .result-btn.download:hover { box-shadow: 0 10px 24px rgba(16, 185, 129, 0.5); }
-  .result-btn.share {
-    background: var(--bg-card); color: var(--share);
-    border: 2px solid var(--share);
-  }
-  .result-btn.share:hover {
-    background: var(--share); color: #fff;
-    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+  .gauge-box.testing::before {
+    opacity: 1;
+    animation: breathe 2s ease-in-out infinite;
   }
 
-  .share-menu {
-    display: none; margin-top: 12px; padding: 12px;
-    background: var(--bg-card); border: 2px solid var(--border);
-    border-radius: var(--radius-sm);
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.08); opacity: 1; }
   }
-  .share-menu.show { display: block; }
-  .share-menu .share-title {
-    font-size: 12px; font-weight: 700; color: var(--text-light);
-    text-transform: uppercase; letter-spacing: 0.5px;
-    margin-bottom: 10px; text-align: center;
-  }
-  .share-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .share-option {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 12px 6px; background: var(--bg-soft);
-    border: 1px solid var(--border); border-radius: 10px;
-    cursor: pointer; font-family: inherit; font-size: 11px;
-    font-weight: 600; color: var(--text-mid);
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .share-option:hover { background: var(--bg-action-hover); border-color: var(--primary); }
-  .share-option .share-icon { font-size: 22px; line-height: 1; }
 
-  .progress-wrap { margin-top: 18px; display: none; }
-  .progress-wrap.active { display: block; }
-  .progress-bar {
-    width: 100%; height: 10px; background: var(--bg-soft);
-    border-radius: 10px; overflow: hidden;
+  .gauge-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    position: relative;
+    z-index: 1;
   }
-  .progress-fill {
-    height: 100%; width: 0%;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    transition: width 0.25s; border-radius: 10px;
-  }
-  .progress-wrap.merge-active .progress-fill { background: linear-gradient(90deg, #ef4444, #f59e0b); }
-  .progress-wrap.split-active .progress-fill { background: linear-gradient(90deg, var(--split), #22d3ee); }
-  .progress-text {
-    text-align: center; margin-top: 10px;
-    font-size: 14px; color: var(--text-mid); font-weight: 700;
-  }
-  .progress-text .pct { color: var(--primary); font-size: 16px; }
-  .progress-wrap.merge-active .progress-text .pct { color: var(--merge); }
-  .progress-wrap.split-active .progress-text .pct { color: var(--split); }
 
-  .status {
-    text-align: center; margin-top: 14px;
-    font-size: 14px; color: var(--text-mid);
-    min-height: 22px; font-weight: 500;
-  }
-  .status.success {
-    color: var(--success); font-weight: 700;
-    padding: 12px; background: rgba(16, 185, 129, 0.1);
-    border-radius: var(--radius-sm); border: 1px solid #a7f3d0;
-  }
-  .status.error { color: var(--danger); font-weight: 600; }
+  .gauge-svg circle { fill: none; }
 
-  .hint-bar {
-    display: none; align-items: center; justify-content: center; gap: 6px;
-    margin-top: 12px; padding: 10px;
-    background: var(--bg-hint); border-radius: var(--radius-sm);
-    font-size: 13px; color: #92400e; font-weight: 500;
+  .ring-track {
+    stroke: rgba(255,255,255,0.05);
+    stroke-width: 8;
   }
-  body.dark .hint-bar { color: #fbbf24; }
-  .hint-bar.show { display: flex; }
 
-  .history-list { display: flex; flex-direction: column; gap: 10px; }
-  .history-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px; background: var(--bg-softer);
-    border: 2px solid var(--border); border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: border-color 0.15s;
+  .ring-ticks {
+    stroke: rgba(255,255,255,0.12);
+    stroke-width: 1.5;
   }
-  .history-item:hover { border-color: var(--primary); }
-  .history-item .hist-icon {
-    flex-shrink: 0; width: 44px; height: 44px;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; color: #fff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+
+  .ring-progress-glow {
+    stroke: url(#gaugeGrad);
+    stroke-width: 18;
+    stroke-linecap: round;
+    opacity: 0.35;
+    filter: blur(10px);
+    transition: stroke-dashoffset 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .history-item .hist-icon.convert { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
-  .history-item .hist-icon.merge { background: linear-gradient(135deg, #ef4444, #dc2626); }
-  .history-item .hist-icon.split { background: linear-gradient(135deg, var(--split), var(--split-dark)); }
-  .history-item .hist-info { flex: 1; min-width: 0; }
-  .history-item .hist-name {
-    font-size: 14px; font-weight: 600; color: var(--text-dark);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    margin-bottom: 3px;
+
+  .ring-progress {
+    stroke: url(#gaugeGrad);
+    stroke-width: 8;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 10px var(--cyan));
+    transition: stroke-dashoffset 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .history-item .hist-meta {
-    font-size: 12px; color: var(--text-light);
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+
+  .display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+    width: 100%;
+    pointer-events: none;
   }
-  .history-item .hist-actions { display: flex; gap: 4px; flex-shrink: 0; }
-  .history-item .hist-btn {
-    width: 34px; height: 34px;
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 8px; cursor: pointer; font-size: 15px;
+
+  .display-value {
+    font-size: 4.5rem;
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(34, 211, 238, 0.35);
+    transition: text-shadow 0.4s;
+  }
+
+  .display-value.testing {
+    color: #fff;
+    text-shadow: 0 0 60px currentColor;
+  }
+
+  .display-unit {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  .display-phase {
+    margin-top: 14px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .phase-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 100px;
+    background: rgba(168, 85, 247, 0.12);
+    border: 1px solid rgba(168, 85, 247, 0.28);
+    color: #e9d5ff;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .phase-pill.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .phase-pill.done {
+    background: rgba(74, 222, 128, 0.12);
+    border-color: rgba(74, 222, 128, 0.3);
+    color: #bbf7d0;
+  }
+
+  .phase-pill::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 6px currentColor;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .metric {
+    position: relative;
+    padding: 16px 12px 14px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .metric::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(34,211,238,0.08), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.35s;
+    pointer-events: none;
+  }
+
+  .metric.active {
+    border-color: rgba(34, 211, 238, 0.35);
+    background: rgba(34, 211, 238, 0.04);
+    transform: translateY(-3px);
+    box-shadow:
+      0 12px 30px -10px rgba(34, 211, 238, 0.3),
+      0 0 0 1px rgba(34,211,238,0.1) inset;
+  }
+
+  .metric.active::before { opacity: 1; }
+
+  .metric.complete {
+    border-color: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.035);
+  }
+
+  .metric-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .metric-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    background: rgba(255,255,255,0.06);
     color: var(--text-mid);
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, color 0.15s;
-  }
-  .history-item .hist-btn:hover {
-    background: var(--primary); color: #fff;
-    border-color: var(--primary);
-  }
-  .history-item .hist-btn.danger:hover {
-    background: var(--danger); border-color: var(--danger);
+    flex-shrink: 0;
+    transition: all 0.3s;
   }
 
-  .btn-clear-history {
-    width: 100%; padding: 12px;
-    background: transparent; color: var(--danger);
-    border: 2px solid var(--danger); border-radius: var(--radius-sm);
-    font-family: inherit; font-size: 14px; font-weight: 700;
-    cursor: pointer; margin-top: 16px;
-    transition: background 0.2s, color 0.2s;
-  }
-  .btn-clear-history:hover { background: var(--danger); color: #fff; }
+  .metric-icon svg { width: 11px; height: 11px; }
 
-  .empty-state {
-    text-align: center; padding: 40px 20px;
-    color: var(--text-light); font-size: 14px;
-  }
-  .empty-state .big-icon {
-    font-size: 60px; margin-bottom: 12px;
-    display: block; opacity: 0.5;
+  .metric.active .metric-icon {
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(34,211,238,0.4);
   }
 
-  .preview-modal {
-    display: none; position: fixed; inset: 0;
-    background: rgba(15, 23, 42, 0.92);
-    z-index: 1100; align-items: center; justify-content: center;
-    padding: 16px;
+  .metric.complete .metric-icon {
+    background: rgba(74, 222, 128, 0.15);
+    color: var(--green);
   }
-  .preview-modal.active { display: flex; }
-  .preview-modal-box {
-    background: var(--bg-card); border-radius: 20px;
-    width: 100%; max-width: 900px; height: 92vh;
-    display: flex; flex-direction: column; overflow: hidden;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+
+  .metric-name {
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
   }
-  .preview-modal-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 20px; border-bottom: 1px solid var(--border);
+
+  .metric-value {
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    line-height: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    transition: color 0.3s;
+  }
+
+  .metric.complete .metric-value { color: #fff; }
+
+  .metric-unit {
+    font-size: 0.62rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+  }
+
+  .cta {
+    width: 100%;
+    padding: 0;
+    border: none;
+    border-radius: 16px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    font-family: inherit;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .cta-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 17px 24px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #22d3ee 0%, #a855f7 55%, #f472b6 100%);
+    background-size: 200% 200%;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    overflow: hidden;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.3) inset,
+      0 -8px 20px -8px rgba(0,0,0,0.3) inset,
+      0 12px 32px -8px rgba(168, 85, 247, 0.5),
+      0 4px 16px -4px rgba(34, 211, 238, 0.4);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cta-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.8s;
+  }
+
+  .cta:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  .cta:hover:not(:disabled) .cta-inner {
+    background-position: 100% 50%;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.3) inset,
+      0 -8px 20px -8px rgba(0,0,0,0.3) inset,
+      0 18px 40px -10px rgba(168, 85, 247, 0.6),
+      0 6px 24px -6px rgba(34, 211, 238, 0.5);
+  }
+
+  .cta:hover:not(:disabled) .cta-inner::before {
+    transform: translateX(100%);
+  }
+
+  .cta:active:not(:disabled) {
+    transform: translateY(0) scale(0.985);
+  }
+
+  .cta:disabled {
+    cursor: not-allowed;
+  }
+
+  .cta:disabled .cta-inner {
+    background: linear-gradient(135deg, rgba(34,211,238,0.3), rgba(168,85,247,0.3));
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.1) inset,
+      0 8px 24px -8px rgba(168, 85, 247, 0.2);
+    color: rgba(255,255,255,0.85);
+  }
+
+  .cta-icon {
+    width: 18px;
+    height: 18px;
     flex-shrink: 0;
   }
-  .preview-modal-header .preview-title {
-    font-size: 15px; font-weight: 700; color: var(--text-dark);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    flex: 1; margin-right: 12px;
-  }
-  .preview-modal-header .preview-actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .preview-modal-header .pv-btn {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: var(--bg-soft); border: 1px solid var(--border);
-    color: var(--text-mid); cursor: pointer; font-size: 17px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, color 0.15s;
-  }
-  .preview-modal-header .pv-btn:hover {
-    background: var(--primary); color: #fff; border-color: var(--primary);
-  }
-  .preview-modal-header .pv-btn.close:hover {
-    background: var(--danger); border-color: var(--danger);
-  }
-  .preview-modal-body {
-    flex: 1; overflow: auto; background: #334155;
-    display: flex; justify-content: center; align-items: flex-start;
-    padding: 16px; position: relative;
-  }
-  .preview-canvas-wrap {
-    display: flex; flex-direction: column;
-    gap: 12px; align-items: center;
-  }
-  .preview-canvas-wrap canvas {
-    max-width: 100%; box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-    background: #fff; border-radius: 4px;
-  }
-  .preview-loading {
-    color: #cbd5e1; text-align: center; padding: 40px; font-size: 14px;
-  }
-  .preview-loading .spinner {
-    width: 40px; height: 40px;
-    border: 4px solid rgba(255,255,255,0.15);
-    border-top-color: #fff; border-radius: 50%;
-    margin: 0 auto 16px;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .modal {
-    display: none; position: fixed; inset: 0;
-    background: rgba(15, 23, 42, 0.85);
-    z-index: 1000; align-items: center; justify-content: center;
-    padding: 16px;
+  .cta:disabled .cta-icon {
+    animation: spin 1.4s linear infinite;
   }
-  .modal.active { display: flex; }
-  .modal-box {
-    background: var(--bg-card); border-radius: 20px;
-    padding: 22px; max-width: 820px; width: 100%; max-height: 96vh;
-    display: flex; flex-direction: column;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
-  .modal-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 16px; padding-bottom: 14px;
-    border-bottom: 1px solid var(--border);
+
+  .status {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    letter-spacing: 0.01em;
+    min-height: 18px;
+    transition: color 0.3s;
   }
-  .modal-header h3 {
-    color: var(--text-dark); font-size: 17px; font-weight: 700;
-    display: flex; align-items: center; gap: 8px;
+
+  .status.success { color: var(--green); }
+  .status.error { color: var(--red); }
+
+  .footer {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    text-transform: uppercase;
   }
-  .modal-header .badge {
-    font-size: 12px; background: var(--primary); color: #fff;
-    padding: 4px 10px; border-radius: 20px; font-weight: 600;
+
+  .footer .dev {
+    background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: 0.1em;
   }
-  .crop-toolbar {
-    display: flex; flex-wrap: wrap; gap: 8px;
-    margin-bottom: 14px; justify-content: center;
-  }
-  .crop-toolbar button {
-    padding: 8px 14px;
-    border: 1.5px solid var(--border); background: var(--bg-card);
-    border-radius: 10px; cursor: pointer; font-size: 13px;
-    font-family: inherit; font-weight: 600; color: var(--text-mid);
-    transition: all 0.15s;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .crop-toolbar button:hover {
-    background: var(--bg-action-hover);
-    border-color: var(--primary); color: var(--primary);
-  }
-  .crop-toolbar button.active {
-    background: var(--primary); color: #fff; border-color: transparent;
-  }
-  .crop-area {
-    flex: 1; min-height: 320px; max-height: 58vh;
-    background: #0f172a; border-radius: 14px;
-    overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .crop-area img { max-width: 100%; max-height: 100%; display: block; }
-  .modal-footer {
-    display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end;
-  }
-  .modal-footer button {
-    padding: 12px 26px; border: none; border-radius: 10px;
-    font-size: 14px; font-weight: 700; font-family: inherit;
+
+  .install-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #22d3ee, #a855f7);
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     cursor: pointer;
-    transition: background 0.15s;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .btn-cancel { background: var(--bg-soft); color: var(--text-mid); }
-  .btn-cancel:hover { background: var(--border); }
-  .btn-ok {
-    background: var(--primary); color: #fff;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    z-index: 100;
+    box-shadow:
+      0 12px 32px -8px rgba(168, 85, 247, 0.6),
+      0 4px 16px -4px rgba(34, 211, 238, 0.5);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
   }
 
-  .cropper-view-box {
-    outline: 2px solid #fff !important;
-    outline-color: rgba(255, 255, 255, 0.9) !important;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6) !important;
-  }
-  .cropper-line { background-color: var(--primary) !important; }
-  .cropper-point {
-    background-color: #fff !important;
-    border: 2px solid var(--primary) !important;
-    width: 12px !important; height: 12px !important;
-    opacity: 1 !important; border-radius: 50%;
-  }
-  .cropper-canvas, .cropper-canvas img { cursor: default !important; }
-  .cropper-drag-box { cursor: default !important; }
-  .cropper-crop-box { cursor: move !important; }
-
-  .crop-hint {
-    text-align: center; font-size: 12px; color: var(--text-light);
-    margin-top: 10px; padding: 8px;
-    background: var(--bg-preview); border-radius: 8px;
+  .install-btn.show {
+    transform: translateX(-50%) translateY(0);
   }
 
-  @media (max-width: 640px) {
-    body { padding: 12px 8px; }
-    .header { padding: 24px 18px 16px; }
-    .header .icon-badge { width: 56px; height: 56px; font-size: 28px; }
-    .header h1 { font-size: 19px; }
-    .tabs { padding: 0 18px 20px; gap: 4px; }
-    .tab { padding: 10px 6px; font-size: 11px; min-width: 80px; }
-    .tab .tab-icon { font-size: 18px; }
-    .panel { padding: 20px 18px 24px; }
-    .thumbs { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
-    .thumb .img-wrap { height: 100px; }
-    .share-options { grid-template-columns: repeat(3, 1fr); }
-    .result-actions { grid-template-columns: 1fr; }
-    .modal-box { padding: 16px; border-radius: 16px; }
+  .install-btn:hover {
+    box-shadow:
+      0 18px 40px -10px rgba(168, 85, 247, 0.7),
+      0 6px 24px -6px rgba(34, 211, 238, 0.6);
+  }
+
+  .install-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (display-mode: standalone) {
+    .install-btn { display: none !important; }
+  }
+
+  @media (max-width: 440px) {
+    .app { padding: 18px; border-radius: 24px; }
+    .gauge-box { width: 240px; height: 240px; }
+    .display-value { font-size: 3.8rem; }
+    .metric-value { font-size: 1.15rem; }
+  }
+
+  @media (max-width: 360px) {
+    .gauge-box { width: 210px; height: 210px; }
+    .display-value { font-size: 3.2rem; }
+    .metrics { gap: 8px; }
+    .metric { padding: 14px 10px 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 </style>
 </head>
 <body>
-<div class="top-bar">
-  <button class="top-btn" id="themeToggle" title="បិទ/បើកពន្លឺ">🌙</button>
-  <button class="top-btn" id="langToggle" title="ប្តូរភាសា">
-    <span class="lang-label" id="langLabel">EN</span>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <main class="app">
+
+    <header class="header">
+      <div class="logo">
+        <div class="logo-mark">
+          <img src="logo.png" alt="SpeedTest" onerror="this.style.display='none';this.parentNode.innerHTML='<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'#fff\' stroke-width=\'2.4\' stroke-linecap=\'round\' stroke-linejoin=\'round\' style=\'width:20px;height:20px;position:relative;z-index:1\'><path d=\'M13 2 3 14h9l-1 8 10-12h-9l1-8z\'/></svg>'">
+        </div>
+        <div class="logo-text">
+          <strong>SpeedTest</strong>
+          <span>Pro Edition</span>
+        </div>
+      </div>
+      <div class="live-pill">
+        <span class="live-dot"></span>
+        <span>Live</span>
+      </div>
+    </header>
+
+    <div class="connection">
+      <div class="conn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h.01"/>
+          <path d="M8.5 16.5a5 5 0 0 1 7 0"/>
+          <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+          <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+        </svg>
+      </div>
+      <div class="conn-text">
+        <span class="conn-label">កំពុងភ្ជាប់តាម</span>
+        <span class="conn-value" id="ispText">កំពុងរក server...</span>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="gauge-box" id="gaugeBox">
+        <svg class="gauge-svg" viewBox="0 0 200 200">
+          <defs>
+            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#22d3ee"/>
+              <stop offset="50%" stop-color="#a855f7"/>
+              <stop offset="100%" stop-color="#f472b6"/>
+            </linearGradient>
+          </defs>
+
+          <circle class="ring-track" cx="100" cy="100" r="86"/>
+
+          <circle class="ring-ticks" cx="100" cy="100" r="70"
+                  stroke-dasharray="1.5 9.15"
+                  opacity="0.6"/>
+
+          <circle class="ring-progress-glow" id="progressGlow"
+                  cx="100" cy="100" r="86"
+                  stroke-dasharray="540.35"
+                  stroke-dashoffset="540.35"
+                  transform="rotate(-90 100 100)"/>
+
+          <circle class="ring-progress" id="progressArc"
+                  cx="100" cy="100" r="86"
+                  stroke-dasharray="540.35"
+                  stroke-dashoffset="540.35"
+                  transform="rotate(-90 100 100)"/>
+        </svg>
+
+        <div class="display">
+          <div class="display-value" id="speedValue">0</div>
+          <div class="display-unit">Mbps</div>
+          <div class="display-phase">
+            <div class="phase-pill" id="phasePill"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics">
+      <div class="metric" id="mDownload">
+        <div class="metric-head">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v14"/>
+              <path d="m19 12-7 7-7-7"/>
+            </svg>
+          </div>
+          <span class="metric-name">Download</span>
+        </div>
+        <div class="metric-value">
+          <span id="downloadValue">--</span>
+          <span class="metric-unit">Mbps</span>
+        </div>
+      </div>
+
+      <div class="metric" id="mUpload">
+        <div class="metric-head">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 19V5"/>
+              <path d="m5 12 7-7 7 7"/>
+            </svg>
+          </div>
+          <span class="metric-name">Upload</span>
+        </div>
+        <div class="metric-value">
+          <span id="uploadValue">--</span>
+          <span class="metric-unit">Mbps</span>
+        </div>
+      </div>
+
+      <div class="metric" id="mPing">
+        <div class="metric-head">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <span class="metric-name">Ping</span>
+        </div>
+        <div class="metric-value">
+          <span id="pingValue">--</span>
+          <span class="metric-unit">ms</span>
+        </div>
+      </div>
+    </section>
+
+    <button class="cta" id="startBtn">
+      <span class="cta-inner">
+        <svg class="cta-icon" id="ctaIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/>
+        </svg>
+        <span id="btnText">ចាប់ផ្តើមសាកល្បង</span>
+      </span>
+    </button>
+
+    <p class="status" id="status">ចុចប៊ូតុងដើម្បីចាប់ផ្តើម</p>
+
+    <div class="footer">Developed by <span class="dev">Mr.TEVA</span></div>
+  </main>
+
+  <button class="install-btn" id="installBtn" aria-label="ដំឡើងកម្មវិធី">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3v12"/>
+      <path d="m7 10 5 5 5-5"/>
+      <path d="M5 21h14"/>
+    </svg>
+    <span>ដំឡើងកម្មវិធី</span>
   </button>
-</div>
-
-<div class="container">
-  <div class="header">
-    <div class="icon-badge">📄</div>
-    <h1 data-i18n="title">ឧបករណ៍ PDF</h1>
-    <p data-i18n="subtitle">បម្លែង បញ្ចូល បំបែក និងគ្រប់គ្រងឯកសារ PDF</p>
-  </div>
-
-  <div class="tabs" id="tabs">
-    <button class="tab active" data-tab="convert">
-      <span class="tab-icon">🖼️</span>
-      <span data-i18n="tab_convert">រូបភាព → PDF</span>
-    </button>
-    <button class="tab" data-tab="merge">
-      <span class="tab-icon">📎</span>
-      <span data-i18n="tab_merge">Merge PDF</span>
-    </button>
-    <button class="tab" data-tab="split">
-      <span class="tab-icon">✂️</span>
-      <span data-i18n="tab_split">Split PDF</span>
-    </button>
-    <button class="tab" data-tab="history">
-      <span class="tab-icon">📜</span>
-      <span data-i18n="tab_history">ប្រវត្តិ</span>
-    </button>
-  </div>
-
-  <!-- Convert Panel -->
-  <div class="panel active" id="panelConvert">
-    <div class="form-group">
-      <label for="pdfName" data-i18n="label_pdf_name">ឈ្មោះឯកសារ PDF</label>
-      <div class="input-wrap">
-        <input type="text" id="pdfName" value="my-document" autocomplete="off">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label data-i18n="label_select_img">ជ្រើសរើសរូបភាព</label>
-      <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()">
-        <input type="file" id="fileInput" accept="image/*" multiple>
-        <div class="drop-icon">📁</div>
-        <div class="drop-title" data-i18n="drop_title">ចុចទីនេះ ឬអូសរូបភាពមកទម្លាក់</div>
-        <div class="drop-sub" data-i18n="drop_sub">គាំទ្រ JPG, PNG, WEBP, GIF</div>
-      </div>
-    </div>
-
-    <div class="thumbs-header" id="thumbsHeader">
-      <div class="count"><span data-i18n="label_images">រូបភាព</span><span id="imgCount">0</span></div>
-      <button class="clear-all" id="clearAllBtn" data-i18n="clear_all">🗑️ លុបទាំងអស់</button>
-    </div>
-
-    <div class="thumbs" id="thumbs"></div>
-
-    <div class="hint-bar" id="hint" data-i18n="hint_drag">💡 ចុចទាញរូបដើម្បីតម្រៀបលំដាប់</div>
-
-    <button class="btn-main" id="convertBtn" disabled>
-      <span class="icon">✨</span>
-      <span data-i18n="btn_convert">បម្លែងទៅ PDF</span>
-    </button>
-
-    <div class="result-card" id="convertResultCard">
-      <div class="result-header">
-        <div class="check-icon">✓</div>
-        <div class="result-title">
-          <h3 data-i18n="result_success">បម្លែងជោគជ័យ!</h3>
-          <p data-i18n="result_ready">ឯកសារ PDF របស់អ្នករួចរាល់ហើយ</p>
-          <span class="result-name" id="convertResultName">document.pdf</span>
-        </div>
-      </div>
-      <div class="result-actions">
-        <button class="result-btn download" data-result="convert" data-action="download">
-          <span class="icon">⬇️</span>
-          <span data-i18n="btn_download">ទាញយក</span>
-        </button>
-        <button class="result-btn share" data-result="convert" data-action="share">
-          <span class="icon">📤</span>
-          <span data-i18n="btn_share">ចែករំលែក</span>
-        </button>
-      </div>
-      <div class="share-menu" id="convertShareMenu">
-        <div class="share-title" data-i18n="share_title">ចែករំលែកជា File</div>
-        <div class="share-options">
-          <button class="share-option" data-share="native" data-result="convert"><span class="share-icon">📤</span><span data-i18n="sh_native">ចែករំលែក</span></button>
-          <button class="share-option" data-share="save" data-result="convert"><span class="share-icon">💾</span><span data-i18n="sh_save">រក្សាទុក</span></button>
-          <button class="share-option" data-share="open" data-result="convert"><span class="share-icon">👁️</span><span data-i18n="sh_open">មើល</span></button>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-reset" id="resetBtn">
-      <span>🔄</span>
-      <span data-i18n="btn_reset">ប្រើម្តងទៀត</span>
-    </button>
-
-    <div class="progress-wrap" id="progressWrap">
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-text"><span class="pct" id="progressText">0%</span></div>
-    </div>
-
-    <div class="status" id="status"></div>
-  </div>
-
-  <!-- Merge Panel -->
-  <div class="panel" id="panelMerge">
-    <div class="form-group">
-      <label for="mergedName" data-i18n="label_merged_name">ឈ្មោះឯកសារចុងក្រោយ</label>
-      <div class="input-wrap">
-        <input type="text" id="mergedName" value="merged-document" autocomplete="off">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label data-i18n="label_select_pdfs">ជ្រើសរើសឯកសារ PDF</label>
-      <div class="file-drop" id="pdfDrop" onclick="document.getElementById('pdfInput').click()">
-        <input type="file" id="pdfInput" accept="application/pdf" multiple>
-        <div class="drop-icon merge">📎</div>
-        <div class="drop-title" data-i18n="drop_title_pdf">ចុចទីនេះ ឬអូសឯកសារ PDF មកទម្លាក់</div>
-        <div class="drop-sub" data-i18n="drop_sub_pdf">ជ្រើសបានច្រើនឯកសារ ដើម្បីបញ្ចូលគ្នា</div>
-      </div>
-    </div>
-
-    <div class="thumbs-header" id="pdfHeader">
-      <div class="count"><span data-i18n="label_pdfs">ឯកសារ PDF</span><span id="pdfCount">0</span></div>
-      <button class="clear-all" id="clearPdfsBtn" data-i18n="clear_all">🗑️ លុបទាំងអស់</button>
-    </div>
-
-    <div class="pdf-list" id="pdfList"></div>
-
-    <div class="hint-bar" id="mergeHint" data-i18n="hint_merge">💡 ចុចទាញឯកសារ ដើម្បីតម្រៀបលំដាប់</div>
-
-    <button class="btn-main merge" id="mergeBtn" disabled>
-      <span class="icon">🔗</span>
-      <span data-i18n="btn_merge">បញ្ចូល PDF ចូលគ្នា</span>
-    </button>
-
-    <div class="result-card" id="mergeResultCard">
-      <div class="result-header">
-        <div class="check-icon">✓</div>
-        <div class="result-title">
-          <h3 data-i18n="merge_success">បញ្ចូលជោគជ័យ!</h3>
-          <p data-i18n="merge_ready">ឯកសារ PDF ត្រូវបានបញ្ចូលគ្នាហើយ</p>
-          <span class="result-name" id="mergeResultName">merged.pdf</span>
-        </div>
-      </div>
-      <div class="result-actions">
-        <button class="result-btn download" data-result="merge" data-action="download">
-          <span class="icon">⬇️</span>
-          <span data-i18n="btn_download">ទាញយក</span>
-        </button>
-        <button class="result-btn share" data-result="merge" data-action="share">
-          <span class="icon">📤</span>
-          <span data-i18n="btn_share">ចែករំលែក</span>
-        </button>
-      </div>
-      <div class="share-menu" id="mergeShareMenu">
-        <div class="share-title" data-i18n="share_title">ចែករំលែកជា File</div>
-        <div class="share-options">
-          <button class="share-option" data-share="native" data-result="merge"><span class="share-icon">📤</span><span data-i18n="sh_native">ចែករំលែក</span></button>
-          <button class="share-option" data-share="save" data-result="merge"><span class="share-icon">💾</span><span data-i18n="sh_save">រក្សាទុក</span></button>
-          <button class="share-option" data-share="open" data-result="merge"><span class="share-icon">👁️</span><span data-i18n="sh_open">មើល</span></button>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-reset" id="resetMergeBtn">
-      <span>🔄</span>
-      <span data-i18n="btn_reset">ប្រើម្តងទៀត</span>
-    </button>
-
-    <div class="progress-wrap" id="mergeProgressWrap">
-      <div class="progress-bar"><div class="progress-fill" id="mergeProgressFill"></div></div>
-      <div class="progress-text"><span class="pct" id="mergeProgressText">0%</span></div>
-    </div>
-
-    <div class="status" id="mergeStatus"></div>
-  </div>
-
-  <!-- Split Panel -->
-  <div class="panel" id="panelSplit">
-    <div class="form-group">
-      <label for="splitName" data-i18n="label_split_name">ឈ្មោះឯកសារចុងក្រោយ</label>
-      <div class="input-wrap">
-        <input type="text" id="splitName" value="split-document" autocomplete="off">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label data-i18n="label_select_pdf_one">ជ្រើសរើសឯកសារ PDF តែមួយ</label>
-      <div class="file-drop" id="splitDrop" onclick="document.getElementById('splitInput').click()">
-        <input type="file" id="splitInput" accept="application/pdf">
-        <div class="drop-icon split">✂️</div>
-        <div class="drop-title" data-i18n="drop_title_pdf">ចុចទីនេះ ឬអូសឯកសារ PDF មកទម្លាក់</div>
-        <div class="drop-sub" data-i18n="drop_sub_one_pdf">ជ្រើសបានតែ 1 ឯកសារ</div>
-      </div>
-    </div>
-
-    <div id="splitInfo" style="display:none; padding:16px; background:var(--bg-info); border:2px solid #a5f3fc; border-radius:var(--radius-sm); margin-bottom:22px; align-items:center; gap:14px;">
-      <div style="flex-shrink:0; width:46px;height:46px; background:linear-gradient(135deg,var(--split),var(--split-dark)); border-radius:12px; display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;">📕</div>
-      <div style="flex:1;min-width:0;">
-        <div id="splitFileName" style="font-size:14px;font-weight:700;color:var(--split-dark);margin-bottom:3px;">file.pdf</div>
-        <div id="splitFileMeta" style="font-size:13px;color:var(--text-mid);">0 pages</div>
-      </div>
-      <div id="splitTotalPages" style="flex-shrink:0; padding:6px 12px; background:var(--split); color:#fff; border-radius:20px; font-size:12px; font-weight:700;">0</div>
-    </div>
-
-    <div id="splitOptions" style="display:none;">
-      <div class="form-group">
-        <label data-i18n="label_split_mode">របៀបបំបែក</label>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-          <button class="mode-btn active" data-mode="range" style="padding:14px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);font-family:inherit;font-size:13px;font-weight:600;color:var(--text-mid);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;">
-            <span style="font-size:22px;">📏</span>
-            <span data-i18n="mode_range">ជ្រើសជួរទំព័រ</span>
-          </button>
-          <button class="mode-btn" data-mode="each" style="padding:14px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);font-family:inherit;font-size:13px;font-weight:600;color:var(--text-mid);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;">
-            <span style="font-size:22px;">📚</span>
-            <span data-i18n="mode_each">បំបែករាល់ទំព័រ</span>
-          </button>
-        </div>
-      </div>
-
-      <div id="rangeModeOptions">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
-          <div>
-            <label style="display:block;font-size:13px;font-weight:600;color:var(--text-mid);margin-bottom:6px;" data-i18n="label_from">ចាប់ពីទំព័រ</label>
-            <input type="number" id="rangeFrom" min="1" value="1" style="text-align:center;padding:12px;font-weight:700;">
-          </div>
-          <div>
-            <label style="display:block;font-size:13px;font-weight:600;color:var(--text-mid);margin-bottom:6px;" data-i18n="label_to">ដល់ទំព័រ</label>
-            <input type="number" id="rangeTo" min="1" value="1" style="text-align:center;padding:12px;font-weight:700;">
-          </div>
-        </div>
-        <div style="margin-bottom:18px;padding:14px;background:var(--bg-skip);border-radius:var(--radius-sm);border:1px solid #fde68a;">
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#92400e;margin-bottom:8px;" data-i18n="label_skip">⏭️ រំលងទំព័រ</label>
-          <input type="text" id="skipPages" placeholder="2, 4, 5-7" autocomplete="off" style="background:var(--bg-card);padding:10px 14px;font-size:14px;">
-        </div>
-      </div>
-
-      <div id="eachModeOptions" style="display:none;">
-        <div style="margin-bottom:18px;padding:14px;background:var(--bg-info);border-radius:var(--radius-sm);border:1px solid #a5f3fc;font-size:13px;color:var(--text-mid);font-weight:500;">
-          <span data-i18n="each_info">បំបែករាល់ទំព័រជា PDF ដោយឡែកៗ ទាញយកជា ZIP file។ ឈ្មោះឯកសារនីមួយៗនឹងមានលេខទំព័រ។</span>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-main split" id="splitBtn" disabled>
-      <span class="icon">✂️</span>
-      <span data-i18n="btn_split">បំបែក PDF</span>
-    </button>
-
-    <div class="result-card" id="splitResultCard">
-      <div class="result-header">
-        <div class="check-icon">✓</div>
-        <div class="result-title">
-          <h3 data-i18n="split_success">បំបែកជោគជ័យ!</h3>
-          <p data-i18n="split_ready">ឯកសារ PDF ត្រូវបានបំបែកហើយ</p>
-          <span class="result-name" id="splitResultName">split.pdf</span>
-        </div>
-      </div>
-      <div class="result-actions">
-        <button class="result-btn download" data-result="split" data-action="download">
-          <span class="icon">⬇️</span>
-          <span data-i18n="btn_download">ទាញយក</span>
-        </button>
-        <button class="result-btn share" data-result="split" data-action="share">
-          <span class="icon">📤</span>
-          <span data-i18n="btn_share">ចែករំលែក</span>
-        </button>
-      </div>
-      <div class="share-menu" id="splitShareMenu">
-        <div class="share-title" data-i18n="share_title">ចែករំលែកជា File</div>
-        <div class="share-options">
-          <button class="share-option" data-share="native" data-result="split"><span class="share-icon">📤</span><span data-i18n="sh_native">ចែករំលែក</span></button>
-          <button class="share-option" data-share="save" data-result="split"><span class="share-icon">💾</span><span data-i18n="sh_save">រក្សាទុក</span></button>
-          <button class="share-option" data-share="open" data-result="split"><span class="share-icon">👁️</span><span data-i18n="sh_open">មើល</span></button>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-reset split" id="resetSplitBtn">
-      <span>🔄</span>
-      <span data-i18n="btn_reset">ប្រើម្តងទៀត</span>
-    </button>
-
-    <div class="progress-wrap" id="splitProgressWrap">
-      <div class="progress-bar"><div class="progress-fill" id="splitProgressFill"></div></div>
-      <div class="progress-text"><span class="pct" id="splitProgressText">0%</span></div>
-    </div>
-
-    <div class="status" id="splitStatus"></div>
-  </div>
-
-  <!-- History Panel -->
-  <div class="panel" id="panelHistory">
-    <div id="historyContent"></div>
-    <button class="btn-clear-history" id="clearHistoryBtn" data-i18n="btn_clear_history">🗑️ លុបប្រវត្តិទាំងអស់</button>
-  </div>
-</div>
-
-<!-- Preview Modal -->
-<div class="preview-modal" id="previewModal">
-  <div class="preview-modal-box">
-    <div class="preview-modal-header">
-      <span class="preview-title" id="previewTitle">Document.pdf</span>
-      <div class="preview-actions">
-        <button class="pv-btn" id="previewDownloadBtn" title="ទាញយក">⬇️</button>
-        <button class="pv-btn close" id="previewCloseBtn" title="បិទ">✕</button>
-      </div>
-    </div>
-    <div class="preview-modal-body" id="previewBody">
-      <div class="preview-loading">
-        <div class="spinner"></div>
-        <div data-i18n="preview_loading">កំពុងផ្ទុក PDF...</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Crop Modal -->
-<div class="modal" id="cropModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>✂️ <span data-i18n="crop_title">Crop រូបភាព</span></h3>
-      <span class="badge" id="cropInfo">0 × 0 px</span>
-    </div>
-    <div class="crop-toolbar">
-      <button data-tool="free" class="active" data-i18n="crop_free">🆓 សេរី</button>
-      <button data-tool="square">⬛ 1:1</button>
-      <button data-tool="16-9">🖼️ 16:9</button>
-      <button data-tool="4-3">📐 4:3</button>
-      <button data-tool="reset" data-i18n="crop_reset">🔄 កំណត់ឡើងវិញ</button>
-    </div>
-    <div class="crop-area"><img id="cropImage" src=""></div>
-    <p class="crop-hint" data-i18n="crop_hint">💡 ទាញជ្រុង ⚪ ឬ គែម ដើម្បីកាត់</p>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeCrop()" data-i18n="btn_cancel">បោះបង់</button>
-      <button class="btn-ok" onclick="applyCrop()" data-i18n="btn_ok">✓ យល់ព្រម</button>
-    </div>
-  </div>
-</div>
 
 <script>
-const { jsPDF } = window.jspdf;
-const { PDFDocument } = PDFLib;
+(function () {
+  'use strict';
 
-/* ============================================================
-   INDEXEDDB — ជំនួស localStorage សម្រាប់ history
-   ចំណុះធំជាង 100x — រក្សាទុក Blob ដោយផ្ទាល់
-   ============================================================ */
-const DB_NAME = 'pdfToolsDB';
-const DB_VERSION = 1;
-const STORE_NAME = 'history';
-const MAX_HISTORY = 50;
-let db = null;
+  const $ = (id) => document.getElementById(id);
+  const startBtn = $('startBtn');
+  const btnText = $('btnText');
+  const ctaIcon = $('ctaIcon');
+  const statusEl = $('status');
+  const speedValue = $('speedValue');
+  const phasePill = $('phasePill');
+  const downloadValue = $('downloadValue');
+  const uploadValue = $('uploadValue');
+  const pingValue = $('pingValue');
+  const ispText = $('ispText');
+  const gaugeBox = $('gaugeBox');
+  const progressArc = $('progressArc');
+  const progressGlow = $('progressGlow');
+  const mDownload = $('mDownload');
+  const mUpload = $('mUpload');
+  const mPing = $('mPing');
 
-function openDB() {
-  return new Promise((resolve, reject) => {
-    if (db) return resolve(db);
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => {
-      db = req.result;
-      resolve(db);
-    };
-    req.onupgradeneeded = (e) => {
-      const database = e.target.result;
-      if (!database.objectStoreNames.contains(STORE_NAME)) {
-        const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-        store.createIndex('date', 'date', { unique: false });
-      }
-    };
-  });
-}
+  const CIRC = 2 * Math.PI * 86;
+  const MAX_GAUGE = 500;
 
-async function dbAdd(entry) {
-  const database = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = database.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.add(entry);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
+  progressArc.setAttribute('stroke-dasharray', CIRC);
+  progressGlow.setAttribute('stroke-dasharray', CIRC);
+  progressArc.setAttribute('stroke-dashoffset', CIRC);
+  progressGlow.setAttribute('stroke-dashoffset', CIRC);
 
-async function dbGetAll() {
-  const database = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = database.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.getAll();
-    req.onsuccess = () => {
-      // តម្រៀបតាម date ចុះក្រោម
-      const arr = req.result.sort((a, b) => new Date(b.date) - new Date(a.date));
-      resolve(arr);
-    };
-    req.onerror = () => reject(req.error);
-  });
-}
+  function setGauge(speed) {
+    const pct = Math.min(Math.log10(Math.max(speed, 1)) / Math.log10(MAX_GAUGE), 1);
+    const offset = CIRC * (1 - pct);
+    progressArc.style.strokeDashoffset = offset;
+    progressGlow.style.strokeDashoffset = offset;
 
-async function dbGet(id) {
-  const database = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = database.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.get(id);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
+    let color = '#f87171';
+    if (speed >= 200) color = '#a3e635';
+    else if (speed >= 100) color = '#4ade80';
+    else if (speed >= 50) color = '#22d3ee';
+    else if (speed >= 20) color = '#60a5fa';
+    else if (speed >= 5) color = '#fb923c';
 
-async function dbDelete(id) {
-  const database = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = database.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.delete(id);
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
-}
+    progressArc.style.filter = 'drop-shadow(0 0 12px ' + color + ')';
+    speedValue.style.textShadow = '0 0 60px ' + color;
 
-async function dbClear() {
-  const database = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = database.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.clear();
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function dbCount() {
-  const database = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = database.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.count();
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
-
-// លុបចាស់បំផុត ពេលលើស 50
-async function dbTrim() {
-  const all = await dbGetAll();
-  if (all.length <= MAX_HISTORY) return;
-  const toDelete = all.slice(MAX_HISTORY);
-  for (const item of toDelete) {
-    await dbDelete(item.id);
-  }
-}
-
-async function addToHistory(entry) {
-  try {
-    await dbAdd({
-      type: entry.type,
-      name: entry.name,
-      size: entry.blob.size,
-      pages: entry.pages || 0,
-      mime: entry.blob.type || 'application/pdf',
-      date: new Date().toISOString(),
-      blob: entry.blob           // ✅ រក្សាទុក Blob ដោយផ្ទាល់
-    });
-    await dbTrim();
-    await renderHistory();
-  } catch (err) {
-    console.error('History save failed:', err);
-    // បើ IndexedDB fail → try cleanup ចាស់ៗ
-    try {
-      const all = await dbGetAll();
-      for (const item of all.slice(20)) await dbDelete(item.id);
-    } catch (e2) {}
-  }
-}
-
-/* ==================== I18N ==================== */
-const i18n = {
-  km: {
-    title: 'ឧបករណ៍ PDF',
-    subtitle: 'បម្លែង បញ្ចូល បំបែក និងគ្រប់គ្រងឯកសារ PDF',
-    tab_convert: 'រូបភាព → PDF',
-    tab_merge: 'Merge PDF',
-    tab_split: 'Split PDF',
-    tab_history: 'ប្រវត្តិ',
-    label_pdf_name: 'ឈ្មោះឯកសារ PDF',
-    label_merged_name: 'ឈ្មោះឯកសារចុងក្រោយ',
-    label_split_name: 'ឈ្មោះឯកសារចុងក្រោយ',
-    label_select_img: 'ជ្រើសរើសរូបភាព',
-    label_select_pdfs: 'ជ្រើសរើសឯកសារ PDF',
-    label_select_pdf_one: 'ជ្រើសរើសឯកសារ PDF តែមួយ',
-    label_images: 'រូបភាព',
-    label_pdfs: 'ឯកសារ PDF',
-    drop_title: 'ចុចទីនេះ ឬអូសរូបភាពមកទម្លាក់',
-    drop_sub: 'គាំទ្រ JPG, PNG, WEBP, GIF',
-    drop_title_pdf: 'ចុចទីនេះ ឬអូសឯកសារ PDF មកទម្លាក់',
-    drop_sub_pdf: 'ជ្រើសបានច្រើនឯកសារ ដើម្បីបញ្ចូលគ្នា',
-    drop_sub_one_pdf: 'ជ្រើសបានតែ 1 ឯកសារ',
-    clear_all: '🗑️ លុបទាំងអស់',
-    hint_drag: '💡 ចុចទាញរូបដើម្បីតម្រៀបលំដាប់',
-    hint_merge: '💡 ចុចទាញឯកសារ ដើម្បីតម្រៀបលំដាប់',
-    btn_convert: 'បម្លែងទៅ PDF',
-    btn_merge: 'បញ្ចូល PDF ចូលគ្នា',
-    btn_split: 'បំបែក PDF',
-    btn_download: 'ទាញយក',
-    btn_share: 'ចែករំលែក',
-    btn_reset: 'ប្រើម្តងទៀត',
-    btn_cancel: 'បោះបង់',
-    btn_ok: '✓ យល់ព្រម',
-    btn_clear_history: '🗑️ លុបប្រវត្តិទាំងអស់',
-    result_success: 'បម្លែងជោគជ័យ!',
-    result_ready: 'ឯកសារ PDF របស់អ្នករួចរាល់ហើយ',
-    merge_success: 'បញ្ចូលជោគជ័យ!',
-    merge_ready: 'ឯកសារ PDF ត្រូវបានបញ្ចូលគ្នាហើយ',
-    split_success: 'បំបែកជោគជ័យ!',
-    split_ready: 'ឯកសារ PDF ត្រូវបានបំបែកហើយ',
-    share_title: 'ចែករំលែកជា File',
-    sh_native: 'ចែករំលែក',
-    sh_save: 'រក្សាទុក',
-    sh_open: 'មើល',
-    label_from: 'ចាប់ពីទំព័រ',
-    label_to: 'ដល់ទំព័រ',
-    label_skip: '⏭️ រំលងទំព័រ',
-    label_split_mode: 'របៀបបំបែក',
-    mode_range: 'ជ្រើសជួរទំព័រ',
-    mode_each: 'បំបែករាល់ទំព័រ',
-    each_info: 'បំបែករាល់ទំព័រជា PDF ដោយឡែកៗ ទាញយកជា ZIP file។ ឈ្មោះឯកសារនីមួយៗនឹងមានលេខទំព័រ។',
-    crop_title: 'Crop រូបភាព',
-    crop_free: '🆓 សេរី',
-    crop_reset: '🔄 កំណត់ឡើងវិញ',
-    crop_hint: '💡 ទាញជ្រុង ⚪ ឬ គែម ដើម្បីកាត់',
-    preview_loading: 'កំពុងផ្ទុក PDF...',
-    history_empty: 'មិនមានប្រវត្តិនៅឡើយទេ',
-    pages: 'ទំព័រ',
-    msg_shared: '✅ បានចែករំលែក',
-    msg_saved: '✅ បានរក្សាទុក',
-    msg_share_failed: 'មិនអាចចែករំលែកបានទេ',
-    confirm_clear: 'លុបប្រវត្តិទាំងអស់?'
-  },
-  en: {
-    title: 'PDF Tools',
-    subtitle: 'Convert, merge, split and manage PDF files',
-    tab_convert: 'Image → PDF',
-    tab_merge: 'Merge PDF',
-    tab_split: 'Split PDF',
-    tab_history: 'History',
-    label_pdf_name: 'PDF file name',
-    label_merged_name: 'Output file name',
-    label_split_name: 'Output file name',
-    label_select_img: 'Select images',
-    label_select_pdfs: 'Select PDF files',
-    label_select_pdf_one: 'Select one PDF file',
-    label_images: 'Images',
-    label_pdfs: 'PDF files',
-    drop_title: 'Click here or drag images here',
-    drop_sub: 'Supports JPG, PNG, WEBP, GIF',
-    drop_title_pdf: 'Click here or drag PDF files',
-    drop_sub_pdf: 'Select multiple files to merge',
-    drop_sub_one_pdf: 'Only 1 file allowed',
-    clear_all: '🗑️ Clear all',
-    hint_drag: '💡 Drag images to reorder',
-    hint_merge: '💡 Drag files to reorder',
-    btn_convert: 'Convert to PDF',
-    btn_merge: 'Merge PDFs',
-    btn_split: 'Split PDF',
-    btn_download: 'Download',
-    btn_share: 'Share',
-    btn_reset: 'Start over',
-    btn_cancel: 'Cancel',
-    btn_ok: '✓ OK',
-    btn_clear_history: '🗑️ Clear all history',
-    result_success: 'Converted!',
-    result_ready: 'Your PDF file is ready',
-    merge_success: 'Merged!',
-    merge_ready: 'PDFs have been merged',
-    split_success: 'Split!',
-    split_ready: 'PDF has been split',
-    share_title: 'Share as File',
-    sh_native: 'Share',
-    sh_save: 'Save',
-    sh_open: 'View',
-    label_from: 'From page',
-    label_to: 'To page',
-    label_skip: '⏭️ Skip pages',
-    label_split_mode: 'Split mode',
-    mode_range: 'Page range',
-    mode_each: 'Split each page',
-    each_info: 'Split each page as a separate PDF, download as ZIP. Each file will have a page number.',
-    crop_title: 'Crop image',
-    crop_free: '🆓 Free',
-    crop_reset: '🔄 Reset',
-    crop_hint: '💡 Drag corners ⚪ or edges to crop',
-    preview_loading: 'Loading PDF...',
-    history_empty: 'No history yet',
-    pages: 'pages',
-    msg_shared: '✅ Shared',
-    msg_saved: '✅ Saved',
-    msg_share_failed: 'Cannot share file',
-    confirm_clear: 'Clear all history?'
-  }
-};
-
-let currentLang = localStorage.getItem('pdf_lang') || 'km';
-
-function applyLang() {
-  const dict = i18n[currentLang];
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (dict[key]) el.textContent = dict[key];
-  });
-  document.getElementById('langLabel').textContent = currentLang === 'km' ? 'EN' : 'ខ្មែរ';
-  document.documentElement.lang = currentLang;
-  renderHistory();
-}
-
-document.getElementById('langToggle').addEventListener('click', () => {
-  currentLang = currentLang === 'km' ? 'en' : 'km';
-  localStorage.setItem('pdf_lang', currentLang);
-  applyLang();
-});
-
-/* ==================== DARK MODE ==================== */
-const themeToggle = document.getElementById('themeToggle');
-let currentTheme = localStorage.getItem('pdf_theme') || 'light';
-
-function applyTheme() {
-  if (currentTheme === 'dark') {
-    document.body.classList.add('dark');
-    themeToggle.textContent = '☀️';
-  } else {
-    document.body.classList.remove('dark');
-    themeToggle.textContent = '🌙';
-  }
-}
-applyTheme();
-
-themeToggle.addEventListener('click', () => {
-  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  localStorage.setItem('pdf_theme', currentTheme);
-  applyTheme();
-});
-
-/* ==================== HISTORY RENDER ==================== */
-function formatSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-}
-
-function timeAgo(iso) {
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return currentLang === 'km' ? 'ឥឡូវ' : 'just now';
-  if (m < 60) return currentLang === 'km' ? `${m} នាទីមុន` : `${m} min ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return currentLang === 'km' ? `${h} ម៉ោងមុន` : `${h} hr ago`;
-  const d = Math.floor(h / 24);
-  if (d < 30) return currentLang === 'km' ? `${d} ថ្ងៃមុន` : `${d} day${d>1?'s':''} ago`;
-  return new Date(iso).toLocaleDateString();
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[c]));
-}
-
-async function renderHistory() {
-  const el = document.getElementById('historyContent');
-  if (!el) return;
-  const dict = i18n[currentLang];
-
-  let h = [];
-  try { h = await dbGetAll(); }
-  catch (err) {
-    console.error(err);
-    el.innerHTML = `<div class="empty-state"><div>❌ ${err.message}</div></div>`;
-    return;
+    speedValue.textContent = speed < 10 ? speed.toFixed(2) : speed < 100 ? speed.toFixed(1) : speed.toFixed(0);
   }
 
-  if (h.length === 0) {
-    el.innerHTML = `
-      <div class="empty-state">
-        <span class="big-icon">📜</span>
-        <div>${dict.history_empty}</div>
-      </div>`;
-    return;
+  function resetGauge() {
+    speedValue.textContent = '0';
+    speedValue.classList.remove('testing');
+    speedValue.style.textShadow = '0 0 40px rgba(34, 211, 238, 0.35)';
+    progressArc.style.strokeDashoffset = CIRC;
+    progressGlow.style.strokeDashoffset = CIRC;
+    gaugeBox.classList.remove('testing');
+    phasePill.classList.remove('show', 'done');
+    phasePill.textContent = '';
+    [mDownload, mUpload, mPing].forEach(m => m.classList.remove('active', 'complete'));
   }
 
-  const iconMap = { convert: '🖼️', merge: '📎', split: '✂️' };
-  const frag = document.createDocumentFragment();
-  const list = document.createElement('div');
-  list.className = 'history-list';
-
-  h.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'history-item';
-    div.dataset.id = item.id;
-    div.innerHTML = `
-      <div class="hist-icon ${item.type}">${iconMap[item.type] || '📄'}</div>
-      <div class="hist-info">
-        <div class="hist-name">${escapeHtml(item.name)}</div>
-        <div class="hist-meta">
-          <span>${formatSize(item.size)}</span>
-          ${item.pages > 0 ? `<span>•</span><span>${item.pages} ${dict.pages}</span>` : ''}
-          <span>•</span>
-          <span>${timeAgo(item.date)}</span>
-        </div>
-      </div>
-      <div class="hist-actions">
-        <button class="hist-btn" data-action="download" data-id="${item.id}" title="${dict.btn_download}">⬇️</button>
-        <button class="hist-btn danger" data-action="del" data-id="${item.id}" title="Delete">🗑️</button>
-      </div>`;
-    list.appendChild(div);
-  });
-  frag.appendChild(list);
-  el.innerHTML = '';
-  el.appendChild(frag);
-
-  el.querySelectorAll('.history-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-      if (e.target.closest('.hist-btn')) return;
-      openHistoryPreview(Number(item.dataset.id));
-    });
-  });
-  el.querySelectorAll('.hist-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      const id = Number(btn.dataset.id);
-      if (btn.dataset.action === 'del') {
-        await dbDelete(id);
-        renderHistory();
-      } else if (btn.dataset.action === 'download') {
-        await downloadHistory(id);
-      }
-    });
-  });
-}
-
-async function downloadHistory(id) {
-  const item = await dbGet(id);
-  if (!item) return;
-  const url = URL.createObjectURL(item.blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = item.name;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-document.getElementById('clearHistoryBtn').addEventListener('click', async () => {
-  if (confirm(i18n[currentLang].confirm_clear)) {
-    await dbClear();
-    renderHistory();
+  function setPhase(text, isDone) {
+    phasePill.textContent = text;
+    phasePill.classList.add('show');
+    phasePill.classList.toggle('done', !!isDone);
+    gaugeBox.classList.add('testing');
+    speedValue.classList.add('testing');
   }
-});
 
-/* ==================== PREVIEW ==================== */
-const previewModal = document.getElementById('previewModal');
-const previewBody = document.getElementById('previewBody');
-const previewTitle = document.getElementById('previewTitle');
-let currentPreviewData = null;
-
-async function openPdfPreview(blob, name) {
-  previewModal.classList.add('active');
-  previewTitle.textContent = name;
-  previewBody.innerHTML = `
-    <div class="preview-loading">
-      <div class="spinner"></div>
-      <div>${i18n[currentLang].preview_loading}</div>
-    </div>`;
-  currentPreviewData = { blob, name };
-
-  try {
-    const arrayBuffer = await blob.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    const totalPages = pdf.numPages;
-    const maxPages = Math.min(totalPages, 5);
-    const wrap = document.createElement('div');
-    wrap.className = 'preview-canvas-wrap';
-
-    for (let p = 1; p <= maxPages; p++) {
-      const page = await pdf.getPage(p);
-      const viewport = page.getViewport({ scale: 1.5 });
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      await page.render({ canvasContext: ctx, viewport }).promise;
-      wrap.appendChild(canvas);
-    }
-    if (totalPages > maxPages) {
-      const info = document.createElement('div');
-      info.style.cssText = 'color:#cbd5e1;text-align:center;padding:12px;font-size:13px;';
-      info.textContent = `+${totalPages - maxPages} more pages`;
-      wrap.appendChild(info);
-    }
-    previewBody.innerHTML = '';
-    previewBody.appendChild(wrap);
-  } catch (err) {
-    console.error(err);
-    previewBody.innerHTML = `<div class="preview-loading">❌ ${err.message}</div>`;
+  function activateMetric(el) {
+    [mDownload, mUpload, mPing].forEach(m => m.classList.remove('active'));
+    el.classList.add('active');
   }
-}
 
-document.getElementById('previewCloseBtn').addEventListener('click', () => {
-  previewModal.classList.remove('active');
-  previewBody.innerHTML = '';
-  currentPreviewData = null;
-});
-document.getElementById('previewDownloadBtn').addEventListener('click', () => {
-  if (currentPreviewData) {
-    const url = URL.createObjectURL(currentPreviewData.blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = currentPreviewData.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
-});
-previewModal.addEventListener('click', (e) => {
-  if (e.target === previewModal) {
-    previewModal.classList.remove('active');
-    previewBody.innerHTML = '';
-  }
-});
+  async function testPing() {
+    setPhase('Testing Ping');
+    activateMetric(mPing);
+    statusEl.textContent = 'កំពុងតេស្ត Ping...';
+    statusEl.className = 'status';
 
-async function openHistoryPreview(id) {
-  const item = await dbGet(id);
-  if (!item) return;
-  if (item.mime === 'application/zip') {
-    await downloadHistory(id);
-    return;
-  }
-  openPdfPreview(item.blob, item.name);
-}
+    const base = 'https://speed.cloudflare.com/__down?bytes=0&t=';
+    const samples = [];
 
-/* ==================== RESULT STATE ==================== */
-const results = {
-  convert: { blob: null, name: '', url: null },
-  merge:   { blob: null, name: '', url: null },
-  split:   { blob: null, name: '', url: null }
-};
+    try { await fetch(base + Date.now() + '&w=1', { cache: 'no-store' }); } catch (e) {}
 
-function setResult(type, blob, name) {
-  if (results[type].url) URL.revokeObjectURL(results[type].url);
-  results[type].blob = blob;
-  results[type].name = name;
-  results[type].url = URL.createObjectURL(blob);
-}
-function clearResult(type) {
-  if (results[type].url) URL.revokeObjectURL(results[type].url);
-  results[type].blob = null;
-  results[type].name = '';
-  results[type].url = null;
-}
-
-function showResultCard(type, name) {
-  const card = document.getElementById(`${type}ResultCard`);
-  document.getElementById(`${type}ResultName`).textContent = name;
-  card.classList.add('show');
-  setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
-  fireConfetti();
-}
-function hideResultCard(type) {
-  document.getElementById(`${type}ResultCard`).classList.remove('show');
-  document.getElementById(`${type}ShareMenu`).classList.remove('show');
-}
-
-function fireConfetti() {
-  if (typeof confetti !== 'function') return;
-  confetti({
-    particleCount: 60,
-    spread: 60,
-    origin: { y: 0.6 },
-    colors: ['#6366f1', '#ec4899', '#10b981', '#f59e0b']
-  });
-}
-
-/* ==================== TABS ==================== */
-const tabs = document.querySelectorAll('.tab');
-const panels = {
-  convert: document.getElementById('panelConvert'),
-  merge: document.getElementById('panelMerge'),
-  split: document.getElementById('panelSplit'),
-  history: document.getElementById('panelHistory')
-};
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    Object.values(panels).forEach(p => p.classList.remove('active'));
-    panels[tab.dataset.tab].classList.add('active');
-    if (tab.dataset.tab === 'history') renderHistory();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-});
-
-/* ==================== DOWNLOAD / SHARE ==================== */
-document.querySelectorAll('.result-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const type = btn.dataset.result;
-    if (btn.dataset.action === 'download') downloadResult(type);
-    else if (btn.dataset.action === 'share') {
-      document.getElementById(`${type}ShareMenu`).classList.toggle('show');
-    }
-  });
-});
-
-function downloadResult(type) {
-  const r = results[type];
-  if (!r.blob) return;
-  const url = URL.createObjectURL(r.blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = r.name;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-document.querySelectorAll('.share-option').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    await handleShare(btn.dataset.result, btn.dataset.share);
-  });
-});
-
-async function handleShare(type, shareType) {
-  const r = results[type];
-  if (!r.blob) return;
-
-  const dict = i18n[currentLang];
-  const file = new File([r.blob], r.name, { type: r.blob.type || 'application/pdf' });
-
-  if (shareType === 'native') {
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    for (let i = 0; i < 12; i++) {
+      const start = performance.now();
       try {
-        await navigator.share({ files: [file], title: r.name, text: r.name });
-        showTempMessage(type, dict.msg_shared);
-      } catch (err) {
-        if (err.name !== 'AbortError') showTempMessage(type, dict.msg_share_failed);
-      }
-    } else if (navigator.share) {
-      try {
-        await navigator.share({ files: [file] });
-        showTempMessage(type, dict.msg_shared);
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          downloadResult(type);
-          showTempMessage(type, dict.msg_saved);
+        await fetch(base + Date.now() + '&i=' + i, { cache: 'no-store' });
+        samples.push(performance.now() - start);
+      } catch (e) {}
+      await new Promise(r => setTimeout(r, 30));
+    }
+
+    if (!samples.length) return { ping: 0, jitter: 0 };
+
+    samples.sort((a, b) => a - b);
+    const fastest = samples.slice(0, Math.max(1, Math.floor(samples.length * 0.3)));
+    const ping = fastest.reduce((a, b) => a + b, 0) / fastest.length;
+
+    let jitterSum = 0;
+    for (let i = 1; i < samples.length; i++) {
+      jitterSum += Math.abs(samples[i] - samples[i - 1]);
+    }
+    const jitter = jitterSum / (samples.length - 1);
+
+    pingValue.textContent = ping.toFixed(0);
+    mPing.classList.remove('active');
+    mPing.classList.add('complete');
+    return { ping, jitter };
+  }
+
+  async function testDownload() {
+    setPhase('Testing Download');
+    activateMetric(mDownload);
+    statusEl.textContent = 'កំពុងតេស្តល្បឿន Download...';
+
+    speedValue.classList.add('testing');
+    progressArc.style.strokeDashoffset = CIRC;
+    progressGlow.style.strokeDashoffset = CIRC;
+
+    const STREAMS = 6;
+    const DURATION = 8000;
+    const CHUNK = 25 * 1024 * 1024;
+
+    let totalBytes = 0;
+    let active = true;
+    const speeds = [];
+
+    const startTime = performance.now();
+    let lastTime = startTime;
+    let lastBytes = 0;
+    let smoothSpeed = 0;
+
+    const tracker = setInterval(() => {
+      const now = performance.now();
+      const dt = (now - lastTime) / 1000;
+      const dBytes = totalBytes - lastBytes;
+
+      if (dt > 0) {
+        const instant = (dBytes * 8) / dt / 1e6;
+        if (instant > 0) {
+          smoothSpeed = smoothSpeed === 0 ? instant : smoothSpeed * 0.7 + instant * 0.3;
+          speeds.push(smoothSpeed);
+          setGauge(smoothSpeed);
         }
       }
-    } else {
-      downloadResult(type);
-      showTempMessage(type, dict.msg_saved);
-    }
-    document.getElementById(`${type}ShareMenu`).classList.remove('show');
-    return;
-  }
+      lastTime = now;
+      lastBytes = totalBytes;
+    }, 150);
 
-  if (shareType === 'save') {
-    downloadResult(type);
-    showTempMessage(type, dict.msg_saved);
-    document.getElementById(`${type}ShareMenu`).classList.remove('show');
-    return;
-  }
-
-  if (shareType === 'open') {
-    window.open(r.url, '_blank');
-    document.getElementById(`${type}ShareMenu`).classList.remove('show');
-    return;
-  }
-}
-
-function showTempMessage(type, msg) {
-  const el = document.getElementById(`${type}Status`);
-  const prev = el.textContent;
-  el.textContent = msg;
-  el.classList.add('success');
-  setTimeout(() => { el.textContent = prev; el.classList.remove('success'); }, 2000);
-}
-
-/* ==================== FILE DROP ==================== */
-function attachFileDrop(dropEl, onFiles) {
-  let dragCount = 0;
-  dropEl.addEventListener('dragenter', (e) => {
-    e.preventDefault(); e.stopPropagation();
-    dragCount++;
-    if (dragCount === 1) dropEl.classList.add('dragover');
-  });
-  dropEl.addEventListener('dragover', (e) => {
-    e.preventDefault(); e.stopPropagation();
-    e.dataTransfer.dropEffect = 'copy';
-  });
-  dropEl.addEventListener('dragleave', (e) => {
-    e.preventDefault(); e.stopPropagation();
-    dragCount--;
-    if (dragCount <= 0) { dragCount = 0; dropEl.classList.remove('dragover'); }
-  });
-  dropEl.addEventListener('drop', (e) => {
-    e.preventDefault(); e.stopPropagation();
-    dragCount = 0;
-    dropEl.classList.remove('dragover');
-    const files = Array.from(e.dataTransfer.files || []);
-    if (files.length) onFiles(files);
-  });
-  ['dragenter','dragover','drop'].forEach(evt => {
-    document.addEventListener(evt, (e) => {
-      if (!e.target.closest('.file-drop')) return;
-      e.preventDefault();
-    });
-  });
-}
-
-/* ==================== PART 1: CONVERT ==================== */
-const fileInput = document.getElementById('fileInput');
-const fileDrop = document.getElementById('fileDrop');
-const thumbsEl = document.getElementById('thumbs');
-const thumbsHeader = document.getElementById('thumbsHeader');
-const imgCount = document.getElementById('imgCount');
-const clearAllBtn = document.getElementById('clearAllBtn');
-const convertBtn = document.getElementById('convertBtn');
-const resetBtn = document.getElementById('resetBtn');
-const statusEl = document.getElementById('status');
-const progressWrap = document.getElementById('progressWrap');
-const progressFill = document.getElementById('progressFill');
-const progressText = document.getElementById('progressText');
-const hint = document.getElementById('hint');
-const cropInfo = document.getElementById('cropInfo');
-const pdfNameInput = document.getElementById('pdfName');
-
-let images = [];
-let uid = 0;
-let dragSrcId = null;
-
-fileInput.addEventListener('change', (e) => addFiles(Array.from(e.target.files)));
-attachFileDrop(fileDrop, (files) => addFiles(files));
-
-clearAllBtn.addEventListener('click', () => {
-  if (images.length === 0) return;
-  if (confirm('លុបរូបភាពទាំងអស់?')) { images = []; renderThumbs(); }
-});
-
-async function addFiles(files) {
-  const imgs = files.filter(f => f.type.startsWith('image/'));
-  if (imgs.length === 0) return;
-  if (imgs.length > 20) statusEl.textContent = `⏳ កំពុងអាន ${imgs.length} រូបភាព...`;
-
-  const newItems = [];
-  for (const file of imgs) {
-    const src = await readAsDataURL(file);
-    const dim = await getImageSize(src);
-    newItems.push({ id: uid++, file, src, rotation: 0, crop: null, naturalW: dim.w, naturalH: dim.h });
-  }
-  images = images.concat(newItems);
-  renderThumbs();
-  fileInput.value = '';
-  statusEl.textContent = '';
-}
-
-function readAsDataURL(file) {
-  return new Promise(res => {
-    const r = new FileReader();
-    r.onload = e => res(e.target.result);
-    r.readAsDataURL(file);
-  });
-}
-function getImageSize(src) {
-  return new Promise(res => {
-    const img = new Image();
-    img.onload = () => res({ w: img.naturalWidth, h: img.naturalHeight });
-    img.src = src;
-  });
-}
-
-function renderThumbs() {
-  const frag = document.createDocumentFragment();
-  images.forEach((item, idx) => {
-    const div = document.createElement('div');
-    div.className = 'thumb';
-    div.draggable = true;
-    div.dataset.id = item.id;
-    div.innerHTML = `
-      <span class="num">${idx + 1}</span>
-      <span class="drag-hint">✥</span>
-      <div class="img-wrap"><img src="${item.src}" style="transform: rotate(${item.rotation}deg);" loading="lazy"></div>
-      <div class="actions">
-        <button data-act="rotl">↺</button>
-        <button data-act="rotr">↻</button>
-        <button data-act="crop">✂️</button>
-        <button data-act="del">🗑️</button>
-      </div>`;
-    div.querySelectorAll('button[data-act]').forEach(btn => {
-      btn.addEventListener('click', (e) => { e.stopPropagation(); handleAction(item.id, btn.dataset.act); });
-    });
-    div.addEventListener('dragstart', onDragStart);
-    div.addEventListener('dragend', onDragEnd);
-    div.addEventListener('dragover', onDragOver);
-    div.addEventListener('dragleave', onDragLeave);
-    div.addEventListener('drop', onDrop);
-    addTouchDrag(div, item.id, pdfNameInput, 'images');
-    frag.appendChild(div);
-  });
-  thumbsEl.innerHTML = '';
-  thumbsEl.appendChild(frag);
-  convertBtn.disabled = images.length === 0;
-  thumbsHeader.classList.toggle('show', images.length > 0);
-  if (images.length > 0) imgCount.textContent = images.length;
-  hint.classList.toggle('show', images.length > 1);
-}
-
-function onDragStart(e) {
-  dragSrcId = Number(this.dataset.id);
-  this.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', String(dragSrcId));
-}
-function onDragEnd() {
-  this.classList.remove('dragging');
-  document.querySelectorAll('.drag-over').forEach(t => t.classList.remove('drag-over'));
-  dragSrcId = null;
-}
-function onDragOver(e) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  if (Number(this.dataset.id) !== dragSrcId) this.classList.add('drag-over');
-}
-function onDragLeave() { this.classList.remove('drag-over'); }
-function onDrop(e) {
-  e.preventDefault();
-  this.classList.remove('drag-over');
-  const targetId = Number(this.dataset.id);
-  if (dragSrcId === null || dragSrcId === targetId) return;
-  const srcIdx = images.findIndex(i => i.id === dragSrcId);
-  const tgtIdx = images.findIndex(i => i.id === targetId);
-  if (srcIdx < 0 || tgtIdx < 0) return;
-  const [moved] = images.splice(srcIdx, 1);
-  images.splice(tgtIdx, 0, moved);
-  renderThumbs();
-}
-
-function addTouchDrag(el, id, inputToBlur, collection) {
-  let touchDragEl = null;
-  let holdTimer = null;
-  let startX, startY;
-  el.addEventListener('touchstart', (e) => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    holdTimer = setTimeout(() => {
-      touchDragEl = el;
-      el.classList.add('dragging');
-      if (navigator.vibrate) navigator.vibrate(30);
-      if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
-      if (inputToBlur) {
-        inputToBlur.setAttribute('readonly', 'readonly');
-        inputToBlur.setAttribute('inputmode', 'none');
-      }
-    }, 250);
-  }, { passive: true });
-  el.addEventListener('touchmove', (e) => {
-    if (!touchDragEl) {
-      const dx = Math.abs(e.touches[0].clientX - startX);
-      const dy = Math.abs(e.touches[0].clientY - startY);
-      if (dx > 10 || dy > 10) clearTimeout(holdTimer);
-      return;
-    }
-    e.preventDefault();
-    const t = e.touches[0];
-    const target = document.elementFromPoint(t.clientX, t.clientY);
-    const item = target ? target.closest('[data-id]') : null;
-    document.querySelectorAll('.drag-over').forEach(x => x.classList.remove('drag-over'));
-    if (item && Number(item.dataset.id) !== id) item.classList.add('drag-over');
-  }, { passive: false });
-  const finish = () => {
-    clearTimeout(holdTimer);
-    if (inputToBlur) {
-      inputToBlur.removeAttribute('readonly');
-      inputToBlur.removeAttribute('inputmode');
-    }
-    if (!touchDragEl) return;
-    const overEl = el.parentElement.querySelector('.drag-over');
-    if (overEl) {
-      const targetId = Number(overEl.dataset.id);
-      const arr = collection === 'pdfs' ? pdfs : images;
-      const srcIdx = arr.findIndex(i => i.id === id);
-      const tgtIdx = arr.findIndex(i => i.id === targetId);
-      if (srcIdx >= 0 && tgtIdx >= 0) {
-        const [moved] = arr.splice(srcIdx, 1);
-        arr.splice(tgtIdx, 0, moved);
+    async function worker() {
+      while (active && (performance.now() - startTime) < DURATION) {
+        try {
+          const res = await fetch(
+            'https://speed.cloudflare.com/__down?bytes=' + CHUNK + '&t=' + Date.now() + Math.random(),
+            { cache: 'no-store' }
+          );
+          const reader = res.body.getReader();
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            totalBytes += value.length;
+            if (performance.now() - startTime > DURATION) {
+              active = false;
+              try { reader.cancel(); } catch (e) {}
+              break;
+            }
+          }
+        } catch (e) {
+          await new Promise(r => setTimeout(r, 100));
+        }
       }
     }
-    document.querySelectorAll('.dragging, .drag-over').forEach(x => x.classList.remove('dragging', 'drag-over'));
-    touchDragEl = null;
-    if (collection === 'pdfs') renderPdfs(); else renderThumbs();
-  };
-  el.addEventListener('touchend', finish);
-  el.addEventListener('touchcancel', finish);
-}
 
-function handleAction(id, act) {
-  const idx = images.findIndex(i => i.id === id);
-  if (idx < 0) return;
-  const item = images[idx];
-  if (act === 'rotl') item.rotation = (item.rotation - 90 + 360) % 360;
-  else if (act === 'rotr') item.rotation = (item.rotation + 90) % 360;
-  else if (act === 'del') images.splice(idx, 1);
-  else if (act === 'crop') { openCrop(item); return; }
-  renderThumbs();
-}
+    await Promise.all(Array.from({ length: STREAMS }, () => worker()));
+    active = false;
+    clearInterval(tracker);
 
-let cropper = null;
-let cropTarget = null;
-function openCrop(item) {
-  cropTarget = item;
-  const modal = document.getElementById('cropModal');
-  const img = document.getElementById('cropImage');
-  img.src = item.src;
-  modal.classList.add('active');
-  if (cropper) { cropper.destroy(); cropper = null; }
-  document.querySelectorAll('.crop-toolbar button[data-tool]').forEach(b => b.classList.remove('active'));
-  document.querySelector('.crop-toolbar button[data-tool="free"]').classList.add('active');
-  setTimeout(() => {
-    cropper = new Cropper(img, {
-      viewMode: 1, dragMode: 'none', autoCropArea: 0.8, responsive: true, restore: false,
-      guides: true, center: true, highlight: false, cropBoxMovable: true, cropBoxResizable: true,
-      toggleDragModeOnDblclick: false, background: true, modal: true,
-      minContainerHeight: 320, minCropBoxWidth: 30, minCropBoxHeight: 30,
-      ready() {
-        updateCropInfo();
-        const canvas = cropper.getCropperCanvas();
-        if (canvas) canvas.style.pointerEvents = 'none';
-        const cropBox = cropper.getCropperCropBox();
-        if (cropBox) cropBox.style.pointerEvents = 'auto';
-      },
-      crop(event) { updateCropInfo(event.detail); }
-    });
-    if (item.crop) cropper.setData(item.crop);
-  }, 100);
-}
-function updateCropInfo(detail) {
-  if (!cropper) return;
-  const data = detail || cropper.getData(true);
-  cropInfo.textContent = `${Math.round(data.width)} × ${Math.round(data.height)} px`;
-}
-function closeCrop() {
-  if (cropper) { cropper.destroy(); cropper = null; }
-  document.getElementById('cropModal').classList.remove('active');
-  cropTarget = null;
-}
-function applyCrop() {
-  if (!cropper || !cropTarget) return closeCrop();
-  const data = cropper.getData(true);
-  cropTarget.crop = { x: data.x, y: data.y, w: data.width, h: data.height };
-  closeCrop();
-  renderThumbs();
-}
-document.querySelectorAll('.crop-toolbar button[data-tool]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (!cropper) return;
-    const tool = btn.dataset.tool;
-    if (tool === 'free') { cropper.setAspectRatio(NaN); setActiveTool(btn); }
-    else if (tool === 'square') { cropper.setAspectRatio(1); setActiveTool(btn); }
-    else if (tool === '16-9') { cropper.setAspectRatio(16 / 9); setActiveTool(btn); }
-    else if (tool === '4-3') { cropper.setAspectRatio(4 / 3); setActiveTool(btn); }
-    else if (tool === 'reset') {
-      cropper.reset();
-      document.querySelectorAll('.crop-toolbar button[data-tool]').forEach(b => b.classList.remove('active'));
-      document.querySelector('.crop-toolbar button[data-tool="free"]').classList.add('active');
-    }
-  });
-});
-function setActiveTool(btn) {
-  document.querySelectorAll('.crop-toolbar button[data-tool]').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
+    const elapsed = (performance.now() - startTime) / 1000;
+    const avg = (totalBytes * 8) / elapsed / 1e6;
 
-convertBtn.addEventListener('click', async () => {
-  if (images.length === 0) return;
-  const name = pdfNameInput.value.trim() || 'document';
-  convertBtn.disabled = true;
-  statusEl.textContent = '';
-  statusEl.classList.remove('success', 'error');
-  hideResultCard('convert');
-  clearResult('convert');
-  progressWrap.classList.add('active');
-  updateProgress(0);
+    speeds.sort((a, b) => b - a);
+    const topCount = Math.max(1, Math.floor(speeds.length * 0.25));
+    const topAvg = speeds.slice(0, topCount).reduce((a, b) => a + b, 0) / topCount;
 
-  try {
-    const pdf = new jsPDF({ unit: 'px', format: 'a4' });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const margin = 20;
+    const final = Math.max(avg, topAvg * 0.95);
 
-    for (let i = 0; i < images.length; i++) {
-      if (i > 0) pdf.addPage();
-      const dataUrl = await processImage(images[i]);
-      const img = await loadImg(dataUrl);
-      const maxW = pageW - margin * 2;
-      const maxH = pageH - margin * 2;
-      let w = img.width, h = img.height;
-      const ratio = Math.min(maxW / w, maxH / h, 1);
-      w *= ratio; h *= ratio;
-      const x = (pageW - w) / 2;
-      const y = (pageH - h) / 2;
-      pdf.addImage(dataUrl, 'JPEG', x, y, w, h);
-      updateProgress(Math.round(((i + 1) / images.length) * 100));
-      if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
-    }
-
-    const blob = pdf.output('blob');
-    const fileName = `${name}.pdf`;
-    setResult('convert', blob, fileName);
-    showResultCard('convert', fileName);
-    resetBtn.classList.add('show');
-    await addToHistory({ type: 'convert', name: fileName, pages: images.length, blob });
-  } catch (err) {
-    console.error(err);
-    statusEl.textContent = '❌ ' + err.message;
-    statusEl.classList.add('error');
-  } finally {
-    convertBtn.disabled = false;
-    setTimeout(() => {
-      progressWrap.classList.remove('active');
-      updateProgress(0);
-    }, 1500);
+    downloadValue.textContent = final.toFixed(1);
+    mDownload.classList.remove('active');
+    mDownload.classList.add('complete');
+    setGauge(final);
+    return final;
   }
-});
 
-resetBtn.addEventListener('click', () => {
-  images = []; uid = 0; dragSrcId = null;
-  fileInput.value = '';
-  pdfNameInput.value = 'my-document';
-  clearResult('convert');
-  hideResultCard('convert');
-  progressWrap.classList.remove('active');
-  updateProgress(0);
-  statusEl.textContent = '';
-  statusEl.classList.remove('success', 'error');
-  convertBtn.disabled = true;
-  resetBtn.classList.remove('show');
-  renderThumbs();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+  async function testUpload() {
+    setPhase('Testing Upload');
+    activateMetric(mUpload);
+    statusEl.textContent = 'កំពុងតេស្តល្បឿន Upload...';
 
-function updateProgress(p) {
-  progressFill.style.width = p + '%';
-  progressText.textContent = p + '%';
-}
-function loadImg(src) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    img.onload = () => res(img);
-    img.onerror = rej;
-    img.src = src;
-  });
-}
-async function processImage(item) {
-  const base = await loadImg(item.src);
-  let sx = 0, sy = 0, sw = base.naturalWidth, sh = base.naturalHeight;
-  if (item.crop) { sx = item.crop.x; sy = item.crop.y; sw = item.crop.w; sh = item.crop.h; }
-  const rot = item.rotation % 360;
-  const rad = rot * Math.PI / 180;
-  const cos = Math.abs(Math.cos(rad));
-  const sin = Math.abs(Math.sin(rad));
-  const cw = Math.round(sw * cos + sh * sin);
-  const ch = Math.round(sw * sin + sh * cos);
-  const canvas = document.createElement('canvas');
-  canvas.width = cw; canvas.height = ch;
-  const ctx = canvas.getContext('2d');
-  ctx.translate(cw / 2, ch / 2);
-  ctx.rotate(rad);
-  ctx.drawImage(base, sx, sy, sw, sh, -sw / 2, -sh / 2, sw, sh);
-  return canvas.toDataURL('image/jpeg', 0.9);
-}
+    speedValue.classList.add('testing');
+    progressArc.style.strokeDashoffset = CIRC;
+    progressGlow.style.strokeDashoffset = CIRC;
 
-/* ==================== PART 2: MERGE ==================== */
-const pdfInput = document.getElementById('pdfInput');
-const pdfDrop = document.getElementById('pdfDrop');
-const pdfList = document.getElementById('pdfList');
-const pdfHeader = document.getElementById('pdfHeader');
-const pdfCount = document.getElementById('pdfCount');
-const clearPdfsBtn = document.getElementById('clearPdfsBtn');
-const mergeBtn = document.getElementById('mergeBtn');
-const resetMergeBtn = document.getElementById('resetMergeBtn');
-const mergeStatus = document.getElementById('mergeStatus');
-const mergeProgressWrap = document.getElementById('mergeProgressWrap');
-const mergeProgressFill = document.getElementById('mergeProgressFill');
-const mergeProgressText = document.getElementById('mergeProgressText');
-const mergeHint = document.getElementById('mergeHint');
-const mergedNameInput = document.getElementById('mergedName');
+    const STREAMS = 6;
+    const DURATION = 8000;
+    const SIZE = 1 * 1024 * 1024;
 
-let pdfs = [];
-let pdfUid = 0;
-let pdfDragSrcId = null;
+    const chunk = new Uint8Array(SIZE);
+    crypto.getRandomValues(chunk.subarray(0, 65536));
+    for (let i = 65536; i < SIZE; i += 65536) {
+      chunk.set(chunk.subarray(0, Math.min(65536, SIZE - i)), i);
+    }
+    const blob = new Blob([chunk]);
 
-pdfInput.addEventListener('change', (e) => addPdfs(Array.from(e.target.files)));
-attachFileDrop(pdfDrop, (files) => addPdfs(files));
+    let totalBytes = 0;
+    let active = true;
+    const speeds = [];
+    const pending = new Set();
 
-clearPdfsBtn.addEventListener('click', () => {
-  if (pdfs.length === 0) return;
-  if (confirm('លុបឯកសារ PDF ទាំងអស់?')) { pdfs = []; renderPdfs(); }
-});
+    const startTime = performance.now();
+    let lastTime = startTime;
+    let lastBytes = 0;
+    let smoothSpeed = 0;
 
-async function addPdfs(files) {
-  const pdfFiles = files.filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
-  if (pdfFiles.length === 0) return;
-  if (pdfFiles.length > 10) mergeStatus.textContent = `⏳ កំពុងអាន ${pdfFiles.length} ឯកសារ...`;
+    const tracker = setInterval(() => {
+      const now = performance.now();
+      const dt = (now - lastTime) / 1000;
+      const dBytes = totalBytes - lastBytes;
 
-  for (const file of pdfFiles) {
-    let pageCount = null;
+      if (dt > 0) {
+        const instant = (dBytes * 8) / dt / 1e6;
+        if (instant > 0) {
+          smoothSpeed = smoothSpeed === 0 ? instant : smoothSpeed * 0.7 + instant * 0.3;
+          speeds.push(smoothSpeed);
+          setGauge(smoothSpeed);
+        }
+      }
+      lastTime = now;
+      lastBytes = totalBytes;
+    }, 150);
+
+    function uploadOnce() {
+      return new Promise((resolve) => {
+        const xhr = new XMLHttpRequest();
+        let last = 0;
+        let settled = false;
+
+        const finish = () => {
+          if (settled) return;
+          settled = true;
+          pending.delete(xhr);
+          resolve();
+        };
+
+        xhr.open('POST', 'https://speed.cloudflare.com/__up?t=' + Date.now() + Math.random(), true);
+        xhr.upload.onprogress = (e) => {
+          if (!e.lengthComputable) return;
+          const delta = e.loaded - last;
+          last = e.loaded;
+          if (delta > 0) totalBytes += delta;
+        };
+
+        xhr.onloadend = finish;
+        xhr.onerror = finish;
+        xhr.onabort = finish;
+        xhr.ontimeout = finish;
+
+        pending.add(xhr);
+
+        try {
+          xhr.send(blob);
+        } catch (e) {
+          finish();
+        }
+      });
+    }
+
+    async function worker() {
+      while (active && (performance.now() - startTime) < DURATION) {
+        try {
+          await uploadOnce();
+        } catch (e) {
+          await new Promise(r => setTimeout(r, 50));
+        }
+      }
+    }
+
+    const timeoutCheck = setInterval(() => {
+      if (performance.now() - startTime > DURATION) {
+        active = false;
+        pending.forEach((xhr) => {
+          try { xhr.abort(); } catch (e) {}
+        });
+        pending.clear();
+      }
+    }, 200);
+
+    await Promise.all(Array.from({ length: STREAMS }, () => worker()));
+
+    active = false;
+    clearInterval(tracker);
+    clearInterval(timeoutCheck);
+
+    const elapsed = (performance.now() - startTime) / 1000;
+    const avg = (totalBytes * 8) / elapsed / 1e6;
+
+    speeds.sort((a, b) => b - a);
+    const topCount = Math.max(1, Math.floor(speeds.length * 0.3));
+    const topAvg = speeds.slice(0, topCount).reduce((a, b) => a + b, 0) / topCount;
+
+    const final = Math.max(avg, topAvg * 0.9);
+
+    uploadValue.textContent = final.toFixed(1);
+    mUpload.classList.remove('active');
+    mUpload.classList.add('complete');
+    setGauge(final);
+    return final;
+  }
+
+  async function loadInfo() {
     try {
-      const buf = await file.arrayBuffer();
-      const doc = await PDFDocument.load(buf, { ignoreEncryption: true });
-      pageCount = doc.getPageCount();
-    } catch (err) {}
-    pdfs.push({ id: pdfUid++, file, name: file.name, size: file.size, pageCount });
-  }
-  renderPdfs();
-  pdfInput.value = '';
-  mergeStatus.textContent = '';
-}
-
-function renderPdfs() {
-  const frag = document.createDocumentFragment();
-  pdfs.forEach((item, idx) => {
-    const div = document.createElement('div');
-    div.className = 'pdf-item';
-    div.draggable = true;
-    div.dataset.id = item.id;
-    div.innerHTML = `
-      <span class="pdf-num">${idx + 1}</span>
-      <div class="pdf-icon">📕</div>
-      <div class="pdf-info">
-        <div class="pdf-name">${escapeHtml(item.name)}</div>
-        <div class="pdf-meta">
-          <span>${formatSize(item.size)}</span>
-          ${item.pageCount !== null ? `<span>•</span><span>${item.pageCount} ${i18n[currentLang].pages}</span>` : ''}
-        </div>
-      </div>
-      <span class="drag-handle">✥</span>
-      <button class="remove-btn" data-remove="${item.id}">🗑️</button>`;
-    div.querySelector('[data-remove]').addEventListener('click', (e) => {
-      e.stopPropagation();
-      pdfs = pdfs.filter(p => p.id !== item.id);
-      renderPdfs();
-    });
-    div.addEventListener('dragstart', onPdfDragStart);
-    div.addEventListener('dragend', onPdfDragEnd);
-    div.addEventListener('dragover', onPdfDragOver);
-    div.addEventListener('dragleave', onPdfDragLeave);
-    div.addEventListener('drop', onPdfDrop);
-    addTouchDrag(div, item.id, mergedNameInput, 'pdfs');
-    frag.appendChild(div);
-  });
-  pdfList.innerHTML = '';
-  pdfList.appendChild(frag);
-  mergeBtn.disabled = pdfs.length < 2;
-  pdfHeader.classList.toggle('show', pdfs.length > 0);
-  if (pdfs.length > 0) pdfCount.textContent = pdfs.length;
-  mergeHint.classList.toggle('show', pdfs.length > 1);
-}
-
-function onPdfDragStart(e) {
-  pdfDragSrcId = Number(this.dataset.id);
-  this.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', String(pdfDragSrcId));
-}
-function onPdfDragEnd() {
-  this.classList.remove('dragging');
-  document.querySelectorAll('.pdf-item').forEach(t => t.classList.remove('drag-over'));
-  pdfDragSrcId = null;
-}
-function onPdfDragOver(e) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  if (Number(this.dataset.id) !== pdfDragSrcId) this.classList.add('drag-over');
-}
-function onPdfDragLeave() { this.classList.remove('drag-over'); }
-function onPdfDrop(e) {
-  e.preventDefault();
-  this.classList.remove('drag-over');
-  const targetId = Number(this.dataset.id);
-  if (pdfDragSrcId === null || pdfDragSrcId === targetId) return;
-  const srcIdx = pdfs.findIndex(i => i.id === pdfDragSrcId);
-  const tgtIdx = pdfs.findIndex(i => i.id === targetId);
-  if (srcIdx < 0 || tgtIdx < 0) return;
-  const [moved] = pdfs.splice(srcIdx, 1);
-  pdfs.splice(tgtIdx, 0, moved);
-  renderPdfs();
-}
-
-mergeBtn.addEventListener('click', async () => {
-  if (pdfs.length < 2) return;
-  const name = mergedNameInput.value.trim() || 'merged-document';
-  mergeBtn.disabled = true;
-  mergeStatus.textContent = '';
-  mergeStatus.classList.remove('success', 'error');
-  hideResultCard('merge');
-  clearResult('merge');
-  mergeProgressWrap.classList.add('active', 'merge-active');
-  updateMergeProgress(0);
-  let totalPages = 0;
-
-  try {
-    const mergedPdf = await PDFDocument.create();
-    const total = pdfs.length;
-    for (let i = 0; i < total; i++) {
-      const item = pdfs[i];
-      const buf = await item.file.arrayBuffer();
-      const srcDoc = await PDFDocument.load(buf, { ignoreEncryption: true });
-      totalPages += srcDoc.getPageCount();
-      const copiedPages = await mergedPdf.copyPages(srcDoc, srcDoc.getPageIndices());
-      copiedPages.forEach(p => mergedPdf.addPage(p));
-      updateMergeProgress(Math.round(((i + 1) / total) * 90));
-      await new Promise(r => setTimeout(r, 20));
+      const res = await fetch('https://speed.cloudflare.com/meta');
+      const d = await res.json();
+      const isp = d.asOrganization || d.asn || 'Unknown ISP';
+      const city = d.city || '';
+      const country = d.country || '';
+      const loc = [city, country].filter(Boolean).join(', ');
+      ispText.textContent = isp + (loc ? ' • ' + loc : '');
+    } catch (e) {
+      ispText.textContent = 'Cloudflare Edge Network';
     }
-    updateMergeProgress(95);
-    const bytes = await mergedPdf.save();
-    updateMergeProgress(100);
-    const blob = new Blob([bytes], { type: 'application/pdf' });
-    const fileName = `${name}.pdf`;
-    setResult('merge', blob, fileName);
-    showResultCard('merge', fileName);
-    resetMergeBtn.classList.add('show');
-    await addToHistory({ type: 'merge', name: fileName, pages: totalPages, blob });
-  } catch (err) {
-    mergeStatus.textContent = '❌ ' + (err.message || 'Error');
-    mergeStatus.classList.add('error');
-  } finally {
-    mergeBtn.disabled = false;
-    setTimeout(() => {
-      mergeProgressWrap.classList.remove('active', 'merge-active');
-      updateMergeProgress(0);
-    }, 1500);
   }
-});
 
-resetMergeBtn.addEventListener('click', () => {
-  pdfs = []; pdfUid = 0; pdfDragSrcId = null;
-  pdfInput.value = '';
-  mergedNameInput.value = 'merged-document';
-  clearResult('merge');
-  hideResultCard('merge');
-  mergeProgressWrap.classList.remove('active', 'merge-active');
-  updateMergeProgress(0);
-  mergeStatus.textContent = '';
-  mergeStatus.classList.remove('success', 'error');
-  mergeBtn.disabled = true;
-  resetMergeBtn.classList.remove('show');
-  renderPdfs();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-function updateMergeProgress(p) {
-  mergeProgressFill.style.width = p + '%';
-  mergeProgressText.textContent = p + '%';
-}
+  startBtn.addEventListener('click', async () => {
+    startBtn.disabled = true;
+    btnText.textContent = 'កំពុងសាកល្បង...';
+    ctaIcon.innerHTML = '<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-dasharray="15 40" stroke-linecap="round"/>';
 
-/* ==================== PART 3: SPLIT ==================== */
-const splitInput = document.getElementById('splitInput');
-const splitDrop = document.getElementById('splitDrop');
-const splitInfo = document.getElementById('splitInfo');
-const splitFileName = document.getElementById('splitFileName');
-const splitFileMeta = document.getElementById('splitFileMeta');
-const splitTotalPages = document.getElementById('splitTotalPages');
-const splitOptions = document.getElementById('splitOptions');
-const splitBtn = document.getElementById('splitBtn');
-const resetSplitBtn = document.getElementById('resetSplitBtn');
-const splitStatus = document.getElementById('splitStatus');
-const splitProgressWrap = document.getElementById('splitProgressWrap');
-const splitProgressFill = document.getElementById('splitProgressFill');
-const splitProgressText = document.getElementById('splitProgressText');
-const rangeFrom = document.getElementById('rangeFrom');
-const rangeTo = document.getElementById('rangeTo');
-const skipPages = document.getElementById('skipPages');
-const rangeModeOptions = document.getElementById('rangeModeOptions');
-const eachModeOptions = document.getElementById('eachModeOptions');
-const splitNameInput = document.getElementById('splitName');
+    downloadValue.textContent = '--';
+    uploadValue.textContent = '--';
+    pingValue.textContent = '--';
+    resetGauge();
 
-let splitFile = null;
-let splitDoc = null;
-let splitPageCount = 0;
-let splitMode = 'range';
+    try {
+      await testPing();
+      await testDownload();
+      await testUpload();
 
-splitInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) loadSplitFile(file);
-});
-attachFileDrop(splitDrop, (files) => {
-  const file = files.find(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
-  if (file) loadSplitFile(file);
-});
-
-async function loadSplitFile(file) {
-  splitStatus.textContent = '⏳...';
-  splitStatus.classList.remove('success', 'error');
-  try {
-    const buf = await file.arrayBuffer();
-    const doc = await PDFDocument.load(buf, { ignoreEncryption: true });
-    splitFile = file; splitDoc = doc; splitPageCount = doc.getPageCount();
-    splitFileName.textContent = file.name;
-    splitFileMeta.textContent = `${formatSize(file.size)} • ${splitPageCount} ${i18n[currentLang].pages}`;
-    splitTotalPages.textContent = splitPageCount;
-    splitInfo.style.display = 'flex';
-    splitOptions.style.display = 'block';
-    rangeFrom.max = splitPageCount;
-    rangeTo.max = splitPageCount;
-    rangeFrom.value = 1;
-    rangeTo.value = splitPageCount;
-
-    if (!splitNameInput.value || splitNameInput.value === 'split-document') {
-      splitNameInput.value = file.name.replace(/\.pdf$/i, '') + '-split';
-    }
-
-    splitBtn.disabled = false;
-    splitStatus.textContent = '';
-  } catch (err) {
-    splitStatus.textContent = '❌ PDF error';
-    splitStatus.classList.add('error');
-    splitFile = null; splitDoc = null; splitPageCount = 0;
-    splitInfo.style.display = 'none'; splitOptions.style.display = 'none';
-    splitBtn.disabled = true;
-  }
-  splitInput.value = '';
-}
-
-document.querySelectorAll('.mode-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.mode-btn').forEach(b => {
-      b.classList.remove('active');
-      b.style.background = 'var(--bg-card)';
-      b.style.color = 'var(--text-mid)';
-    });
-    btn.classList.add('active');
-    btn.style.background = 'linear-gradient(135deg,#ecfeff,#cffafe)';
-    btn.style.color = 'var(--split-dark)';
-    splitMode = btn.dataset.mode;
-    if (splitMode === 'range') {
-      rangeModeOptions.style.display = 'block';
-      eachModeOptions.style.display = 'none';
-    } else {
-      rangeModeOptions.style.display = 'none';
-      eachModeOptions.style.display = 'block';
+      setPhase('ការសាកល្បងបានបញ្ចប់', true);
+      statusEl.textContent = 'បានបញ្ចប់ដោយជោគជ័យ';
+      statusEl.className = 'status success';
+      gaugeBox.classList.remove('testing');
+      speedValue.classList.remove('testing');
+      [mDownload, mUpload, mPing].forEach(m => m.classList.remove('active'));
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = 'មានបញ្ហា: ' + err.message;
+      statusEl.className = 'status error';
+      phasePill.classList.remove('show');
+      gaugeBox.classList.remove('testing');
+    } finally {
+      startBtn.disabled = false;
+      btnText.textContent = 'សាកល្បងម្តងទៀត';
+      ctaIcon.innerHTML = '<polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/>';
     }
   });
-});
 
-function parseSkipList(str, total) {
-  const set = new Set();
-  if (!str || !str.trim()) return set;
-  const parts = str.split(',').map(s => s.trim()).filter(Boolean);
-  for (const part of parts) {
-    if (part.includes('-')) {
-      const [a, b] = part.split('-').map(s => parseInt(s.trim(), 10));
-      if (!isNaN(a) && !isNaN(b)) {
-        const s1 = Math.min(a, b), e1 = Math.max(a, b);
-        for (let i = s1; i <= e1; i++) if (i >= 1 && i <= total) set.add(i);
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    });
+  }
+
+  let deferredPrompt = null;
+  const installBtn = document.getElementById('installBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) installBtn.classList.add('show');
+  });
+
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        installBtn.classList.remove('show');
+        return;
       }
-    } else {
-      const n = parseInt(part, 10);
-      if (!isNaN(n) && n >= 1 && n <= total) set.add(n);
-    }
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.classList.remove('show');
+    });
   }
-  return set;
-}
 
-function getSplitPages() {
-  if (!splitDoc) return [];
-  const total = splitPageCount;
-  if (splitMode === 'each') {
-    const arr = [];
-    for (let i = 0; i < total; i++) arr.push(i);
-    return arr;
-  }
-  let from = parseInt(rangeFrom.value, 10) || 1;
-  let to = parseInt(rangeTo.value, 10) || total;
-  from = Math.max(1, Math.min(from, total));
-  to = Math.max(1, Math.min(to, total));
-  if (from > to) [from, to] = [to, from];
-  const skipSet = parseSkipList(skipPages.value, total);
-  const pages = [];
-  for (let i = from; i <= to; i++) if (!skipSet.has(i)) pages.push(i - 1);
-  return pages;
-}
-
-splitBtn.addEventListener('click', async () => {
-  if (!splitDoc || !splitFile) return;
-  const pages = getSplitPages();
-  if (pages.length === 0) {
-    splitStatus.textContent = '❌ No pages';
-    splitStatus.classList.add('error');
-    return;
-  }
-  splitBtn.disabled = true;
-  splitStatus.textContent = '';
-  splitStatus.classList.remove('success', 'error');
-  hideResultCard('split');
-  clearResult('split');
-  splitProgressWrap.classList.add('active', 'split-active');
-  updateSplitProgress(0);
-
-  try {
-    if (splitMode === 'each') {
-      await splitEachPage();
-    } else {
-      await splitRange(pages);
-    }
-  } catch (err) {
-    splitStatus.textContent = '❌ ' + (err.message || 'Error');
-    splitStatus.classList.add('error');
-  } finally {
-    splitBtn.disabled = false;
-    setTimeout(() => {
-      splitProgressWrap.classList.remove('active', 'split-active');
-      updateSplitProgress(0);
-    }, 1500);
-  }
-});
-
-async function splitRange(pages) {
-  const name = splitNameInput.value.trim() || 'split-document';
-  updateSplitProgress(15);
-  const newDoc = await PDFDocument.create();
-  const copiedPages = await newDoc.copyPages(splitDoc, pages);
-  copiedPages.forEach(p => newDoc.addPage(p));
-  updateSplitProgress(80);
-  const bytes = await newDoc.save();
-  updateSplitProgress(100);
-  const blob = new Blob([bytes], { type: 'application/pdf' });
-  const fileName = `${name}.pdf`;
-  setResult('split', blob, fileName);
-  showResultCard('split', fileName);
-  resetSplitBtn.classList.add('show');
-  await addToHistory({ type: 'split', name: fileName, pages: pages.length, blob });
-}
-
-async function splitEachPage() {
-  const name = splitNameInput.value.trim() || 'split-document';
-  const total = splitPageCount;
-  await loadJSZip();
-  const zip = new JSZip();
-  const folder = zip.folder(name);
-  for (let i = 0; i < total; i++) {
-    const newDoc = await PDFDocument.create();
-    const [page] = await newDoc.copyPages(splitDoc, [i]);
-    newDoc.addPage(page);
-    const bytes = await newDoc.save();
-    folder.file(`${name}-page-${String(i + 1).padStart(3, '0')}.pdf`, bytes);
-    updateSplitProgress(Math.round(((i + 1) / total) * 90));
-    if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
-  }
-  updateSplitProgress(95);
-  const zipBlob = await zip.generateAsync({ type: 'blob' });
-  updateSplitProgress(100);
-  const fileName = `${name}.zip`;
-  setResult('split', zipBlob, fileName);
-  showResultCard('split', fileName);
-  resetSplitBtn.classList.add('show');
-  await addToHistory({ type: 'split', name: fileName, pages: total, blob: zipBlob });
-}
-
-let jszipLoaded = false;
-function loadJSZip() {
-  return new Promise((resolve, reject) => {
-    if (jszipLoaded && window.JSZip) return resolve();
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-    s.onload = () => { jszipLoaded = true; resolve(); };
-    s.onerror = reject;
-    document.head.appendChild(s);
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    if (installBtn) installBtn.classList.remove('show');
   });
-}
 
-resetSplitBtn.addEventListener('click', () => {
-  splitFile = null; splitDoc = null; splitPageCount = 0;
-  splitInput.value = '';
-  rangeFrom.value = 1; rangeTo.value = 1; skipPages.value = '';
-  splitNameInput.value = 'split-document';
-  splitInfo.style.display = 'none';
-  splitOptions.style.display = 'none';
-  clearResult('split');
-  hideResultCard('split');
-  splitProgressWrap.classList.remove('active', 'split-active');
-  updateSplitProgress(0);
-  splitStatus.textContent = '';
-  splitStatus.classList.remove('success', 'error');
-  splitBtn.disabled = true;
-  resetSplitBtn.classList.remove('show');
-  document.querySelectorAll('.mode-btn').forEach(b => {
-    b.classList.remove('active');
-    b.style.background = 'var(--bg-card)';
-    b.style.color = 'var(--text-mid)';
-  });
-  const first = document.querySelector('.mode-btn[data-mode="range"]');
-  first.classList.add('active');
-  first.style.background = 'linear-gradient(135deg,#ecfeff,#cffafe)';
-  first.style.color = 'var(--split-dark)';
-  splitMode = 'range';
-  rangeModeOptions.style.display = 'block';
-  eachModeOptions.style.display = 'none';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-function updateSplitProgress(p) {
-  splitProgressFill.style.width = p + '%';
-  splitProgressText.textContent = p + '%';
-}
-
-/* ==================== INIT ==================== */
-applyLang();
-applyTheme();
-renderHistory();
-
-if (window.pdfjsLib) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-}
+  loadInfo();
+})();
 </script>
 </body>
- </html>
+</html>
