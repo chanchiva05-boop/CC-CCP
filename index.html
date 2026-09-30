@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<title>⚖️ ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដី</title>
+<title>⚖️</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
@@ -133,12 +133,6 @@ tailwind.config = {
     #pageTitle { font-size: 15px !important; }
     #pageSubtitle { font-size: 10.5px !important; }
   }
-  
-  @keyframes backupPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-    50% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
-  }
-  .backup-reminder-pulse { animation: backupPulse 2s infinite; }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
@@ -209,7 +203,7 @@ tailwind.config = {
           <path d="M12 3v18M5 8h14M5 8l-3 8a3 3 0 0 0 6 0L5 8zM19 8l-3 8a3 3 0 0 0 6 0l-3-8z"/>
         </svg>
       </div>
-      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដី</h1>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">ប្រព័ន្ធគ្រប់គ្រងសំណុំរឿងក្ដី</h1>
       <p id="loginGreeting" class="text-slate-500 dark:text-slate-400 text-sm mt-1">សូមបញ្ចូលលេខសម្ងាត់ដើម្បីបន្ត</p>
     </div>
     <div class="space-y-4">
@@ -249,7 +243,7 @@ tailwind.config = {
         </div>
         <div>
           <h1 class="text-base font-bold tracking-tight">Case Manager</h1>
-          <p class="text-[10px] text-brand-300 uppercase tracking-widest">Professional</p>
+          <p class="text-[10px] text-brand-300 uppercase tracking-widest">Pro-2026</p>
         </div>
       </div>
       <button onclick="toggleSidebar()" class="lg:hidden text-brand-300 p-2 hover:text-white">
@@ -291,10 +285,6 @@ tailwind.config = {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         📲 ដំឡើង App
       </button>
-      <button onclick="showStorageStatus()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-brand-200 hover:bg-white/5 hover:text-white transition-colors text-sm">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
-        <span id="storageStatusText">Storage</span>
-      </button>
       <button onclick="toggleDark()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-brand-200 hover:bg-white/5 hover:text-white transition-colors text-sm">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <span id="themeLabel">ផ្ទាំងងងឹត</span>
@@ -315,7 +305,7 @@ tailwind.config = {
           </button>
           <div class="min-w-0 flex-1">
             <h2 id="pageTitle" class="text-base md:text-xl font-bold tracking-tight truncate">ផ្ទាំងគ្រប់គ្រង</h2>
-            <p id="pageSubtitle" class="text-[11px] md:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">ទិដ្ឋភាពទូទៅនៃរឿងក្ដីរបស់អ្នក</p>
+            <p id="pageSubtitle" class="text-[11px] md:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">ទិដ្ឋភាពទូទៅនៃសំណុំរឿងក្ដីរបស់អ្នក</p>
           </div>
         </div>
         <button onclick="showPage('settings')" class="flex-shrink-0 max-w-[140px] md:max-w-[240px] px-3.5 md:px-5 py-2 rounded-full bg-gradient-to-r from-brand-50 to-purple-50 dark:from-brand-950 dark:to-purple-950 border border-brand-100 dark:border-brand-900/50 hover:shadow-md active:scale-95 transition-all duration-200">
@@ -456,7 +446,7 @@ tailwind.config = {
                   <th class="px-5 py-4 font-semibold">តុលាការមានសម្ថកិច្ច</th>
                   <th class="px-5 py-4 font-semibold">អតិថិជន</th>
                   <th class="px-5 py-4 font-semibold">ស្ថានភាព</th>
-                  <th class="px-5 py-4 font-semibold">ថ្ងៃកាលបរិតុលាការ</th>
+                  <th class="px-5 py-4 font-semibold">ថ្ងៃកាលបរិច្ឆេទតុលាការ</th>
                   <th class="px-5 py-4 font-semibold text-right">សកម្មភាព</th>
                 </tr>
               </thead>
@@ -489,7 +479,7 @@ tailwind.config = {
             <span class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
             </span>
-            <h3 class="font-bold">កាលវិភាគថ្ងៃកាត់ក្ដី</h3>
+            <h3 class="font-bold">កាលវិភាគកាលបរិច្ឆេទតុលាការ</h3>
           </div>
           <div id="calendarList" class="space-y-3"></div>
         </div>
@@ -558,56 +548,6 @@ tailwind.config = {
 
       <!-- SETTINGS -->
       <section id="page-settings" class="page hidden animate-fade-in">
-        <!-- Storage Status -->
-        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 p-5 rounded-2xl shadow-card border border-blue-200 dark:border-blue-900 mb-5">
-          <div class="flex items-start gap-3 mb-4">
-            <div class="w-11 h-11 bg-blue-100 dark:bg-blue-950 rounded-xl flex items-center justify-center shrink-0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
-            </div>
-            <div class="flex-1">
-              <h3 class="font-bold text-blue-800 dark:text-blue-400">ស្ថានភាព Storage</h3>
-              <p id="storageStatusMsg" class="text-xs text-blue-600 dark:text-blue-500 mt-0.5">កំពុងពិនិត្យ...</p>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="p-3 bg-white/60 dark:bg-slate-900/60 rounded-lg">
-              <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-1">ការប្រើប្រាស់</p>
-              <p id="storageUsage" class="text-sm font-bold">-</p>
-            </div>
-            <div class="p-3 bg-white/60 dark:bg-slate-900/60 rounded-lg">
-              <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-1">ទំហំសរុប</p>
-              <p id="storageQuota" class="text-sm font-bold">-</p>
-            </div>
-          </div>
-          <button onclick="requestPersistentStorage(true)" class="mt-3 w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-medium">
-            🛡️ ស្នើសុំ Persistent Storage
-          </button>
-        </div>
-
-        <!-- Auto Backup -->
-        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 p-5 rounded-2xl shadow-card border border-emerald-200 dark:border-emerald-900 mb-5">
-          <div class="flex items-start gap-3 mb-4">
-            <div class="w-11 h-11 bg-emerald-100 dark:bg-emerald-950 rounded-xl flex items-center justify-center shrink-0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
-            </div>
-            <div class="flex-1">
-              <h3 class="font-bold text-emerald-800 dark:text-emerald-400">Auto Backup</h3>
-              <p class="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">រក្សាទុកស្វ័យប្រវត្តិក្នុង App រាល់ថ្ងៃ</p>
-            </div>
-            <label class="cursor-pointer flex-shrink-0">
-              <input type="checkbox" id="autoBackupToggle" onchange="toggleAutoBackup(this.checked)" checked class="peer hidden">
-              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-700 rounded-full peer-checked:bg-emerald-500 transition-all relative">
-                <div class="w-5 h-5 bg-white rounded-full absolute top-1 left-1 peer-checked:translate-x-5 transition-all"></div>
-              </div>
-            </label>
-          </div>
-          
-          <p class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">📁 Auto Backups ចុងក្រោយ:</p>
-          <div id="autoBackupList" class="space-y-2 text-sm">
-            <div class="text-center py-4 text-xs text-slate-500 dark:text-slate-400">កំពុងផ្ទុក...</div>
-          </div>
-        </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 mb-5">
           <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
             <div class="flex items-start gap-3 mb-4">
@@ -812,8 +752,8 @@ tailwind.config = {
             <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
             <option value="រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ">រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
-            <option value="បណ្ដឹងបានដក">បណ្ដឹងបានដក</option>
-            <option value="ស្រុះស្រួលគ្នា">ស្រុះស្រួលគ្នា</option>
+            <option value="បណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
+            <option value="ស្រុះស្រួលគ្នា">សះជាគ្នា</option>
           </optgroup>
           <optgroup label="⚖️ នីតិវិធីព្រហ្មទណ្ឌ">
             <option value="ដាក់ពាក្យបណ្ដឹង">ដាក់ពាក្យបណ្ដឹង</option>
@@ -823,7 +763,7 @@ tailwind.config = {
             <option value="ដំណាក់កាលជំនុំជម្រះ">ដំណាក់កាលជំនុំជម្រះ</option>
             <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
-            <option value="បណ្ដឹងបានដក">បណ្ដឹងបានដក</option>
+            <option value="បណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
           </optgroup>
           <optgroup label="✅ បានបញ្ចប់">
             <option value="បានបញ្ចប់">បានបញ្ចប់</option>
@@ -967,30 +907,6 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- BACKUP REMINDER BANNER -->
-<div id="backupReminderBanner" class="hidden fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 z-40 max-w-[92vw] md:max-w-sm animate-slide-up">
-  <div class="bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-2xl shadow-2xl p-4 border border-white/20">
-    <div class="flex items-start gap-3">
-      <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shrink-0 backup-reminder-pulse">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-        </svg>
-      </div>
-      <div class="flex-1 min-w-0">
-        <p class="font-bold text-sm">🔔 ដល់ពេល Backup ហើយ!</p>
-        <p id="backupReminderText" class="text-xs opacity-90 mt-0.5">ជាង ៧ ថ្ងៃហើយ</p>
-        <div class="flex gap-2 mt-3">
-          <button onclick="exportData(); hideBackupReminder();" class="px-3 py-1.5 bg-white text-orange-600 rounded-lg text-xs font-bold">💾 Backup ឥឡូវ</button>
-          <button onclick="snoozeBackup(3)" class="px-3 py-1.5 bg-white/20 rounded-lg text-xs font-medium">រំលឹក ៣ ថ្ងៃ</button>
-        </div>
-      </div>
-      <button onclick="snoozeBackup(7)" class="text-white/70 hover:text-white p-1">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-  </div>
-</div>
-
 <!-- TOAST -->
 <div id="toast" class="hidden fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-2xl shadow-2xl z-[80] max-w-[90vw] text-center text-sm font-medium"></div>
 
@@ -1036,75 +952,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ============ PERSISTENT STORAGE (ការពារទិន្នន័យ) ============
-async function requestPersistentStorage(showToast = false) {
-  if (!navigator.storage || !navigator.storage.persist) {
-    console.warn('⚠️ Persistent Storage API មិនត្រូវបានគាំទ្រ');
-    return false;
-  }
-  
-  try {
-    const alreadyPersisted = await navigator.storage.persisted();
-    if (alreadyPersisted) {
-      if (showToast) toast('✅ Storage ត្រូវបានការពាររួចហើយ');
-      updateStorageStatusUI(true);
-      return true;
-    }
-    
-    const granted = await navigator.storage.persist();
-    if (granted) {
-      console.log('✅ Persistent Storage granted!');
-      updateStorageStatusUI(true);
-      if (showToast) toast('🛡️ ទិន្នន័យត្រូវបានការពារ!');
-    } else {
-      console.warn('⚠️ Persistent Storage denied');
-      updateStorageStatusUI(false);
-      if (showToast) toast('⚠️ Browser មិនអនុញ្ញាត');
-    }
-    return granted;
-  } catch (error) {
-    console.error('❌ Storage error:', error);
-    return false;
-  }
-}
-
-async function updateStorageStatusUI(isPersistent) {
-  const statusEl = document.getElementById('storageStatusMsg');
-  const usageEl = document.getElementById('storageUsage');
-  const quotaEl = document.getElementById('storageQuota');
-  const sidebarText = document.getElementById('storageStatusText');
-  
-  if (!statusEl) return;
-  
-  if (isPersistent) {
-    statusEl.innerHTML = '🛡️ <span class="font-bold">ទិន្នន័យត្រូវបានការពារ</span> — Browser នឹងមិនលុបទិន្នន័យដោយស្វ័យប្រវត្តិទេ';
-    statusEl.className = 'text-xs text-emerald-600 dark:text-emerald-500 mt-0.5';
-    if (sidebarText) {
-      sidebarText.textContent = '🛡️ Storage ការពារ';
-    }
-  } else {
-    statusEl.innerHTML = '⚠️ <span class="font-bold">ទិន្នន័យមិនបានការពារ</span> — សូមចុច Button ខាងក្រោម';
-    statusEl.className = 'text-xs text-amber-600 dark:text-amber-500 mt-0.5';
-    if (sidebarText) {
-      sidebarText.textContent = '⚠️ Storage មិនការពារ';
-    }
-  }
-  
-  // បង្ហាញទំហំប្រើប្រាស់
-  if (navigator.storage && navigator.storage.estimate) {
-    try {
-      const est = await navigator.storage.estimate();
-      if (usageEl) usageEl.textContent = formatFileSize(est.usage || 0);
-      if (quotaEl) quotaEl.textContent = formatFileSize(est.quota || 0);
-    } catch (e) {}
-  }
-}
-
-async function showStorageStatus() {
-  showPage('settings');
-  toast('📊 មើលស្ថានភាព Storage');
-}
-
 // ============ CRYPTO ============
 async function hashPassword(password) {
   const encoder = new TextEncoder();
@@ -1145,7 +992,7 @@ function statusInfo(status) {
   return { label: status || '—', cls: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400', dot: 'bg-slate-400' };
 }
 
-// ============ HEARING DAY HELPER ============
+// ============ HEARING DAY HELPER (សំខាន់!) ============
 function getHearingDayInfo(dateStr) {
   if (!dateStr) return null;
   const target = new Date(dateStr);
@@ -1154,11 +1001,49 @@ function getHearingDayInfo(dateStr) {
   today.setHours(0, 0, 0, 0);
   const diff = Math.round((target - today) / 86400000);
   
-  if (diff < 0) return { label: 'ផុតថ្ងៃ', days: diff, badge: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold', border: 'border-red-500', isExpired: true };
-  if (diff === 0) return { label: 'ថ្ងៃនេះ', days: 0, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-red-500', isExpired: false };
-  if (diff <= 3) return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-brand-500', isExpired: false };
-  if (diff <= 7) return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400', border: 'border-brand-500', isExpired: false };
-  return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400', border: 'border-brand-500', isExpired: false };
+  if (diff < 0) {
+    return {
+      label: 'ផុតថ្ងៃ',
+      days: diff,
+      badge: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold',
+      border: 'border-red-500',
+      isExpired: true
+    };
+  }
+  if (diff === 0) {
+    return {
+      label: 'ថ្ងៃនេះ',
+      days: 0,
+      badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400',
+      border: 'border-red-500',
+      isExpired: false
+    };
+  }
+  if (diff <= 3) {
+    return {
+      label: diff + ' ថ្ងៃ',
+      days: diff,
+      badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400',
+      border: 'border-brand-500',
+      isExpired: false
+    };
+  }
+  if (diff <= 7) {
+    return {
+      label: diff + ' ថ្ងៃ',
+      days: diff,
+      badge: 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400',
+      border: 'border-brand-500',
+      isExpired: false
+    };
+  }
+  return {
+    label: diff + ' ថ្ងៃ',
+    days: diff,
+    badge: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400',
+    border: 'border-brand-500',
+    isExpired: false
+  };
 }
 
 // ============ INDEXEDDB ============
@@ -1255,8 +1140,7 @@ function getFileIcon(category) {
     word: { emoji: '📘', color: 'blue' },
     excel: { emoji: '📗', color: 'green' },
     image: { emoji: '🖼️', color: 'purple' },
-    other: { emoji: '📄', color: 'slate' },
-    autobackup: { emoji: '💾', color: 'emerald' }
+    other: { emoji: '📄', color: 'slate' }
   };
   return icons[category] || icons.other;
 }
@@ -1307,7 +1191,6 @@ async function handleSetup() {
   DB.set('auth', { name, password: hashedPass, role: 'admin', createdAt: new Date().toISOString() });
   document.getElementById('setupScreen').classList.add('hidden');
   toast('✅ បង្កើតគណនីជោគជ័យ!');
-  await requestPersistentStorage(false);
   showLogin();
 }
 
@@ -2287,217 +2170,11 @@ function saveName() {
   toast('✅ បានកែឈ្មោះ');
 }
 
-// ============ AUTO BACKUP ============
-const BACKUP_CONFIG = {
-  STORAGE_KEY: 'lastBackupDate',
-  SNOOZE_KEY: 'backupSnoozeUntil',
-  AUTO_BACKUP_KEY: 'autoBackupEnabled',
-  INTERVAL_DAYS: 7,
-  AUTO_BACKUP_DAYS: 1,
-  AUTO_BACKUP_MAX: 5
-};
-
-function shouldShowBackupReminder() {
-  const snoozeUntil = parseInt(localStorage.getItem(BACKUP_CONFIG.SNOOZE_KEY) || '0');
-  if (Date.now() < snoozeUntil) return false;
-  const lastBackup = parseInt(localStorage.getItem(BACKUP_CONFIG.STORAGE_KEY) || '0');
-  if (lastBackup === 0) return true;
-  const daysSince = (Date.now() - lastBackup) / 86400000;
-  return daysSince >= BACKUP_CONFIG.INTERVAL_DAYS;
-}
-
-function checkBackupReminder() {
-  if (!shouldShowBackupReminder()) return;
-  if (!DB.get('cases').length && !DB.get('clients').length) return;
-  
-  const lastBackup = parseInt(localStorage.getItem(BACKUP_CONFIG.STORAGE_KEY) || '0');
-  const textEl = document.getElementById('backupReminderText');
-  if (textEl) {
-    if (lastBackup === 0) textEl.textContent = 'អ្នកមិនធ្លាប់ Backup ទេ';
-    else {
-      const days = Math.floor((Date.now() - lastBackup) / 86400000);
-      textEl.textContent = `ជាង ${days} ថ្ងៃហើយ`;
-    }
-  }
-  document.getElementById('backupReminderBanner')?.classList.remove('hidden');
-}
-
-function hideBackupReminder() {
-  document.getElementById('backupReminderBanner')?.classList.add('hidden');
-}
-
-function snoozeBackup(days) {
-  localStorage.setItem(BACKUP_CONFIG.SNOOZE_KEY, (Date.now() + days * 86400000).toString());
-  hideBackupReminder();
-  toast(`⏰ រំលឹកឡើងវិញក្នុង ${days} ថ្ងៃ`);
-}
-
-async function autoBackup() {
-  if (localStorage.getItem(BACKUP_CONFIG.AUTO_BACKUP_KEY) === 'false') return;
-  try {
-    const lastAuto = parseInt(localStorage.getItem('lastAutoBackup') || '0');
-    const daysSince = (Date.now() - lastAuto) / 86400000;
-    if (daysSince < BACKUP_CONFIG.AUTO_BACKUP_DAYS) return;
-    
-    const files = await FileDB.getAll();
-    const dataFiles = files.filter(f => f.category !== 'autobackup');
-    
-    const backupData = {
-      version: '2.0',
-      appName: 'Case Manager Professional',
-      exportedAt: new Date().toISOString(),
-      autoBackup: true,
-      data: {
-        cases: DB.get('cases'),
-        clients: DB.get('clients'),
-        documents: dataFiles
-      }
-    };
-    
-    const jsonStr = JSON.stringify(backupData);
-    const id = 'autobackup_' + Date.now();
-    
-    await FileDB.add({
-      id: id,
-      caseId: -1,
-      name: `auto-backup-${new Date().toISOString().slice(0,10)}.json`,
-      size: jsonStr.length,
-      type: 'application/json',
-      category: 'autobackup',
-      data: 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(jsonStr))),
-      uploadedAt: new Date().toISOString()
-    });
-    
-    localStorage.setItem('lastAutoBackup', Date.now().toString());
-    await cleanOldAutoBackups();
-    console.log('✅ Auto backup created');
-  } catch (err) {
-    console.error('Auto backup failed:', err);
-  }
-}
-
-async function cleanOldAutoBackups() {
-  try {
-    const all = await FileDB.getAll();
-    const autoBackups = all.filter(f => f.category === 'autobackup').sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
-    if (autoBackups.length > BACKUP_CONFIG.AUTO_BACKUP_MAX) {
-      const toDelete = autoBackups.slice(BACKUP_CONFIG.AUTO_BACKUP_MAX);
-      for (const backup of toDelete) await FileDB.delete(backup.id);
-    }
-  } catch (err) {}
-}
-
-async function listAutoBackups() {
-  try {
-    const all = await FileDB.getAll();
-    return all.filter(f => f.category === 'autobackup').sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
-  } catch { return []; }
-}
-
-async function restoreFromAutoBackup(id) {
-  try {
-    const backup = await FileDB.get(id);
-    if (!backup) return toast('❌ រកមិនឃើញ Backup');
-    
-    showConfirm('ស្តារទិន្នន័យ', 'តើអ្នកចង់ស្តារទិន្នន័យពី Auto Backup? ទិន្នន័យបច្ចុប្បន្ននឹងត្រូវជំនួស។', async () => {
-      try {
-        const base64 = backup.data.split(',')[1];
-        const json = decodeURIComponent(escape(atob(base64)));
-        const parsed = JSON.parse(json);
-        if (!parsed.data) return toast('❌ Backup ខូច');
-        
-        DB.set('cases', parsed.data.cases || []);
-        DB.set('clients', parsed.data.clients || []);
-        
-        const allFiles = await FileDB.getAll();
-        for (const f of allFiles) {
-          if (f.category !== 'autobackup') await FileDB.delete(f.id);
-        }
-        if (Array.isArray(parsed.data.documents)) {
-          for (const doc of parsed.data.documents) {
-            if (doc.category !== 'autobackup') await FileDB.add(doc);
-          }
-        }
-        
-        toast('✅ បានស្តារទិន្នន័យជោគជ័យ!');
-        renderSettingsStats();
-        showPage('dashboard');
-      } catch (err) {
-        console.error(err);
-        toast('❌ ស្តារបរាជ័យ');
-      }
-    }, 'ស្តារ');
-  } catch (err) {
-    toast('❌ ស្តារបរាជ័យ');
-  }
-}
-
-async function deleteAutoBackup(id) {
-  showConfirm('លុប Auto Backup', 'តើអ្នកប្រាកដ?', async () => {
-    await FileDB.delete(id);
-    toast('🗑️ បានលុប');
-    renderAutoBackupList();
-  }, 'លុប');
-}
-
-function toggleAutoBackup(enabled) {
-  localStorage.setItem(BACKUP_CONFIG.AUTO_BACKUP_KEY, enabled ? 'true' : 'false');
-  toast(enabled ? '✅ បើក Auto Backup' : '⏸️ បិទ Auto Backup');
-  if (enabled) autoBackup();
-}
-
-async function renderAutoBackupList() {
-  const listEl = document.getElementById('autoBackupList');
-  if (!listEl) return;
-  
-  const toggle = document.getElementById('autoBackupToggle');
-  if (toggle) toggle.checked = localStorage.getItem(BACKUP_CONFIG.AUTO_BACKUP_KEY) !== 'false';
-  
-  try {
-    const backups = await listAutoBackups();
-    if (!backups.length) {
-      listEl.innerHTML = '<div class="text-center py-4 text-xs text-slate-500 dark:text-slate-400">មិនមាន Auto Backup</div>';
-      return;
-    }
-    
-    listEl.innerHTML = backups.map(b => {
-      const date = new Date(b.uploadedAt).toLocaleString('km-KH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-      return `
-        <div class="flex items-center gap-2 p-2 bg-white/60 dark:bg-slate-900/60 rounded-lg">
-          <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-950 rounded-lg flex items-center justify-center shrink-0">
-            <span class="text-sm">💾</span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-xs font-semibold truncate">${date}</p>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400">${formatFileSize(b.size)}</p>
-          </div>
-          <button onclick="restoreFromAutoBackup('${b.id}')" class="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 rounded text-[10px] font-medium">ស្តារ</button>
-          <button onclick="deleteAutoBackup('${b.id}')" class="w-7 h-7 rounded hover:bg-red-50 dark:hover:bg-red-950 text-red-500 flex items-center justify-center">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-          </button>
-        </div>
-      `;
-    }).join('');
-  } catch (err) {
-    listEl.innerHTML = '<div class="text-center py-4 text-xs text-red-500">❌ មានបញ្ហា</div>';
-  }
-}
-
-function initAutoBackupSystem() {
-  setTimeout(checkBackupReminder, 3000);
-  setTimeout(autoBackup, 5000);
-  setInterval(() => { checkBackupReminder(); autoBackup(); }, 60 * 60 * 1000);
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) { checkBackupReminder(); autoBackup(); }
-  });
-}
-
 // ============ BACKUP / RESTORE ============
 async function exportData() {
   try {
     toast('📦 កំពុងបង្កើត Backup...');
-    const allFiles = await FileDB.getAll();
-    const files = allFiles.filter(f => f.category !== 'autobackup');
+    const files = await FileDB.getAll();
     
     const data = {
       version: '2.0',
@@ -2530,10 +2207,6 @@ async function exportData() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    localStorage.setItem(BACKUP_CONFIG.STORAGE_KEY, Date.now().toString());
-    localStorage.removeItem(BACKUP_CONFIG.SNOOZE_KEY);
-    hideBackupReminder();
     
     toast(`✅ បានទាញយក Backup (${sizeMB} MB)`);
   } catch (err) {
@@ -2605,14 +2278,9 @@ async function confirmImport() {
     if (mode === 'replace') {
       DB.set('cases', incoming.cases || []);
       DB.set('clients', incoming.clients || []);
-      const allFiles = await FileDB.getAll();
-      for (const f of allFiles) {
-        if (f.category !== 'autobackup') await FileDB.delete(f.id);
-      }
+      await FileDB.clear();
       if (Array.isArray(incoming.documents)) {
-        for (const doc of incoming.documents) {
-          if (doc.category !== 'autobackup') await FileDB.add(doc);
-        }
+        for (const doc of incoming.documents) await FileDB.add(doc);
       }
       toast('✅ បានជំនួសទាំងអស់!');
     } else {
@@ -2622,7 +2290,7 @@ async function confirmImport() {
         const existingIds = new Set(existingFiles.map(f => f.id));
         let added = 0;
         for (const doc of incoming.documents) {
-          if (!existingIds.has(doc.id) && doc.category !== 'autobackup') { await FileDB.add(doc); added++; }
+          if (!existingIds.has(doc.id)) { await FileDB.add(doc); added++; }
         }
         result.addedDocs = added;
       }
@@ -2638,7 +2306,7 @@ async function confirmImport() {
   };
   
   if (mode === 'replace') {
-    showConfirm('ជំនួសទាំងអស់', 'ការជំនួសនឹងលុបទិន្នន័យបច្ចុប្បន្នចោលទាំងអស់! តើអ្នកប្រាកដទេ?', proceed, 'ជំនួស');
+    showConfirm('ជំនួសទាំងអស់', 'ការជំនួសនឹងលុបទិន្នន័យបច្ចុប្បន្នចោលទាំងអស់ រួមទាំងឯកសារ! តើអ្នកប្រាកដទេ?', proceed, 'ជំនួស');
   } else {
     proceed();
   }
@@ -2681,13 +2349,10 @@ function mergeData(incoming) {
 }
 
 function clearAllData() {
-  showConfirm('លុបទាំងអស់', 'តើអ្នកប្រាកដជាចង់លុបទិន្នន័យទាំងអស់?', async () => {
+  showConfirm('លុបទាំងអស់', 'តើអ្នកប្រាកដជាចង់លុបទិន្នន័យទាំងអស់ រួមទាំងឯកសារ?', async () => {
     DB.set('cases', []);
     DB.set('clients', []);
-    const allFiles = await FileDB.getAll();
-    for (const f of allFiles) {
-      if (f.category !== 'autobackup') await FileDB.delete(f.id);
-    }
+    await FileDB.clear();
     toast('🗑️ បានលុបទាំងអស់');
     renderSettingsStats();
     showPage('dashboard');
@@ -2700,18 +2365,8 @@ async function renderSettingsStats() {
   set('backupClientCount', DB.get('clients').length);
   try {
     const files = await FileDB.getAll();
-    const dataFiles = files.filter(f => f.category !== 'autobackup');
-    set('backupDocCount', dataFiles.length);
+    set('backupDocCount', files.length);
   } catch { set('backupDocCount', '0'); }
-  
-  await renderAutoBackupList();
-  await updateStorageStatusUI(await isStoragePersistent());
-}
-
-async function isStoragePersistent() {
-  if (!navigator.storage || !navigator.storage.persisted) return false;
-  try { return await navigator.storage.persisted(); }
-  catch { return false; }
 }
 
 // ============ CONFIRM MODAL ============
@@ -2768,9 +2423,7 @@ window.addEventListener('resize', () => {
 async function initApp() {
   loadUser();
   await FileDB.init();
-  await requestPersistentStorage(false);
   showPage('dashboard');
-  initAutoBackupSystem();
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -2788,4 +2441,4 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 </script>
 </body>
-  </html>
+</html>
