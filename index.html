@@ -146,10 +146,10 @@ tailwind.config = {
 
   <div class="relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 animate-slide-up max-h-[95vh] overflow-y-auto">
     <div class="text-center mb-6">
-      <!-- LOGO -->
+      <!-- ✅ LOGO ថ្មី -->
       <img src="icon-512.png" 
            alt="Case Manager Logo" 
-           class="w-20 h-20 rounded-2xl shadow-lg shadow-brand-500/30 mb-4 mx-auto object-cover">
+           class="w-24 h-24 mx-auto mb-4 rounded-3xl shadow-lg shadow-brand-500/30 object-cover">
       <h1 class="text-xl font-bold text-slate-900 dark:text-white">សូមស្វាគមន៍</h1>
       <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">សូមបង្កើតគណនីដើម្បីចាប់ផ្ដើមប្រើប្រាស់</p>
     </div>
@@ -197,10 +197,10 @@ tailwind.config = {
 
   <div class="relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 animate-slide-up">
     <div class="text-center mb-8">
-      <!-- LOGO -->
+      <!-- ✅ LOGO ថ្មី -->
       <img src="icon-512.png" 
            alt="Case Manager Logo" 
-           class="w-20 h-20 rounded-2xl shadow-lg shadow-brand-500/30 mb-4 mx-auto object-cover">
+           class="w-24 h-24 mx-auto mb-4 rounded-3xl shadow-lg shadow-brand-500/30 object-cover">
       <h1 class="text-2xl font-bold text-slate-900 dark:text-white">ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដី</h1>
       <p id="loginGreeting" class="text-slate-500 dark:text-slate-400 text-sm mt-1">សូមបញ្ចូលលេខសម្ងាត់ដើម្បីបន្ត</p>
     </div>
@@ -234,12 +234,12 @@ tailwind.config = {
   <aside id="sidebar" class="w-72 bg-brand-950 text-white flex flex-col fixed lg:relative h-full z-40 safe-top shadow-2xl">
     <div class="p-5 border-b border-white/10 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <!-- LOGO -->
+        <!-- ✅ LOGO ថ្មី -->
         <img src="icon-512.png" 
              alt="Case Manager Logo" 
-             class="w-10 h-10 rounded-xl shadow-lg object-cover flex-shrink-0">
-        <div class="min-w-0">
-          <h1 class="text-base font-bold tracking-tight truncate">Case Manager</h1>
+             class="w-10 h-10 rounded-xl object-cover shadow-lg shrink-0">
+        <div>
+          <h1 class="text-base font-bold tracking-tight">Case Manager</h1>
           <p class="text-[10px] text-brand-300 uppercase tracking-widest">Professional</p>
         </div>
       </div>
@@ -999,18 +999,48 @@ function getHearingDayInfo(dateStr) {
   const diff = Math.round((target - today) / 86400000);
   
   if (diff < 0) {
-    return { label: 'ផុតថ្ងៃ', days: diff, badge: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold', border: 'border-red-500', isExpired: true };
+    return {
+      label: 'ផុតថ្ងៃ',
+      days: diff,
+      badge: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold',
+      border: 'border-red-500',
+      isExpired: true
+    };
   }
   if (diff === 0) {
-    return { label: 'ថ្ងៃនេះ', days: 0, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-red-500', isExpired: false };
+    return {
+      label: 'ថ្ងៃនេះ',
+      days: 0,
+      badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400',
+      border: 'border-red-500',
+      isExpired: false
+    };
   }
   if (diff <= 3) {
-    return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-brand-500', isExpired: false };
+    return {
+      label: diff + ' ថ្ងៃ',
+      days: diff,
+      badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400',
+      border: 'border-brand-500',
+      isExpired: false
+    };
   }
   if (diff <= 7) {
-    return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400', border: 'border-brand-500', isExpired: false };
+    return {
+      label: diff + ' ថ្ងៃ',
+      days: diff,
+      badge: 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400',
+      border: 'border-brand-500',
+      isExpired: false
+    };
   }
-  return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400', border: 'border-brand-500', isExpired: false };
+  return {
+    label: diff + ' ថ្ងៃ',
+    days: diff,
+    badge: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400',
+    border: 'border-brand-500',
+    isExpired: false
+  };
 }
 
 // ============ INDEXEDDB ============
@@ -1871,7 +1901,7 @@ async function previewDoc(id) {
   }
 }
 
-// ============ PDF VIEWER (PDF.js) ============
+// ============ PDF VIEWER ============
 async function showPdfViewer(doc) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-black/95 z-[100] flex flex-col animate-fade-in';
