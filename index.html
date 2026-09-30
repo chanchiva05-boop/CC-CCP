@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<title>⚖️</title>
+<title>⚖️ ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដី</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
@@ -133,6 +133,39 @@ tailwind.config = {
     #pageTitle { font-size: 15px !important; }
     #pageSubtitle { font-size: 10.5px !important; }
   }
+  
+  /* ============ SIDEBAR LOGO STYLES ============ */
+  .sidebar-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #3563ff 0%, #1f42f5 50%, #8b5cf6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 
+      0 4px 12px rgba(53, 99, 255, 0.4),
+      0 2px 4px rgba(139, 92, 246, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .sidebar-logo::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 50%);
+    pointer-events: none;
+  }
+  .sidebar-logo svg {
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+  }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
@@ -146,7 +179,8 @@ tailwind.config = {
 
   <div class="relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 animate-slide-up max-h-[95vh] overflow-y-auto">
     <div class="text-center mb-6">
-      <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl shadow-lg shadow-brand-500/30 mb-4">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl shadow-lg shadow-brand-500/30 mb-4"
+           style="background: linear-gradient(135deg, #3563ff 0%, #1f42f5 50%, #8b5cf6 100%);">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 3v18M5 8h14M5 8l-3 8a3 3 0 0 0 6 0L5 8zM19 8l-3 8a3 3 0 0 0 6 0l-3-8z"/>
         </svg>
@@ -198,12 +232,13 @@ tailwind.config = {
 
   <div class="relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 animate-slide-up">
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl shadow-lg shadow-brand-500/30 mb-4">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl shadow-lg shadow-brand-500/30 mb-4"
+           style="background: linear-gradient(135deg, #3563ff 0%, #1f42f5 50%, #8b5cf6 100%);">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 3v18M5 8h14M5 8l-3 8a3 3 0 0 0 6 0L5 8zM19 8l-3 8a3 3 0 0 0 6 0l-3-8z"/>
         </svg>
       </div>
-      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">ប្រព័ន្ធគ្រប់គ្រងសំណុំរឿងក្ដី</h1>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដី</h1>
       <p id="loginGreeting" class="text-slate-500 dark:text-slate-400 text-sm mt-1">សូមបញ្ចូលលេខសម្ងាត់ដើម្បីបន្ត</p>
     </div>
     <div class="space-y-4">
@@ -234,19 +269,26 @@ tailwind.config = {
   <div id="overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden"></div>
 
   <aside id="sidebar" class="w-72 bg-brand-950 text-white flex flex-col fixed lg:relative h-full z-40 safe-top shadow-2xl">
-    <div class="p-5 border-b border-white/10 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-gradient-to-br from-brand-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- ============ SIDEBAR HEADER WITH LOGO ============ -->
+    <div class="p-5 border-b border-white/10 flex justify-between items-center gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        
+        <!-- LOGO (Gradient + Scales of Justice) -->
+        <div class="sidebar-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v18M5 8h14M5 8l-3 8a3 3 0 0 0 6 0L5 8zM19 8l-3 8a3 3 0 0 0 6 0l-3-8z"/>
           </svg>
         </div>
-        <div>
-          <h1 class="text-base font-bold tracking-tight">Case Manager</h1>
-          <p class="text-[10px] text-brand-300 uppercase tracking-widest">Pro-2026</p>
+        
+        <!-- Title -->
+        <div class="min-w-0 flex-1">
+          <h1 class="text-base font-bold tracking-tight leading-tight truncate">Case Manager</h1>
+          <p class="text-[10px] text-brand-300 uppercase tracking-widest font-medium mt-0.5">Pro Edition</p>
         </div>
       </div>
-      <button onclick="toggleSidebar()" class="lg:hidden text-brand-300 p-2 hover:text-white">
+      
+      <!-- Close Button (Mobile) -->
+      <button onclick="toggleSidebar()" class="lg:hidden text-brand-300 p-2 hover:text-white flex-shrink-0">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
@@ -305,7 +347,7 @@ tailwind.config = {
           </button>
           <div class="min-w-0 flex-1">
             <h2 id="pageTitle" class="text-base md:text-xl font-bold tracking-tight truncate">ផ្ទាំងគ្រប់គ្រង</h2>
-            <p id="pageSubtitle" class="text-[11px] md:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">ទិដ្ឋភាពទូទៅនៃសំណុំរឿងក្ដីរបស់អ្នក</p>
+            <p id="pageSubtitle" class="text-[11px] md:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">ទិដ្ឋភាពទូទៅនៃរឿងក្ដីរបស់អ្នក</p>
           </div>
         </div>
         <button onclick="showPage('settings')" class="flex-shrink-0 max-w-[140px] md:max-w-[240px] px-3.5 md:px-5 py-2 rounded-full bg-gradient-to-r from-brand-50 to-purple-50 dark:from-brand-950 dark:to-purple-950 border border-brand-100 dark:border-brand-900/50 hover:shadow-md active:scale-95 transition-all duration-200">
@@ -446,7 +488,7 @@ tailwind.config = {
                   <th class="px-5 py-4 font-semibold">តុលាការមានសម្ថកិច្ច</th>
                   <th class="px-5 py-4 font-semibold">អតិថិជន</th>
                   <th class="px-5 py-4 font-semibold">ស្ថានភាព</th>
-                  <th class="px-5 py-4 font-semibold">ថ្ងៃកាលបរិច្ឆេទតុលាការ</th>
+                  <th class="px-5 py-4 font-semibold">ថ្ងៃកាលបរិតុលាការ</th>
                   <th class="px-5 py-4 font-semibold text-right">សកម្មភាព</th>
                 </tr>
               </thead>
@@ -479,7 +521,7 @@ tailwind.config = {
             <span class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
             </span>
-            <h3 class="font-bold">កាលវិភាគកាលបរិច្ឆេទតុលាការ</h3>
+            <h3 class="font-bold">កាលវិភាគថ្ងៃកាត់ក្ដី</h3>
           </div>
           <div id="calendarList" class="space-y-3"></div>
         </div>
@@ -501,7 +543,7 @@ tailwind.config = {
               <select id="docCaseSelect" onchange="renderDocs()" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl mb-3 text-sm outline-none"></select>
 
               <div id="docDropZone" ondragover="event.preventDefault(); this.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950')" ondragleave="this.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950')" ondrop="handleDocDrop(event)" onclick="document.getElementById('docFileInput').click()" class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-6 text-center cursor-pointer transition-all hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950 mb-3">
-                <div class="w-14 h-14 mx-auto mb-3 bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <div class="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #3563ff 0%, #1f42f5 50%, #8b5cf6 100%);">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 </div>
                 <p class="text-sm font-semibold mb-1">ចុច Upload</p>
@@ -752,8 +794,8 @@ tailwind.config = {
             <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
             <option value="រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ">រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
-            <option value="បណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
-            <option value="ស្រុះស្រួលគ្នា">សះជាគ្នា</option>
+            <option value="បណ្ដឹងបានដក">បណ្ដឹងបានដក</option>
+            <option value="ស្រុះស្រួលគ្នា">ស្រុះស្រួលគ្នា</option>
           </optgroup>
           <optgroup label="⚖️ នីតិវិធីព្រហ្មទណ្ឌ">
             <option value="ដាក់ពាក្យបណ្ដឹង">ដាក់ពាក្យបណ្ដឹង</option>
@@ -763,7 +805,7 @@ tailwind.config = {
             <option value="ដំណាក់កាលជំនុំជម្រះ">ដំណាក់កាលជំនុំជម្រះ</option>
             <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
-            <option value="បណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
+            <option value="បណ្ដឹងបានដក">បណ្ដឹងបានដក</option>
           </optgroup>
           <optgroup label="✅ បានបញ្ចប់">
             <option value="បានបញ្ចប់">បានបញ្ចប់</option>
@@ -992,7 +1034,7 @@ function statusInfo(status) {
   return { label: status || '—', cls: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400', dot: 'bg-slate-400' };
 }
 
-// ============ HEARING DAY HELPER (សំខាន់!) ============
+// ============ HEARING DAY HELPER ============
 function getHearingDayInfo(dateStr) {
   if (!dateStr) return null;
   const target = new Date(dateStr);
@@ -1002,48 +1044,18 @@ function getHearingDayInfo(dateStr) {
   const diff = Math.round((target - today) / 86400000);
   
   if (diff < 0) {
-    return {
-      label: 'ផុតថ្ងៃ',
-      days: diff,
-      badge: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold',
-      border: 'border-red-500',
-      isExpired: true
-    };
+    return { label: 'ផុតថ្ងៃ', days: diff, badge: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold', border: 'border-red-500', isExpired: true };
   }
   if (diff === 0) {
-    return {
-      label: 'ថ្ងៃនេះ',
-      days: 0,
-      badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400',
-      border: 'border-red-500',
-      isExpired: false
-    };
+    return { label: 'ថ្ងៃនេះ', days: 0, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-red-500', isExpired: false };
   }
   if (diff <= 3) {
-    return {
-      label: diff + ' ថ្ងៃ',
-      days: diff,
-      badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400',
-      border: 'border-brand-500',
-      isExpired: false
-    };
+    return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-brand-500', isExpired: false };
   }
   if (diff <= 7) {
-    return {
-      label: diff + ' ថ្ងៃ',
-      days: diff,
-      badge: 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400',
-      border: 'border-brand-500',
-      isExpired: false
-    };
+    return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400', border: 'border-brand-500', isExpired: false };
   }
-  return {
-    label: diff + ' ថ្ងៃ',
-    days: diff,
-    badge: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400',
-    border: 'border-brand-500',
-    isExpired: false
-  };
+  return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400', border: 'border-brand-500', isExpired: false };
 }
 
 // ============ INDEXEDDB ============
@@ -1713,23 +1725,13 @@ async function renderDocSelect() {
   
   if (!cases.length) {
     select.innerHTML = '<option value="">— មិនមានរឿងក្ដី —</option>';
-    document.getElementById('docsList').innerHTML = `
-      <div class="text-center py-12">
-        <div class="text-5xl mb-3 opacity-40">📁</div>
-        <p class="text-slate-400 text-sm">សូមបង្កើតរឿងក្ដីជាមុន</p>
-      </div>`;
+    document.getElementById('docsList').innerHTML = `<div class="text-center py-12"><div class="text-5xl mb-3 opacity-40">📁</div><p class="text-slate-400 text-sm">សូមបង្កើតរឿងក្ដីជាមុន</p></div>`;
     return;
   }
   
   const currentValue = select.value;
-  select.innerHTML = cases.map(c => 
-    `<option value="${c.id}">${c.caseNumber} - ${c.title}</option>`
-  ).join('');
-  
-  if (currentValue && cases.find(c => c.id == currentValue)) {
-    select.value = currentValue;
-  }
-  
+  select.innerHTML = cases.map(c => `<option value="${c.id}">${c.caseNumber} - ${c.title}</option>`).join('');
+  if (currentValue && cases.find(c => c.id == currentValue)) select.value = currentValue;
   await renderDocs();
 }
 
@@ -1742,47 +1744,33 @@ async function renderDocs() {
   const docSizeEl = document.getElementById('docTotalSize');
   
   if (!caseId) {
-    listEl.innerHTML = `<div class="text-center py-12">
-      <div class="text-5xl mb-3 opacity-40">📄</div>
-      <p class="text-slate-400 text-sm">សូមជ្រើសរឿងក្ដី</p>
-    </div>`;
+    listEl.innerHTML = `<div class="text-center py-12"><div class="text-5xl mb-3 opacity-40">📄</div><p class="text-slate-400 text-sm">សូមជ្រើសរឿងក្ដី</p></div>`;
     if (countEl) countEl.textContent = '';
     return;
   }
   
   try {
     let docs = await FileDB.getByCase(caseId);
-    
     if (docCountEl) docCountEl.textContent = docs.length;
     const totalSize = docs.reduce((sum, d) => sum + (d.size || 0), 0);
     if (docSizeEl) docSizeEl.textContent = formatFileSize(totalSize);
     
     if (typeFilter) docs = docs.filter(d => d.category === typeFilter);
     docs.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
-    
     if (countEl) countEl.textContent = docs.length ? `${docs.length} ឯកសារ` : '';
     
     if (!docs.length) {
-      listEl.innerHTML = `
-        <div class="text-center py-12">
-          <div class="text-5xl mb-3 opacity-40">📄</div>
-          <p class="text-slate-400 text-sm">មិនមានឯកសារ${typeFilter ? ' តាមប្រភេទនេះ' : ''}</p>
-          <p class="text-xs text-slate-400 mt-1">សូម Upload ឯកសារ</p>
-        </div>`;
+      listEl.innerHTML = `<div class="text-center py-12"><div class="text-5xl mb-3 opacity-40">📄</div><p class="text-slate-400 text-sm">មិនមានឯកសារ${typeFilter ? ' តាមប្រភេទនេះ' : ''}</p><p class="text-xs text-slate-400 mt-1">សូម Upload ឯកសារ</p></div>`;
       return;
     }
     
     listEl.innerHTML = docs.map(d => {
       const icon = getFileIcon(d.category);
       const isImage = d.category === 'image';
-      
       return `
         <div class="group flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 overflow-hidden ${isImage ? '' : `bg-${icon.color}-50 dark:bg-${icon.color}-950`}">
-            ${isImage 
-              ? `<img src="${d.data}" alt="${d.name}" class="w-full h-full object-cover cursor-pointer" onclick="previewDoc(${d.id})">`
-              : `<span class="text-2xl">${icon.emoji}</span>`
-            }
+            ${isImage ? `<img src="${d.data}" alt="${d.name}" class="w-full h-full object-cover cursor-pointer" onclick="previewDoc(${d.id})">` : `<span class="text-2xl">${icon.emoji}</span>`}
           </div>
           <div class="flex-1 min-w-0">
             <p class="font-medium text-sm truncate" title="${d.name}">${d.name}</p>
@@ -1833,7 +1821,6 @@ async function uploadFiles(files) {
   
   const MAX_SIZE = 50 * 1024 * 1024;
   let uploaded = 0, skipped = 0;
-  
   toast(`📤 កំពុង Upload ${files.length} ឯកសារ...`);
   
   for (const file of files) {
@@ -1842,7 +1829,6 @@ async function uploadFiles(files) {
       skipped++;
       continue;
     }
-    
     try {
       const base64 = await fileToBase64(file);
       const docData = {
@@ -1862,7 +1848,6 @@ async function uploadFiles(files) {
       skipped++;
     }
   }
-  
   if (uploaded > 0) {
     toast(`✅ Upload ${uploaded} ឯកសារ${skipped ? ` (${skipped} បរាជ័យ)` : ''}`);
     renderDocs();
@@ -1885,17 +1870,8 @@ async function previewDoc(id) {
   try {
     const doc = await FileDB.get(id);
     if (!doc) return toast('❌ រកមិនឃើញឯកសារ');
-    
-    if (doc.category === 'image') {
-      showImagePreview(doc);
-      return;
-    }
-    
-    if (doc.category === 'pdf') {
-      showPdfViewer(doc);
-      return;
-    }
-    
+    if (doc.category === 'image') { showImagePreview(doc); return; }
+    if (doc.category === 'pdf') { showPdfViewer(doc); return; }
     downloadDoc(id);
     toast('ℹ️ ឯកសារត្រូវបាន Download ដើម្បីបើក');
   } catch (err) {
@@ -1921,28 +1897,23 @@ async function showPdfViewer(doc) {
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
     </div>
-    
     <div class="flex-shrink-0 bg-slate-800 text-white px-3 py-2 flex items-center justify-between text-sm">
       <button onclick="pdfPrevPage()" id="pdfPrevBtn" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 font-medium flex items-center gap-1">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
         មុន
       </button>
-      <div class="flex items-center gap-2">
-        <span id="pdfPageInfo" class="text-xs">កំពុងផ្ទុក...</span>
-      </div>
+      <div class="flex items-center gap-2"><span id="pdfPageInfo" class="text-xs">កំពុងផ្ទុក...</span></div>
       <button onclick="pdfNextPage()" id="pdfNextBtn" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 font-medium flex items-center gap-1">
         បន្ទាប់
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
       </button>
     </div>
-    
     <div id="pdfCanvasContainer" class="flex-1 overflow-auto bg-slate-700 p-2" style="display:flex;align-items:flex-start;justify-content:center;">
       <div class="pdf-loading text-white">
         <div class="spinner" style="width:40px;height:40px;border-width:4px"></div>
         <p class="mt-3 text-sm">កំពុងផ្ទុក PDF...</p>
       </div>
     </div>
-    
     <div class="flex-shrink-0 bg-slate-800 text-white px-3 py-2 flex items-center justify-center gap-2 safe-bottom">
       <button onclick="pdfZoom(-0.25)" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
@@ -1964,7 +1935,6 @@ async function showPdfViewer(doc) {
     
     const loadingTask = pdfjsLib.getDocument({ data: pdfArray });
     const pdf = await loadingTask.promise;
-    
     currentPdfDoc = { pdf: pdf, pageNum: 1, scale: 1, doc: doc, modal: modal };
     await renderPdfPage();
   } catch (err) {
@@ -1983,7 +1953,6 @@ async function showPdfViewer(doc) {
 async function renderPdfPage() {
   if (!currentPdfDoc) return;
   const { pdf, pageNum, scale } = currentPdfDoc;
-  
   const page = await pdf.getPage(pageNum);
   const viewport = page.getViewport({ scale: scale * 1.5 });
   
@@ -2031,9 +2000,7 @@ async function pdfZoom(delta) {
 
 function closePdfViewer(btn) {
   const modal = btn.closest('.fixed');
-  if (currentPdfDoc?.pdf) {
-    try { currentPdfDoc.pdf.destroy(); } catch(e) {}
-  }
+  if (currentPdfDoc?.pdf) { try { currentPdfDoc.pdf.destroy(); } catch(e) {} }
   currentPdfDoc = null;
   if (modal) modal.remove();
   document.body.style.overflow = '';
@@ -2175,7 +2142,6 @@ async function exportData() {
   try {
     toast('📦 កំពុងបង្កើត Backup...');
     const files = await FileDB.getAll();
-    
     const data = {
       version: '2.0',
       appName: 'Case Manager Professional',
@@ -2187,14 +2153,11 @@ async function exportData() {
         documents: files
       }
     };
-    
     const json = JSON.stringify(data);
     const sizeMB = (json.length / 1024 / 1024).toFixed(2);
-    
     if (sizeMB > 100) {
       if (!confirm(`⚠️ Backup ធំ ${sizeMB} MB!\n\nតើអ្នកចង់បន្តទេ?`)) return;
     }
-    
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const now = new Date();
@@ -2207,7 +2170,6 @@ async function exportData() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
     toast(`✅ បានទាញយក Backup (${sizeMB} MB)`);
   } catch (err) {
     console.error(err);
@@ -2429,7 +2391,6 @@ async function initApp() {
 window.addEventListener('DOMContentLoaded', async () => {
   initTheme();
   const auth = DB.get('auth', null);
-  
   if (!auth) {
     document.getElementById('setupScreen').classList.remove('hidden');
   } else if (checkSession()) {
