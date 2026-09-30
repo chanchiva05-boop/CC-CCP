@@ -1,1 +1,2791 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#3563ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Case Manager">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Case Manager">
+<meta name="description" content="ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដីសម្រាប់មេធាវី">
 
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>⚖️ ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដី</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: { khmer: ['"Kantumruy Pro"', 'sans-serif'] },
+      colors: {
+        brand: {
+          50: '#eef4ff', 100: '#d9e5ff', 200: '#bcd1ff', 300: '#8eb4ff',
+          400: '#598cff', 500: '#3563ff', 600: '#1f42f5', 700: '#1830d8',
+          800: '#1a2aae', 900: '#1c2b89', 950: '#141a4f'
+        }
+      },
+      boxShadow: { 'card': '0 1px 3px rgba(0,0,0,0.04), 0 4px 16px -4px rgba(0,0,0,0.06)' },
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease',
+        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        'pulse-soft': 'pulseSoft 2s ease-in-out infinite'
+      },
+      keyframes: {
+        fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+        slideUp: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+        pulseSoft: { '0%,100%': { opacity: 1 }, '50%': { opacity: 0.6 } }
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Kantumruy Pro', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; overscroll-behavior-y: contain; -webkit-font-smoothing: antialiased; }
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .dark ::-webkit-scrollbar-thumb { background: #475569; }
+  
+  .glass { background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); }
+  .dark .glass { background: rgba(15, 23, 42, 0.72); }
+  
+  @media (max-width: 1023px) {
+    #sidebar { transform: translateX(-100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+    #sidebar.open { transform: translateX(0); }
+  }
+  @media (max-width: 767px) {
+    .desktop-table { display: none !important; }
+    .mobile-cards { display: block !important; }
+  }
+  @media (min-width: 768px) {
+    .desktop-table { display: block !important; }
+    .mobile-cards { display: none !important; }
+  }
+  @media (max-width: 640px) {
+    .modal-content { border-radius: 24px 24px 0 0 !important; max-height: 92vh; margin-top: auto; }
+    .modal-wrap { align-items: flex-end; }
+  }
+  button, a, select, input, textarea { min-height: 44px; }
+  
+  .sidebar-link { position: relative; transition: all 0.2s ease; }
+  .sidebar-link.active {
+    background: linear-gradient(135deg, rgba(53, 99, 255, 0.9), rgba(31, 66, 245, 0.9));
+    color: white;
+    box-shadow: 0 8px 24px -8px rgba(53, 99, 255, 0.6);
+  }
+  .sidebar-link.active::before {
+    content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 60%; background: white; border-radius: 0 3px 3px 0;
+  }
+  .sidebar-link:not(.active):hover { background: rgba(255, 255, 255, 0.08); }
+  
+  .card-hover { transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -8px rgba(0,0,0,0.12); }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #3563ff, #1f42f5);
+    box-shadow: 0 4px 16px -4px rgba(53, 99, 255, 0.5);
+    transition: all 0.2s ease;
+  }
+  .btn-primary:hover { box-shadow: 0 6px 20px -4px rgba(53, 99, 255, 0.7); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0) scale(0.98); }
+  
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .empty-icon { font-size: 48px; opacity: 0.4; margin-bottom: 8px; }
+  .stat-card { position: relative; overflow: hidden; }
+  
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px;
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+  }
+  select optgroup { font-weight: 700; font-size: 13px; color: #3563ff; background: #f1f5f9; padding: 4px 0; }
+  .dark select optgroup { color: #8eb4ff; background: #1e293b; }
+  select option { padding: 8px; font-size: 14px; color: #0f172a; }
+  .dark select option { background: #0f172a; color: #e2e8f0; }
+  
+  .spinner { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  
+  #pageTitle, #pageSubtitle { line-height: 1.3; word-break: break-word; }
+  #headerName { font-family: 'Kantumruy Pro', 'Inter', sans-serif; letter-spacing: -0.01em; }
+  
+  @media (max-width: 400px) {
+    #pageTitle { font-size: 15px !important; }
+    #pageSubtitle { font-size: 10.5px !important; }
+  }
+  
+  @keyframes backupPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    50% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+  }
+  .backup-reminder-pulse { animation: backupPulse 2s infinite; }
+</style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+
+<!-- ============ SETUP SCREEN ============ -->
+<div id="setupScreen" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 safe-top safe-bottom overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-brand-950 via-brand-900 to-brand-800"></div>
+  <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at 20% 30%, rgba(139,92,246,0.4), transparent 40%), radial-gradient(circle at 80% 70%, rgba(53,99,255,0.5), transparent 40%);"></div>
+  <div class="absolute top-10 left-10 w-72 h-72 bg-brand-500/30 rounded-full blur-3xl animate-pulse-soft"></div>
+  <div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-soft" style="animation-delay: 1s;"></div>
+
+  <div class="relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 animate-slide-up max-h-[95vh] overflow-y-auto">
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl shadow-lg shadow-brand-500/30 mb-4">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18M5 8h14M5 8l-3 8a3 3 0 0 0 6 0L5 8zM19 8l-3 8a3 3 0 0 0 6 0l-3-8z"/>
+        </svg>
+      </div>
+      <h1 class="text-xl font-bold text-slate-900 dark:text-white">សូមស្វាគមន៍</h1>
+      <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">សូមបង្កើតគណនីដើម្បីចាប់ផ្ដើមប្រើប្រាស់</p>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">ឈ្មោះពេញ <span class="text-red-500">*</span></label>
+        <div class="relative">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input id="setupName" type="text" placeholder="ឧ. លោក សុខ វិបុល" class="w-full pl-11 pr-4 py-3 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">លេខសម្ងាត់ <span class="text-red-500">*</span></label>
+        <div class="relative">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input id="setupPass" type="password" placeholder="បញ្ចូលលេខសម្ងាត់" class="w-full pl-11 pr-12 py-3 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+          <button type="button" onclick="togglePass('setupPass', this)" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400" tabindex="-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">បញ្ជាក់លេខសម្ងាត់ <span class="text-red-500">*</span></label>
+        <div class="relative">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input id="setupPass2" type="password" placeholder="បញ្ចូលម្ដងទៀត" onkeypress="if(event.key==='Enter') handleSetup()" class="w-full pl-11 pr-12 py-3 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+          <button type="button" onclick="togglePass('setupPass2', this)" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400" tabindex="-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="setupError" class="hidden text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 p-3 rounded-xl"></div>
+      <button onclick="handleSetup()" class="btn-primary w-full text-white py-3.5 rounded-xl font-semibold text-base">ចាប់ផ្ដើមប្រើប្រាស់ →</button>
+      <p class="text-xs text-slate-500 dark:text-slate-400 text-center leading-relaxed">🔒 ព័ត៌មានរបស់អ្នកត្រូវបានរក្សាទុកក្នុងឧបករណ៍នេះតែប៉ុណ្ណោះ</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 safe-top safe-bottom overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-brand-950 via-brand-900 to-brand-800"></div>
+  <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at 20% 30%, rgba(139,92,246,0.4), transparent 40%), radial-gradient(circle at 80% 70%, rgba(53,99,255,0.5), transparent 40%);"></div>
+  <div class="absolute top-10 left-10 w-72 h-72 bg-brand-500/30 rounded-full blur-3xl animate-pulse-soft"></div>
+  <div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-soft" style="animation-delay: 1s;"></div>
+
+  <div class="relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 animate-slide-up">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl shadow-lg shadow-brand-500/30 mb-4">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18M5 8h14M5 8l-3 8a3 3 0 0 0 6 0L5 8zM19 8l-3 8a3 3 0 0 0 6 0l-3-8z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដី</h1>
+      <p id="loginGreeting" class="text-slate-500 dark:text-slate-400 text-sm mt-1">សូមបញ្ចូលលេខសម្ងាត់ដើម្បីបន្ត</p>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">លេខសម្ងាត់</label>
+        <div class="relative">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input id="loginPass" type="password" onkeypress="if(event.key==='Enter') login()" class="w-full pl-11 pr-12 py-3 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+          <button type="button" onclick="togglePass('loginPass', this)" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400" tabindex="-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input id="rememberMe" type="checkbox" class="w-4 h-4 rounded">
+        <span class="text-sm text-slate-600 dark:text-slate-400">ចងចាំខ្ញុំ</span>
+      </label>
+      <div id="loginError" class="hidden text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 p-3 rounded-xl"></div>
+      <button id="loginBtn" onclick="login()" class="btn-primary w-full text-white py-3.5 rounded-xl font-semibold text-base flex items-center justify-center gap-2">
+        <span id="loginBtnText">ចូលប្រើប្រាស់ →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hidden flex h-screen overflow-hidden">
+  <div id="overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden"></div>
+
+  <aside id="sidebar" class="w-72 bg-brand-950 text-white flex flex-col fixed lg:relative h-full z-40 safe-top shadow-2xl">
+    <div class="p-5 border-b border-white/10 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-brand-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v18M5 8h14M5 8l-3 8a3 3 0 0 0 6 0L5 8zM19 8l-3 8a3 3 0 0 0 6 0l-3-8z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-bold tracking-tight">Case Manager</h1>
+          <p class="text-[10px] text-brand-300 uppercase tracking-widest">Professional</p>
+        </div>
+      </div>
+      <button onclick="toggleSidebar()" class="lg:hidden text-brand-300 p-2 hover:text-white">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="flex-1 p-3 space-y-1 overflow-y-auto no-scrollbar">
+      <p class="px-4 pt-3 pb-1 text-[10px] uppercase tracking-widest text-brand-400 font-semibold">ម៉ឺនុយមេ</p>
+      <a href="#" onclick="showPage('dashboard'); closeSidebarOnMobile()" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-brand-100" data-page="dashboard">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span class="font-medium">ផ្ទាំងគ្រប់គ្រង</span>
+      </a>
+      <a href="#" onclick="showPage('cases'); closeSidebarOnMobile()" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-brand-100" data-page="cases">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+        <span class="font-medium">សំណុំរឿងក្ដី</span>
+      </a>
+      <a href="#" onclick="showPage('clients'); closeSidebarOnMobile()" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-brand-100" data-page="clients">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="font-medium">អតិថិជន</span>
+      </a>
+      <a href="#" onclick="showPage('calendar'); closeSidebarOnMobile()" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-brand-100" data-page="calendar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="font-medium">កាលវិភាគ</span>
+      </a>
+      <a href="#" onclick="showPage('documents'); closeSidebarOnMobile()" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-brand-100" data-page="documents">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+        <span class="font-medium">ឯកសារ</span>
+      </a>
+      <p class="px-4 pt-5 pb-1 text-[10px] uppercase tracking-widest text-brand-400 font-semibold">ប្រព័ន្ធ</p>
+      <a href="#" onclick="showPage('settings'); closeSidebarOnMobile()" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-brand-100" data-page="settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span class="font-medium">ការកំណត់</span>
+      </a>
+    </nav>
+
+    <div class="p-4 border-t border-white/10 safe-bottom space-y-2">
+      <button onclick="installApp()" id="installBtn" class="hidden w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl text-sm font-semibold shadow-lg">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        📲 ដំឡើង App
+      </button>
+      <button onclick="showStorageStatus()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-brand-200 hover:bg-white/5 hover:text-white transition-colors text-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
+        <span id="storageStatusText">Storage</span>
+      </button>
+      <button onclick="toggleDark()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-brand-200 hover:bg-white/5 hover:text-white transition-colors text-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span id="themeLabel">ផ្ទាំងងងឹត</span>
+      </button>
+      <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-brand-200 hover:bg-white/5 hover:text-red-400 transition-colors text-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        ចាកចេញ
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 overflow-y-auto scroll-smooth bg-slate-50 dark:bg-slate-950 flex flex-col min-w-0">
+    <header class="glass sticky top-0 z-20 border-b border-slate-200/60 dark:border-slate-800/60 safe-top flex-shrink-0">
+      <div class="px-3 md:px-6 py-2.5 md:py-3 flex justify-between items-center gap-3">
+        <div class="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+          <button onclick="toggleSidebar()" class="lg:hidden w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+          <div class="min-w-0 flex-1">
+            <h2 id="pageTitle" class="text-base md:text-xl font-bold tracking-tight truncate">ផ្ទាំងគ្រប់គ្រង</h2>
+            <p id="pageSubtitle" class="text-[11px] md:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">ទិដ្ឋភាពទូទៅនៃរឿងក្ដីរបស់អ្នក</p>
+          </div>
+        </div>
+        <button onclick="showPage('settings')" class="flex-shrink-0 max-w-[140px] md:max-w-[240px] px-3.5 md:px-5 py-2 rounded-full bg-gradient-to-r from-brand-50 to-purple-50 dark:from-brand-950 dark:to-purple-950 border border-brand-100 dark:border-brand-900/50 hover:shadow-md active:scale-95 transition-all duration-200">
+          <span id="headerName" class="block text-xs md:text-sm font-semibold bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent truncate">Admin</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="p-4 md:p-6 pb-24 flex-1">
+
+      <!-- DASHBOARD -->
+      <section id="page-dashboard" class="page animate-fade-in">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+          <div class="stat-card bg-white dark:bg-slate-900 p-4 md:p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 card-hover">
+            <div class="w-10 h-10 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center mb-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-xs font-medium">សំណុំរឿងក្ដីសរុប</p>
+            <p id="statTotal" class="text-2xl md:text-3xl font-bold mt-1 tracking-tight">0</p>
+          </div>
+          <div class="stat-card bg-white dark:bg-slate-900 p-4 md:p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 card-hover">
+            <div class="w-10 h-10 bg-green-50 dark:bg-green-950 rounded-xl flex items-center justify-center mb-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-xs font-medium">កំពុងដំណើរការ</p>
+            <p id="statActive" class="text-2xl md:text-3xl font-bold mt-1 tracking-tight">0</p>
+          </div>
+          <div class="stat-card bg-white dark:bg-slate-900 p-4 md:p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 card-hover">
+            <div class="w-10 h-10 bg-amber-50 dark:bg-amber-950 rounded-xl flex items-center justify-center mb-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-xs font-medium">រង់ចាំ</p>
+            <p id="statPending" class="text-2xl md:text-3xl font-bold mt-1 tracking-tight">0</p>
+          </div>
+          <div class="stat-card bg-white dark:bg-slate-900 p-4 md:p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 card-hover">
+            <div class="w-10 h-10 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center mb-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-xs font-medium">បានបញ្ចប់</p>
+            <p id="statClosed" class="text-2xl md:text-3xl font-bold mt-1 tracking-tight">0</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-5">
+          <div class="lg:col-span-3 bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold flex items-center gap-2">
+                <span class="w-8 h-8 bg-brand-50 dark:bg-brand-950 rounded-lg flex items-center justify-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                </span>
+                កាលបរិច្ឆេទតុលាការខាងមុខ
+              </h3>
+              <button onclick="showPage('calendar')" class="text-xs text-brand-600 hover:text-brand-700 font-medium">មើលទាំងអស់ →</button>
+            </div>
+            <div id="upcomingHearings" class="space-y-2"></div>
+          </div>
+          <div class="lg:col-span-2 bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
+            <h3 class="font-bold mb-4 flex items-center gap-2">
+              <span class="w-8 h-8 bg-purple-50 dark:bg-purple-950 rounded-lg flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+              </span>
+              ស្ថិតិ
+            </h3>
+            <div class="max-w-xs mx-auto"><canvas id="statusChart"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CASES -->
+      <section id="page-cases" class="page hidden animate-fade-in">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
+          <div class="relative sm:col-span-2 lg:col-span-2">
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input id="caseSearch" oninput="renderCases()" placeholder="ស្វែងរករឿងក្ដី..." class="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-base">
+          </div>
+          <div class="relative">
+            <select id="caseFilterCourt" onchange="renderCases()" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-sm">
+              <option value="">🏛️ តុលាការទាំងអស់</option>
+              <optgroup label="សាលាដំបូង">
+                <option value="សាលាដំបូងរាជធានីភ្នំពេញ">ភ្នំពេញ</option>
+                <option value="សាលាដំបូងខេត្តកណ្ដាល">កណ្ដាល</option>
+                <option value="សាលាដំបូងខេត្តតាកែវ">តាកែវ</option>
+                <option value="សាលាដំបូងខេត្តកែប">កែប</option>
+                <option value="សាលាដំបូងខេត្តកំពង់ស្ពឺ">កំពង់ស្ពឺ</option>
+                <option value="សាលាដំបូងខេត្តព្រះសីហនុ">ព្រះសីហនុ</option>
+                <option value="សាលាដំបូងខេត្តកំពត">កំពត</option>
+                <option value="សាលាដំបូងខេត្តកំពង់ឆ្នាំង">កំពង់ឆ្នាំង</option>
+                <option value="សាលាដំបូងខេត្តពោធិ៍សាត់">ពោធិ៍សាត់</option>
+                <option value="សាលាដំបូងខេត្តបាត់ដំបង">បាត់ដំបង</option>
+                <option value="សាលាដំបូងខេត្តប៉ៃលិន">ប៉ៃលិន</option>
+                <option value="សាលាដំបូងខេត្តបន្ទាយមានជ័យ">បន្ទាយមានជ័យ</option>
+                <option value="សាលាដំបូងខេត្តសៀមរាប">សៀមរាប</option>
+                <option value="សាលាដំបូងខេត្តកំពង់ធំ">កំពង់ធំ</option>
+                <option value="សាលាដំបូងខេត្តកំពង់ចាម">កំពង់ចាម</option>
+                <option value="សាលាដំបូងខេត្តត្បូងឃ្មុំ">ត្បូងឃ្មុំ</option>
+                <option value="សាលាដំបូងខេត្តក្រចេះ">ក្រចេះ</option>
+                <option value="សាលាដំបូងខេត្តព្រៃវែង">ព្រៃវែង</option>
+                <option value="សាលាដំបូងខេត្តស្វាយរៀង">ស្វាយរៀង</option>
+                <option value="សាលាដំបូងខេត្តកោះកុង">កោះកុង</option>
+                <option value="សាលាដំបូងខេត្តព្រះវិហារ">ព្រះវិហារ</option>
+                <option value="សាលាដំបូងខេត្តស្ទឹងត្រែង">ស្ទឹងត្រែង</option>
+                <option value="សាលាដំបូងខេត្តរតនគិរី">រតនគិរី</option>
+                <option value="សាលាដំបូងខេត្តមណ្ឌលគិរី">មណ្ឌលគិរី</option>
+                <option value="សាលាដំបូងខេត្តឧត្តរមានជ័យ">ឧត្តរមានជ័យ</option>
+              </optgroup>
+              <optgroup label="សាលាឧទ្ធរណ៍">
+                <option value="សាលាឧទ្ធរណ៍ភ្នំពេញ">ភ្នំពេញ</option>
+                <option value="សាលាឧទ្ធរណ៍បាត់ដំបង">បាត់ដំបង</option>
+                <option value="សាលាឧទ្ធរណ៍ព្រះសីហនុ">ព្រះសីហនុ</option>
+                <option value="សាលាឧទ្ធរណ៍ត្បូងឃ្មុំ">ត្បូងឃ្មុំ</option>
+              </optgroup>
+              <optgroup label="តុលាការកំពូល">
+                <option value="តុលាការកំពូលភ្នំពេញ">តុលាការកំពូលភ្នំពេញ</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="relative">
+            <select id="caseFilterStatus" onchange="renderCases()" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-sm">
+              <option value="">⚖️ ស្ថានភាពទាំងអស់</option>
+              <option value="active">កំពុងដំណើរការ</option>
+              <option value="pending">រង់ចាំ</option>
+              <option value="closed">បានបញ្ចប់</option>
+            </select>
+          </div>
+          <button onclick="openCaseModal()" class="btn-primary text-white px-5 py-3 rounded-xl font-medium flex items-center justify-center gap-2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            បន្ថែម
+          </button>
+        </div>
+
+        <div class="desktop-table bg-white dark:bg-slate-900 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                  <th class="px-5 py-4 font-semibold">លេខសំណុំរឿងក្ដី</th>
+                  <th class="px-5 py-4 font-semibold">ចំណងជើង</th>
+                  <th class="px-5 py-4 font-semibold">តុលាការមានសម្ថកិច្ច</th>
+                  <th class="px-5 py-4 font-semibold">អតិថិជន</th>
+                  <th class="px-5 py-4 font-semibold">ស្ថានភាព</th>
+                  <th class="px-5 py-4 font-semibold">ថ្ងៃកាលបរិតុលាការ</th>
+                  <th class="px-5 py-4 font-semibold text-right">សកម្មភាព</th>
+                </tr>
+              </thead>
+              <tbody id="casesTable"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="casesCards" class="mobile-cards space-y-3"></div>
+      </section>
+
+      <!-- CLIENTS -->
+      <section id="page-clients" class="page hidden animate-fade-in">
+        <div class="flex justify-between items-center mb-5 gap-3">
+          <div>
+            <h3 class="font-bold text-base">បញ្ជីអតិថិជន</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">គ្រប់គ្រងព័ត៌មានអតិថិជន</p>
+          </div>
+          <button onclick="openClientModal()" class="btn-primary text-white px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 text-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            បន្ថែម
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="clientsGrid"></div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section id="page-calendar" class="page hidden animate-fade-in">
+        <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-2 mb-5">
+            <span class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            </span>
+            <h3 class="font-bold">កាលវិភាគថ្ងៃកាត់ក្ដី</h3>
+          </div>
+          <div id="calendarList" class="space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- DOCUMENTS -->
+      <section id="page-documents" class="page hidden animate-fade-in">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
+          <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 lg:sticky lg:top-24">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                </span>
+                <h3 class="font-bold">ឯកសាររឿងក្ដី</h3>
+              </div>
+
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ជ្រើសរឿងក្ដី</label>
+              <select id="docCaseSelect" onchange="renderDocs()" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl mb-3 text-sm outline-none"></select>
+
+              <div id="docDropZone" ondragover="event.preventDefault(); this.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950')" ondragleave="this.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950')" ondrop="handleDocDrop(event)" onclick="document.getElementById('docFileInput').click()" class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-6 text-center cursor-pointer transition-all hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950 mb-3">
+                <div class="w-14 h-14 mx-auto mb-3 bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <p class="text-sm font-semibold mb-1">ចុច Upload</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">ឬ Drag & Drop នៅទីនេះ</p>
+                <p class="text-[10px] text-slate-400 mt-2">PDF • Word • Excel • Image</p>
+                <p class="text-[10px] text-slate-400">អតិបរមា 50MB</p>
+                <input type="file" id="docFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.txt,.pptx,.ppt" onchange="handleDocUpload(event)" class="hidden" multiple>
+              </div>
+
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ប្រភេទឯកសារ</label>
+              <select id="docFilterType" onchange="renderDocs()" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl text-sm outline-none">
+                <option value="">📁 ទាំងអស់</option>
+                <option value="pdf">📕 PDF</option>
+                <option value="word">📘 Word</option>
+                <option value="excel">📗 Excel</option>
+                <option value="image">🖼️ រូបភាព</option>
+                <option value="other">📄 ផ្សេងៗ</option>
+              </select>
+
+              <div class="mt-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                <div class="flex justify-between text-xs">
+                  <span class="text-slate-600 dark:text-slate-400">📄 ចំនួនឯកសារ:</span>
+                  <span id="docCount" class="font-semibold">0</span>
+                </div>
+                <div class="flex justify-between text-xs mt-1">
+                  <span class="text-slate-600 dark:text-slate-400">💾 ទំហំសរុប:</span>
+                  <span id="docTotalSize" class="font-semibold">0 KB</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-2">
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-base">បញ្ជីឯកសារ</h3>
+                <span id="docsListCount" class="text-xs text-slate-500 dark:text-slate-400"></span>
+              </div>
+              <div id="docsList" class="space-y-2"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="page-settings" class="page hidden animate-fade-in">
+        <!-- Storage Status -->
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 p-5 rounded-2xl shadow-card border border-blue-200 dark:border-blue-900 mb-5">
+          <div class="flex items-start gap-3 mb-4">
+            <div class="w-11 h-11 bg-blue-100 dark:bg-blue-950 rounded-xl flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-blue-800 dark:text-blue-400">ស្ថានភាព Storage</h3>
+              <p id="storageStatusMsg" class="text-xs text-blue-600 dark:text-blue-500 mt-0.5">កំពុងពិនិត្យ...</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-3 bg-white/60 dark:bg-slate-900/60 rounded-lg">
+              <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-1">ការប្រើប្រាស់</p>
+              <p id="storageUsage" class="text-sm font-bold">-</p>
+            </div>
+            <div class="p-3 bg-white/60 dark:bg-slate-900/60 rounded-lg">
+              <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-1">ទំហំសរុប</p>
+              <p id="storageQuota" class="text-sm font-bold">-</p>
+            </div>
+          </div>
+          <button onclick="requestPersistentStorage(true)" class="mt-3 w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-medium">
+            🛡️ ស្នើសុំ Persistent Storage
+          </button>
+        </div>
+
+        <!-- Auto Backup -->
+        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 p-5 rounded-2xl shadow-card border border-emerald-200 dark:border-emerald-900 mb-5">
+          <div class="flex items-start gap-3 mb-4">
+            <div class="w-11 h-11 bg-emerald-100 dark:bg-emerald-950 rounded-xl flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-emerald-800 dark:text-emerald-400">Auto Backup</h3>
+              <p class="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">រក្សាទុកស្វ័យប្រវត្តិក្នុង App រាល់ថ្ងៃ</p>
+            </div>
+            <label class="cursor-pointer flex-shrink-0">
+              <input type="checkbox" id="autoBackupToggle" onchange="toggleAutoBackup(this.checked)" checked class="peer hidden">
+              <div class="w-12 h-7 bg-slate-200 dark:bg-slate-700 rounded-full peer-checked:bg-emerald-500 transition-all relative">
+                <div class="w-5 h-5 bg-white rounded-full absolute top-1 left-1 peer-checked:translate-x-5 transition-all"></div>
+              </div>
+            </label>
+          </div>
+          
+          <p class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">📁 Auto Backups ចុងក្រោយ:</p>
+          <div id="autoBackupList" class="space-y-2 text-sm">
+            <div class="text-center py-4 text-xs text-slate-500 dark:text-slate-400">កំពុងផ្ទុក...</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 mb-5">
+          <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
+            <div class="flex items-start gap-3 mb-4">
+              <div class="w-11 h-11 bg-green-50 dark:bg-green-950 rounded-xl flex items-center justify-center shrink-0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              </div>
+              <div>
+                <h3 class="font-bold">Backup ទិន្នន័យ</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">ទាញយកទិន្នន័យទាំងអស់ជា File JSON</p>
+              </div>
+            </div>
+            <div class="space-y-2 mb-4 text-sm">
+              <div class="flex justify-between p-2.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                <span class="text-slate-600 dark:text-slate-400">📁 រឿងក្ដី</span>
+                <span id="backupCaseCount" class="font-semibold">0</span>
+              </div>
+              <div class="flex justify-between p-2.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                <span class="text-slate-600 dark:text-slate-400">👥 អតិថិជន</span>
+                <span id="backupClientCount" class="font-semibold">0</span>
+              </div>
+              <div class="flex justify-between p-2.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                <span class="text-slate-600 dark:text-slate-400">📄 ឯកសារ</span>
+                <span id="backupDocCount" class="font-semibold">0</span>
+              </div>
+            </div>
+            <button onclick="exportData()" class="btn-primary w-full text-white py-3 rounded-xl font-medium flex items-center justify-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              ទាញយក Backup
+            </button>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
+            <div class="flex items-start gap-3 mb-4">
+              <div class="w-11 h-11 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center shrink-0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              </div>
+              <div>
+                <h3 class="font-bold">ដាក់បញ្ចូលទិន្នន័យ</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Upload File JSON ដែលធ្លាប់ Backup</p>
+              </div>
+            </div>
+            <div id="dropZone" ondragover="event.preventDefault(); this.classList.add('border-brand-500', 'bg-brand-50')" ondragleave="this.classList.remove('border-brand-500', 'bg-brand-50')" ondrop="handleDrop(event)" onclick="document.getElementById('importFile').click()" class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-6 text-center cursor-pointer transition-all hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950 mb-4">
+              <svg class="mx-auto mb-2 text-slate-400" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              <p class="text-sm font-medium">ចុចដើម្បីជ្រើស File</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">ឬ Drag & Drop នៅទីនេះ</p>
+              <input type="file" id="importFile" accept=".json" onchange="handleImport(event)" class="hidden">
+            </div>
+            <div class="mb-4">
+              <p class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">របៀបដាក់បញ្ចូល</p>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="cursor-pointer">
+                  <input type="radio" name="importMode" value="merge" checked class="peer hidden">
+                  <div class="p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-brand-500 peer-checked:bg-brand-50 dark:peer-checked:bg-brand-950 transition-all text-center">
+                    <p class="text-sm font-semibold">🔗 បញ្ចូលបន្ថែម</p>
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="importMode" value="replace" class="peer hidden">
+                  <div class="p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-red-500 peer-checked:bg-red-50 dark:peer-checked:bg-red-950 transition-all text-center">
+                    <p class="text-sm font-semibold">♻️ ជំនួសទាំងអស់</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div id="importPreview" class="hidden p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl mb-4 text-xs space-y-1"></div>
+            <button id="confirmImportBtn" onclick="confirmImport()" disabled class="w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed">ដាក់បញ្ចូល</button>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 mb-5">
+          <div class="flex items-start gap-3 mb-4">
+            <div class="w-11 h-11 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold">គណនីរបស់អ្នក</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">គ្រប់គ្រងព័ត៌មានគណនី</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-3 text-sm mb-3">
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">ឈ្មោះពេញ</p>
+              <p id="settingsName" class="font-semibold">-</p>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <button onclick="openPasswordModal()" class="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl text-sm font-medium">🔐 ផ្លាស់ប្ដូរលេខសម្ងាត់</button>
+            <button onclick="openNameModal()" class="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl text-sm font-medium">✏️ កែឈ្មោះ</button>
+          </div>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-950/30 p-5 rounded-2xl border border-red-200 dark:border-red-900">
+          <div class="flex items-start gap-3">
+            <div class="w-11 h-11 bg-red-100 dark:bg-red-950 rounded-xl flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-red-700 dark:text-red-400">តំបន់គ្រោះថ្នាក់</h3>
+              <p class="text-xs text-red-600 dark:text-red-400/80 mt-1">សកម្មភាពទាំងនេះមិនអាចត្រឡប់វិញបានទេ</p>
+              <button onclick="clearAllData()" class="mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium">🗑️ លុបទិន្នន័យទាំងអស់</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <button onclick="handleFAB()" class="fixed bottom-6 right-6 md:hidden w-14 h-14 btn-primary text-white rounded-2xl shadow-xl flex items-center justify-center z-20 safe-bottom">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </main>
+</div>
+
+<!-- CASE MODAL -->
+<div id="caseModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-wrap flex items-end sm:items-center justify-center">
+  <div class="modal-content bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white dark:bg-slate-900 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center z-10 rounded-t-3xl">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+        </div>
+        <h3 id="caseModalTitle" class="font-bold">បន្ថែមសំណុំរឿងក្ដីថ្មី</h3>
+      </div>
+      <button onclick="closeCaseModal()" class="w-9 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input type="hidden" id="caseId">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">លេខសំណុំរឿងក្ដី <span class="text-red-500">*</span></label>
+        <input id="caseNumber" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ចំណងជើង <span class="text-red-500">*</span></label>
+        <input id="caseTitle" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">តុលាការមានសម្ថកិច្ច <span class="text-red-500">*</span></label>
+        <select id="caseCourt" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+          <option value="">— សូមជ្រើសរើសតុលាការ —</option>
+          <optgroup label="🏛️ សាលាដំបូង">
+            <option value="សាលាដំបូងរាជធានីភ្នំពេញ">សាលាដំបូងរាជធានីភ្នំពេញ</option>
+            <option value="សាលាដំបូងខេត្តកណ្ដាល">សាលាដំបូងខេត្តកណ្ដាល</option>
+            <option value="សាលាដំបូងខេត្តតាកែវ">សាលាដំបូងខេត្តតាកែវ</option>
+            <option value="សាលាដំបូងខេត្តកែប">សាលាដំបូងខេត្តកែប</option>
+            <option value="សាលាដំបូងខេត្តកំពង់ស្ពឺ">សាលាដំបូងខេត្តកំពង់ស្ពឺ</option>
+            <option value="សាលាដំបូងខេត្តព្រះសីហនុ">សាលាដំបូងខេត្តព្រះសីហនុ</option>
+            <option value="សាលាដំបូងខេត្តកំពត">សាលាដំបូងខេត្តកំពត</option>
+            <option value="សាលាដំបូងខេត្តកំពង់ឆ្នាំង">សាលាដំបូងខេត្តកំពង់ឆ្នាំង</option>
+            <option value="សាលាដំបូងខេត្តពោធិ៍សាត់">សាលាដំបូងខេត្តពោធិ៍សាត់</option>
+            <option value="សាលាដំបូងខេត្តបាត់ដំបង">សាលាដំបូងខេត្តបាត់ដំបង</option>
+            <option value="សាលាដំបូងខេត្តប៉ៃលិន">សាលាដំបូងខេត្តប៉ៃលិន</option>
+            <option value="សាលាដំបូងខេត្តបន្ទាយមានជ័យ">សាលាដំបូងខេត្តបន្ទាយមានជ័យ</option>
+            <option value="សាលាដំបូងខេត្តសៀមរាប">សាលាដំបូងខេត្តសៀមរាប</option>
+            <option value="សាលាដំបូងខេត្តកំពង់ធំ">សាលាដំបូងខេត្តកំពង់ធំ</option>
+            <option value="សាលាដំបូងខេត្តកំពង់ចាម">សាលាដំបូងខេត្តកំពង់ចាម</option>
+            <option value="សាលាដំបូងខេត្តត្បូងឃ្មុំ">សាលាដំបូងខេត្តត្បូងឃ្មុំ</option>
+            <option value="សាលាដំបូងខេត្តក្រចេះ">សាលាដំបូងខេត្តក្រចេះ</option>
+            <option value="សាលាដំបូងខេត្តព្រៃវែង">សាលាដំបូងខេត្តព្រៃវែង</option>
+            <option value="សាលាដំបូងខេត្តស្វាយរៀង">សាលាដំបូងខេត្តស្វាយរៀង</option>
+            <option value="សាលាដំបូងខេត្តកោះកុង">សាលាដំបូងខេត្តកោះកុង</option>
+            <option value="សាលាដំបូងខេត្តព្រះវិហារ">សាលាដំបូងខេត្តព្រះវិហារ</option>
+            <option value="សាលាដំបូងខេត្តស្ទឹងត្រែង">សាលាដំបូងខេត្តស្ទឹងត្រែង</option>
+            <option value="សាលាដំបូងខេត្តរតនគិរី">សាលាដំបូងខេត្តរតនគិរី</option>
+            <option value="សាលាដំបូងខេត្តមណ្ឌលគិរី">សាលាដំបូងខេត្តមណ្ឌលគិរី</option>
+            <option value="សាលាដំបូងខេត្តឧត្តរមានជ័យ">សាលាដំបូងខេត្តឧត្តរមានជ័យ</option>
+          </optgroup>
+          <optgroup label="⚖️ សាលាឧទ្ធរណ៍">
+            <option value="សាលាឧទ្ធរណ៍ភ្នំពេញ">សាលាឧទ្ធរណ៍ភ្នំពេញ</option>
+            <option value="សាលាឧទ្ធរណ៍បាត់ដំបង">សាលាឧទ្ធរណ៍បាត់ដំបង</option>
+            <option value="សាលាឧទ្ធរណ៍ព្រះសីហនុ">សាលាឧទ្ធរណ៍ព្រះសីហនុ</option>
+            <option value="សាលាឧទ្ធរណ៍ត្បូងឃ្មុំ">សាលាឧទ្ធរណ៍ត្បូងឃ្មុំ</option>
+          </optgroup>
+          <optgroup label="👑 តុលាការកំពូល">
+            <option value="តុលាការកំពូលភ្នំពេញ">តុលាការកំពូលភ្នំពេញ</option>
+          </optgroup>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ប្រភេទសំណុំរឿងក្ដី</label>
+        <select id="caseType" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+          <option>រដ្ឋប្បវេណី</option>
+          <option>ព្រហ្មទណ្ឌ</option>
+          <option>ពាណិជ្ជកម្ម</option>
+          <option>គ្រួសារ</option>
+          <option>ដីធ្លី</option>
+          <option>ការងារ</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">អតិថិជន</label>
+        <select id="caseClient" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base"></select>
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ស្ថានភាព <span class="text-red-500">*</span></label>
+        <select id="caseStatus" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+          <option value="">— សូមជ្រើសរើសស្ថានភាព —</option>
+          <optgroup label="📋 នីតិវិធីរដ្ឋប្បវេណី">
+            <option value="ដាក់ពាក្យបណ្ដឹង">ដាក់ពាក្យបណ្ដឹង</option>
+            <option value="នីតិវិធីត្រៀមទាញហេតុផល">នីតិវិធីត្រៀមទាញហេតុផល</option>
+            <option value="នីតិវិធីទាញហេតុផលដោយផ្ទាល់មាត់">នីតិវិធីទាញហេតុផលដោយផ្ទាល់មាត់</option>
+            <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
+            <option value="រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ">រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
+            <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
+            <option value="បណ្ដឹងបានដក">បណ្ដឹងបានដក</option>
+            <option value="ស្រុះស្រួលគ្នា">ស្រុះស្រួលគ្នា</option>
+          </optgroup>
+          <optgroup label="⚖️ នីតិវិធីព្រហ្មទណ្ឌ">
+            <option value="ដាក់ពាក្យបណ្ដឹង">ដាក់ពាក្យបណ្ដឹង</option>
+            <option value="ដំណាក់កាលមន្ត្រីនគរបាល">ដំណាក់កាលមន្ត្រីនគរបាល</option>
+            <option value="ដំណាក់កាលព្រះរាជអាជ្ញា">ដំណាក់កាលព្រះរាជអាជ្ញា</option>
+            <option value="ដំណាក់កាលចៅក្រមស៊ើបសួរ">ដំណាក់កាលចៅក្រមស៊ើបសួរ</option>
+            <option value="ដំណាក់កាលជំនុំជម្រះ">ដំណាក់កាលជំនុំជម្រះ</option>
+            <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
+            <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
+            <option value="បណ្ដឹងបានដក">បណ្ដឹងបានដក</option>
+          </optgroup>
+          <optgroup label="✅ បានបញ្ចប់">
+            <option value="បានបញ្ចប់">បានបញ្ចប់</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">កំណត់កាលបរិច្ឆេទតុលាការ</label>
+        <input id="caseHearing" type="date" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">កំណត់ចំណាំ</label>
+        <textarea id="caseNote" rows="3" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base resize-none"></textarea>
+      </div>
+    </div>
+    <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
+      <button onclick="closeCaseModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
+      <button onclick="saveCase()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT MODAL -->
+<div id="clientModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-wrap flex items-end sm:items-center justify-center">
+  <div class="modal-content bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md max-h-[95vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white dark:bg-slate-900 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center z-10 rounded-t-3xl">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        </div>
+        <h3 id="clientModalTitle" class="font-bold">បន្ថែមអតិថិជនថ្មី</h3>
+      </div>
+      <button onclick="closeClientModal()" class="w-9 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 space-y-4">
+      <input type="hidden" id="clientId">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ឈ្មោះ <span class="text-red-500">*</span></label>
+        <input id="clientName" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">លេខទូរស័ព្ទ</label>
+        <input id="clientPhone" type="tel" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">អ៊ីមែល</label>
+        <input id="clientEmail" type="email" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">អាសយដ្ឋាន</label>
+        <input id="clientAddress" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+    </div>
+    <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
+      <button onclick="closeClientModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
+      <button onclick="saveClient()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div id="passwordModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-wrap flex items-end sm:items-center justify-center">
+  <div class="modal-content bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md">
+    <div class="sticky top-0 bg-white dark:bg-slate-900 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center z-10 rounded-t-3xl">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3 class="font-bold">ផ្លាស់ប្ដូរលេខសម្ងាត់</h3>
+      </div>
+      <button onclick="closePasswordModal()" class="w-9 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">លេខសម្ងាត់បច្ចុប្បន្ន</label>
+        <input id="oldPass" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">លេខសម្ងាត់ថ្មី</label>
+        <input id="newPass" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">បញ្ជាក់លេខសម្ងាត់ថ្មី</label>
+        <input id="newPass2" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+    </div>
+    <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
+      <button onclick="closePasswordModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
+      <button onclick="savePassword()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAME MODAL -->
+<div id="nameModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-wrap flex items-end sm:items-center justify-center">
+  <div class="modal-content bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md">
+    <div class="sticky top-0 bg-white dark:bg-slate-900 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center z-10 rounded-t-3xl">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3 class="font-bold">កែឈ្មោះ</h3>
+      </div>
+      <button onclick="closeNameModal()" class="w-9 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ឈ្មោះពេញថ្មី</label>
+        <input id="newName" type="text" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+      </div>
+    </div>
+    <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
+      <button onclick="closeNameModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
+      <button onclick="saveName()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="confirmModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm p-6">
+    <div class="flex items-start gap-3 mb-4">
+      <div class="w-10 h-10 bg-red-100 dark:bg-red-950 rounded-full flex items-center justify-center shrink-0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+      </div>
+      <div>
+        <h3 id="confirmTitle" class="font-bold">បញ្ជាក់</h3>
+        <p id="confirmMsg" class="text-sm text-slate-600 dark:text-slate-400 mt-1">តើអ្នកប្រាកដទេ?</p>
+      </div>
+    </div>
+    <div class="flex gap-3 justify-end">
+      <button onclick="closeConfirm()" class="px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium text-sm">បោះបង់</button>
+      <button id="confirmOkBtn" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium text-sm">យល់ព្រម</button>
+    </div>
+  </div>
+</div>
+
+<!-- BACKUP REMINDER BANNER -->
+<div id="backupReminderBanner" class="hidden fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 z-40 max-w-[92vw] md:max-w-sm animate-slide-up">
+  <div class="bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-2xl shadow-2xl p-4 border border-white/20">
+    <div class="flex items-start gap-3">
+      <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shrink-0 backup-reminder-pulse">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-sm">🔔 ដល់ពេល Backup ហើយ!</p>
+        <p id="backupReminderText" class="text-xs opacity-90 mt-0.5">ជាង ៧ ថ្ងៃហើយ</p>
+        <div class="flex gap-2 mt-3">
+          <button onclick="exportData(); hideBackupReminder();" class="px-3 py-1.5 bg-white text-orange-600 rounded-lg text-xs font-bold">💾 Backup ឥឡូវ</button>
+          <button onclick="snoozeBackup(3)" class="px-3 py-1.5 bg-white/20 rounded-lg text-xs font-medium">រំលឹក ៣ ថ្ងៃ</button>
+        </div>
+      </div>
+      <button onclick="snoozeBackup(7)" class="text-white/70 hover:text-white p-1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="hidden fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-2xl shadow-2xl z-[80] max-w-[90vw] text-center text-sm font-medium"></div>
+
+<script>
+// ============ PDF.JS CONFIG ============
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+}
+
+// ============ THEME ============
+function toggleDark() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeLabel').textContent = isDark ? 'ផ្ទាំងភ្លឺ' : 'ផ្ទាំងងងឹត';
+}
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  const isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+    document.getElementById('themeLabel').textContent = 'ផ្ទាំងភ្លឺ';
+  }
+}
+
+// ============ PWA ============
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.classList.remove('hidden');
+});
+function isPWA() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+async function installApp() {
+  if (!deferredPrompt) { alert('📲 សូមចុច Menu → "Install App"'); return; }
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+}
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+// ============ PERSISTENT STORAGE (ការពារទិន្នន័យ) ============
+async function requestPersistentStorage(showToast = false) {
+  if (!navigator.storage || !navigator.storage.persist) {
+    console.warn('⚠️ Persistent Storage API មិនត្រូវបានគាំទ្រ');
+    return false;
+  }
+  
+  try {
+    const alreadyPersisted = await navigator.storage.persisted();
+    if (alreadyPersisted) {
+      if (showToast) toast('✅ Storage ត្រូវបានការពាររួចហើយ');
+      updateStorageStatusUI(true);
+      return true;
+    }
+    
+    const granted = await navigator.storage.persist();
+    if (granted) {
+      console.log('✅ Persistent Storage granted!');
+      updateStorageStatusUI(true);
+      if (showToast) toast('🛡️ ទិន្នន័យត្រូវបានការពារ!');
+    } else {
+      console.warn('⚠️ Persistent Storage denied');
+      updateStorageStatusUI(false);
+      if (showToast) toast('⚠️ Browser មិនអនុញ្ញាត');
+    }
+    return granted;
+  } catch (error) {
+    console.error('❌ Storage error:', error);
+    return false;
+  }
+}
+
+async function updateStorageStatusUI(isPersistent) {
+  const statusEl = document.getElementById('storageStatusMsg');
+  const usageEl = document.getElementById('storageUsage');
+  const quotaEl = document.getElementById('storageQuota');
+  const sidebarText = document.getElementById('storageStatusText');
+  
+  if (!statusEl) return;
+  
+  if (isPersistent) {
+    statusEl.innerHTML = '🛡️ <span class="font-bold">ទិន្នន័យត្រូវបានការពារ</span> — Browser នឹងមិនលុបទិន្នន័យដោយស្វ័យប្រវត្តិទេ';
+    statusEl.className = 'text-xs text-emerald-600 dark:text-emerald-500 mt-0.5';
+    if (sidebarText) {
+      sidebarText.textContent = '🛡️ Storage ការពារ';
+    }
+  } else {
+    statusEl.innerHTML = '⚠️ <span class="font-bold">ទិន្នន័យមិនបានការពារ</span> — សូមចុច Button ខាងក្រោម';
+    statusEl.className = 'text-xs text-amber-600 dark:text-amber-500 mt-0.5';
+    if (sidebarText) {
+      sidebarText.textContent = '⚠️ Storage មិនការពារ';
+    }
+  }
+  
+  // បង្ហាញទំហំប្រើប្រាស់
+  if (navigator.storage && navigator.storage.estimate) {
+    try {
+      const est = await navigator.storage.estimate();
+      if (usageEl) usageEl.textContent = formatFileSize(est.usage || 0);
+      if (quotaEl) quotaEl.textContent = formatFileSize(est.quota || 0);
+    } catch (e) {}
+  }
+}
+
+async function showStorageStatus() {
+  showPage('settings');
+  toast('📊 មើលស្ថានភាព Storage');
+}
+
+// ============ CRYPTO ============
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + '|case-manager-salt-2026');
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ============ DATA ============
+const DB = {
+  get(key, def=[]) {
+    try { return JSON.parse(localStorage.getItem(key)) ?? def; }
+    catch { return def; }
+  },
+  set(key, val) { localStorage.setItem(key, JSON.stringify(val)); },
+  remove(key) { localStorage.removeItem(key); }
+};
+
+let statusChart = null;
+let currentUser = null;
+let currentPdfDoc = null;
+
+// ============ STATUS HELPERS ============
+function getStatusCategory(status) {
+  if (!status) return 'unknown';
+  const s = status.toLowerCase();
+  if (s.includes('បញ្ចប់') || s.includes('ស្ថាពរ') || s.includes('បណ្ដឹងបានដក') || s.includes('ស្រុះស្រួល')) return 'closed';
+  if (s.includes('រង់ចាំ')) return 'pending';
+  if (s.includes('ដាក់ពាក្យ') || s.includes('នីតិវិធី') || s.includes('ដំណាក់កាល')) return 'active';
+  return 'unknown';
+}
+
+function statusInfo(status) {
+  const cat = getStatusCategory(status);
+  if (cat === 'active') return { label: status || 'កំពុងដំណើរការ', cls: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400', dot: 'bg-green-500' };
+  if (cat === 'pending') return { label: status || 'រង់ចាំ', cls: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400', dot: 'bg-amber-500' };
+  if (cat === 'closed') return { label: status || 'បានបញ្ចប់', cls: 'bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-400', dot: 'bg-purple-500' };
+  return { label: status || '—', cls: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400', dot: 'bg-slate-400' };
+}
+
+// ============ HEARING DAY HELPER ============
+function getHearingDayInfo(dateStr) {
+  if (!dateStr) return null;
+  const target = new Date(dateStr);
+  target.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diff = Math.round((target - today) / 86400000);
+  
+  if (diff < 0) return { label: 'ផុតថ្ងៃ', days: diff, badge: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold', border: 'border-red-500', isExpired: true };
+  if (diff === 0) return { label: 'ថ្ងៃនេះ', days: 0, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-red-500', isExpired: false };
+  if (diff <= 3) return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-brand-500', isExpired: false };
+  if (diff <= 7) return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400', border: 'border-brand-500', isExpired: false };
+  return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400', border: 'border-brand-500', isExpired: false };
+}
+
+// ============ INDEXEDDB ============
+const FileDB = {
+  dbName: 'CaseManagerFiles',
+  storeName: 'documents',
+  db: null,
+  async init() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(this.dbName, 1);
+      req.onerror = () => reject(req.error);
+      req.onsuccess = () => { this.db = req.result; resolve(this.db); };
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(this.storeName)) {
+          const store = db.createObjectStore(this.storeName, { keyPath: 'id' });
+          store.createIndex('caseId', 'caseId', { unique: false });
+          store.createIndex('uploadedAt', 'uploadedAt', { unique: false });
+        }
+      };
+    });
+  },
+  async add(data) {
+    if (!this.db) await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(this.storeName, 'readwrite');
+      const req = tx.objectStore(this.storeName).put(data);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async get(id) {
+    if (!this.db) await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(this.storeName, 'readonly');
+      const req = tx.objectStore(this.storeName).get(id);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async getByCase(caseId) {
+    if (!this.db) await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(this.storeName, 'readonly');
+      const idx = tx.objectStore(this.storeName).index('caseId');
+      const req = idx.getAll(Number(caseId));
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async getAll() {
+    if (!this.db) await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(this.storeName, 'readonly');
+      const req = tx.objectStore(this.storeName).getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async delete(id) {
+    if (!this.db) await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(this.storeName, 'readwrite');
+      const req = tx.objectStore(this.storeName).delete(id);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async clear() {
+    if (!this.db) await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(this.storeName, 'readwrite');
+      const req = tx.objectStore(this.storeName).clear();
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  }
+};
+
+// ============ FILE HELPERS ============
+function getFileCategory(fileName, mimeType = '') {
+  const ext = (fileName || '').split('.').pop().toLowerCase();
+  const mime = (mimeType || '').toLowerCase();
+  if (ext === 'pdf' || mime.includes('pdf')) return 'pdf';
+  if (['doc', 'docx'].includes(ext) || mime.includes('word')) return 'word';
+  if (['xls', 'xlsx'].includes(ext) || mime.includes('excel') || mime.includes('sheet')) return 'excel';
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(ext) || mime.startsWith('image/')) return 'image';
+  return 'other';
+}
+
+function getFileIcon(category) {
+  const icons = {
+    pdf: { emoji: '📕', color: 'red' },
+    word: { emoji: '📘', color: 'blue' },
+    excel: { emoji: '📗', color: 'green' },
+    image: { emoji: '🖼️', color: 'purple' },
+    other: { emoji: '📄', color: 'slate' },
+    autobackup: { emoji: '💾', color: 'emerald' }
+  };
+  return icons[category] || icons.other;
+}
+
+function formatFileSize(bytes) {
+  if (!bytes || bytes === 0) return '0 B';
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+  return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '-';
+  try {
+    return new Date(dateStr).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  } catch { return dateStr; }
+}
+
+// ============ PASSWORD VISIBILITY ============
+function togglePass(inputId, btn) {
+  const input = document.getElementById(inputId);
+  const svg = btn.querySelector('svg');
+  if (input.type === 'password') {
+    input.type = 'text';
+    svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22"/>';
+  } else {
+    input.type = 'password';
+    svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+
+// ============ SETUP ============
+async function handleSetup() {
+  const name = document.getElementById('setupName').value.trim();
+  const pass = document.getElementById('setupPass').value;
+  const pass2 = document.getElementById('setupPass2').value;
+  const err = document.getElementById('setupError');
+  err.classList.add('hidden');
+  
+  if (!name) { err.textContent = '⚠️ សូមបំពេញឈ្មោះពេញ'; err.classList.remove('hidden'); return; }
+  if (name.length < 2) { err.textContent = '⚠️ ឈ្មោះត្រូវមាន ≥ ២ តួ'; err.classList.remove('hidden'); return; }
+  if (!pass) { err.textContent = '⚠️ សូមបញ្ចូលលេខសម្ងាត់'; err.classList.remove('hidden'); return; }
+  if (pass.length < 4) { err.textContent = '⚠️ លេខសម្ងាត់ត្រូវមាន ≥ ៤ តួ'; err.classList.remove('hidden'); return; }
+  if (pass !== pass2) { err.textContent = '❌ លេខសម្ងាត់មិនដូចគ្នា'; err.classList.remove('hidden'); return; }
+  
+  const hashedPass = await hashPassword(pass);
+  DB.set('auth', { name, password: hashedPass, role: 'admin', createdAt: new Date().toISOString() });
+  document.getElementById('setupScreen').classList.add('hidden');
+  toast('✅ បង្កើតគណនីជោគជ័យ!');
+  await requestPersistentStorage(false);
+  showLogin();
+}
+
+function showLogin() {
+  const auth = DB.get('auth', null);
+  const greeting = document.getElementById('loginGreeting');
+  if (auth && auth.name) {
+    const firstName = auth.name.split(' ').slice(-1)[0] || auth.name;
+    greeting.textContent = `សូមស្វាគមន៍ត្រឡប់មកវិញ, ${firstName}`;
+  }
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginPass').value = '';
+  setTimeout(() => document.getElementById('loginPass').focus(), 100);
+}
+
+// ============ LOGIN ============
+function checkLoginLock() {
+  const lock = DB.get('loginLock', null);
+  if (lock && lock.until > Date.now()) {
+    return { locked: true, mins: Math.ceil((lock.until - Date.now()) / 60000) };
+  }
+  if (lock && lock.until <= Date.now()) DB.remove('loginLock');
+  return { locked: false };
+}
+function recordFailedLogin() {
+  const attempts = DB.get('loginAttempts', { count: 0, firstAt: Date.now() });
+  if (Date.now() - attempts.firstAt > 15 * 60 * 1000) {
+    attempts.count = 0; attempts.firstAt = Date.now();
+  }
+  attempts.count++;
+  DB.set('loginAttempts', attempts);
+  if (attempts.count >= 5) {
+    DB.set('loginLock', { until: Date.now() + 15 * 60 * 1000 });
+    DB.remove('loginAttempts');
+    return { locked: true, mins: 15 };
+  }
+  return { locked: false, remaining: 5 - attempts.count };
+}
+function resetLoginAttempts() { DB.remove('loginAttempts'); DB.remove('loginLock'); }
+
+async function login() {
+  const lock = checkLoginLock();
+  if (lock.locked) { showLoginError(`🔒 ចាក់សោ ${lock.mins} នាទីទៀត`); return; }
+  
+  const password = document.getElementById('loginPass').value;
+  const remember = document.getElementById('rememberMe').checked;
+  if (!password) return showLoginError('⚠️ សូមបញ្ចូលលេខសម្ងាត់');
+  
+  const btn = document.getElementById('loginBtn');
+  const btnText = document.getElementById('loginBtnText');
+  btn.disabled = true;
+  btnText.innerHTML = '<span class="spinner"></span> កំពុងពិនិត្យ...';
+  
+  const auth = DB.get('auth', null);
+  const hashedPass = await hashPassword(password);
+  await new Promise(r => setTimeout(r, 300));
+  
+  if (!auth || auth.password !== hashedPass) {
+    const result = recordFailedLogin();
+    btn.disabled = false;
+    btnText.textContent = 'ចូលប្រើប្រាស់ →';
+    if (result.locked) showLoginError('🔒 ព្យាយាមច្រើនដងពេក');
+    else showLoginError(`❌ លេខសម្ងាត់មិនត្រឹមត្រូវ (នៅសល់ ${result.remaining} ដង)`);
+    return;
+  }
+  
+  resetLoginAttempts();
+  currentUser = { name: auth.name, role: auth.role };
+  const storage = remember ? localStorage : sessionStorage;
+  storage.setItem('loggedIn', '1');
+  storage.setItem('sessionStart', Date.now().toString());
+  storage.setItem('user', JSON.stringify(currentUser));
+  
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  initApp();
+}
+
+function showLoginError(msg) {
+  const err = document.getElementById('loginError');
+  err.textContent = msg;
+  err.classList.remove('hidden');
+  setTimeout(() => err.classList.add('hidden'), 5000);
+}
+
+function logout() {
+  showConfirm('ចាកចេញ', 'តើអ្នកចង់ចាកចេញ?', () => {
+    ['loggedIn','sessionStart','user'].forEach(k => {
+      localStorage.removeItem(k);
+      sessionStorage.removeItem(k);
+    });
+    location.reload();
+  }, 'ចាកចេញ');
+}
+
+// ============ SESSION ============
+function checkSession() {
+  const loggedIn = localStorage.getItem('loggedIn') || sessionStorage.getItem('loggedIn');
+  if (!loggedIn) return false;
+  const start = parseInt(localStorage.getItem('sessionStart') || sessionStorage.getItem('sessionStart') || '0');
+  if (Date.now() - start > 8 * 60 * 60 * 1000) {
+    ['loggedIn','sessionStart','user'].forEach(k => {
+      localStorage.removeItem(k);
+      sessionStorage.removeItem(k);
+    });
+    return false;
+  }
+  return true;
+}
+
+function loadUser() {
+  try {
+    const stored = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (stored) {
+      currentUser = JSON.parse(stored);
+      const fullName = currentUser.name || 'Admin';
+      document.getElementById('headerName').textContent = fullName;
+      document.getElementById('settingsName').textContent = fullName;
+    }
+  } catch (e) {}
+}
+
+// ============ SIDEBAR ============
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('hidden');
+}
+function closeSidebarOnMobile() {
+  if (window.innerWidth < 1024) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.add('hidden');
+  }
+}
+
+// ============ NAVIGATION ============
+const pageInfo = {
+  dashboard: { title: 'ផ្ទាំងគ្រប់គ្រង', subtitle: 'ទិដ្ឋភាពទូទៅនៃរឿងក្ដីរបស់អ្នក' },
+  cases: { title: 'សំណុំរឿងក្ដី', subtitle: 'គ្រប់គ្រងរឿងក្ដីទាំងអស់' },
+  clients: { title: 'អតិថិជន', subtitle: 'ព័ត៌មានអតិថិជន' },
+  calendar: { title: 'កាលវិភាគ', subtitle: 'ថ្ងៃកាត់ក្ដីខាងមុខ' },
+  documents: { title: 'ឯកសារ', subtitle: 'Upload និងគ្រប់គ្រងឯកសាររឿងក្ដី' },
+  settings: { title: 'ការកំណត់', subtitle: 'Backup, Restore និងគ្រប់គ្រងទិន្នន័យ' }
+};
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById('page-' + page).classList.remove('hidden');
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+  document.getElementById('pageTitle').textContent = pageInfo[page].title;
+  document.getElementById('pageSubtitle').textContent = pageInfo[page].subtitle;
+  document.querySelector('main').scrollTop = 0;
+
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'cases') renderCases();
+  if (page === 'clients') renderClients();
+  if (page === 'calendar') renderCalendar();
+  if (page === 'documents') renderDocSelect();
+  if (page === 'settings') renderSettingsStats();
+}
+
+function handleFAB() {
+  const active = document.querySelector('.page:not(.hidden)')?.id;
+  if (active === 'page-clients') openClientModal();
+  else openCaseModal();
+}
+
+// ============ DASHBOARD ============
+function renderDashboard() {
+  const cases = DB.get('cases');
+  document.getElementById('statTotal').textContent = cases.length;
+  document.getElementById('statActive').textContent = cases.filter(c => getStatusCategory(c.status) === 'active').length;
+  document.getElementById('statPending').textContent = cases.filter(c => getStatusCategory(c.status) === 'pending').length;
+  document.getElementById('statClosed').textContent = cases.filter(c => getStatusCategory(c.status) === 'closed').length;
+
+  const upcoming = cases.filter(c => c.nextHearing).sort((a,b) => new Date(a.nextHearing) - new Date(b.nextHearing)).slice(0, 4);
+  document.getElementById('upcomingHearings').innerHTML = upcoming.length
+    ? upcoming.map(c => {
+        const info = getHearingDayInfo(c.nextHearing);
+        if (!info) return '';
+        return `<div class="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl">
+          <div class="w-11 h-11 bg-gradient-to-br from-brand-500 to-brand-700 text-white rounded-xl flex flex-col items-center justify-center shrink-0">
+            <p class="text-sm font-bold leading-none">${c.nextHearing.slice(8,10)}</p>
+            <p class="text-[9px] opacity-80 mt-0.5">${c.nextHearing.slice(5,7)}</p>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-sm truncate">${c.caseNumber}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 truncate">${c.title}</p>
+          </div>
+          <span class="badge ${info.badge} whitespace-nowrap">${info.label}</span>
+        </div>`;
+      }).join('')
+    : `<div class="text-center py-8"><div class="empty-icon">📅</div><p class="text-slate-400 text-sm">មិនមានកាលវិភាគ</p></div>`;
+
+  const ctx = document.getElementById('statusChart').getContext('2d');
+  if (statusChart) statusChart.destroy();
+  const isDark = document.documentElement.classList.contains('dark');
+  statusChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['កំពុងដំណើរការ','រង់ចាំ','បានបញ្ចប់'],
+      datasets: [{
+        data: [
+          cases.filter(c => getStatusCategory(c.status) === 'active').length,
+          cases.filter(c => getStatusCategory(c.status) === 'pending').length,
+          cases.filter(c => getStatusCategory(c.status) === 'closed').length
+        ],
+        backgroundColor: ['#22c55e','#f59e0b','#8b5cf6'],
+        borderWidth: 0, spacing: 3, borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true, cutout: '65%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { boxWidth: 8, boxHeight: 8, padding: 12, font: { size: 11, family: 'Kantumruy Pro' },
+            color: isDark ? '#cbd5e1' : '#475569', usePointStyle: true, pointStyle: 'circle' }
+        }
+      }
+    }
+  });
+}
+
+// ============ CASES ============
+function renderCases() {
+  const search = (document.getElementById('caseSearch')?.value || '').toLowerCase();
+  const courtFilter = document.getElementById('caseFilterCourt')?.value || '';
+  const statusFilter = document.getElementById('caseFilterStatus')?.value || '';
+  const cases = DB.get('cases');
+  const clients = DB.get('clients');
+  
+  const filtered = cases.filter(c => {
+    const matchSearch = !search ||
+      c.caseNumber.toLowerCase().includes(search) ||
+      c.title.toLowerCase().includes(search) ||
+      (c.court||'').toLowerCase().includes(search) ||
+      (c.status||'').toLowerCase().includes(search);
+    const matchCourt = !courtFilter || c.court === courtFilter;
+    const matchStatus = !statusFilter || getStatusCategory(c.status) === statusFilter;
+    return matchSearch && matchCourt && matchStatus;
+  });
+
+  document.getElementById('casesTable').innerHTML = filtered.length
+    ? filtered.map(c => {
+        const client = clients.find(x => x.id === c.clientId);
+        const s = statusInfo(c.status);
+        return `<tr class="border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40">
+          <td class="px-5 py-4 font-semibold text-brand-600 dark:text-brand-400">${c.caseNumber}</td>
+          <td class="px-5 py-4">${c.title}</td>
+          <td class="px-5 py-4 text-slate-600 dark:text-slate-400 text-xs">${c.court||'-'}</td>
+          <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${client?.name||'-'}</td>
+          <td class="px-5 py-4">
+            <span class="badge ${s.cls}" style="max-width:200px">
+              <span class="w-1.5 h-1.5 rounded-full ${s.dot} flex-shrink-0"></span>
+              <span class="truncate" title="${s.label}">${s.label}</span>
+            </span>
+          </td>
+          <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${c.nextHearing||'-'}</td>
+          <td class="px-5 py-4 text-right whitespace-nowrap">
+            <button onclick="editCase(${c.id})" class="w-8 h-8 rounded-lg hover:bg-brand-50 dark:hover:bg-brand-950 text-brand-600 dark:text-brand-400 mr-1">
+              <svg class="inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button onclick="deleteCase(${c.id})" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950 text-red-500">
+              <svg class="inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+          </td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="7" class="px-5 py-12 text-center"><div class="empty-icon">📁</div><p class="text-slate-400 text-sm">មិនមានរឿងក្ដី</p></td></tr>';
+
+  document.getElementById('casesCards').innerHTML = filtered.length
+    ? filtered.map(c => {
+        const client = clients.find(x => x.id === c.clientId);
+        const s = statusInfo(c.status);
+        const hearingInfo = c.nextHearing ? getHearingDayInfo(c.nextHearing) : null;
+        return `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
+          <div class="mb-3">
+            <p class="font-bold text-brand-600 dark:text-brand-400 text-sm">${c.caseNumber}</p>
+            <p class="font-semibold mt-0.5">${c.title}</p>
+          </div>
+          <div class="mb-3">
+            <span class="badge ${s.cls}">
+              <span class="w-1.5 h-1.5 rounded-full ${s.dot}"></span>
+              ${s.label}
+            </span>
+          </div>
+          <div class="space-y-1.5 text-sm text-slate-600 dark:text-slate-400">
+            <p class="flex items-start gap-2"><span>🏛️</span><span class="text-xs">${c.court||'-'}</span></p>
+            <p class="flex items-center gap-2"><span>👤</span>${client?.name||'-'}</p>
+            ${c.nextHearing ? `<p class="flex items-center gap-2 flex-wrap"><span>📅</span>${c.nextHearing} ${hearingInfo ? `<span class="badge ${hearingInfo.badge} text-[10px]">${hearingInfo.label}</span>` : ''}</p>` : ''}
+          </div>
+          <div class="flex gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button onclick="editCase(${c.id})" class="flex-1 py-2 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 rounded-xl font-medium text-sm">✏️ កែ</button>
+            <button onclick="deleteCase(${c.id})" class="flex-1 py-2 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-xl font-medium text-sm">🗑️ លុប</button>
+          </div>
+        </div>`;
+      }).join('')
+    : '<div class="text-center py-12"><div class="empty-icon">📁</div><p class="text-slate-400 text-sm">មិនមានរឿងក្ដី</p></div>';
+}
+
+function openCaseModal(id=null) {
+  const clients = DB.get('clients');
+  document.getElementById('caseClient').innerHTML = clients.length
+    ? clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('')
+    : '<option value="">— គ្មានអតិថិជន —</option>';
+  
+  const courtSelect = document.getElementById('caseCourt');
+  const statusSelect = document.getElementById('caseStatus');
+  
+  const cleanCustom = (select) => {
+    Array.from(select.options).forEach(opt => {
+      if (opt.dataset.custom === '1') opt.remove();
+    });
+  };
+  
+  if (id) {
+    const c = DB.get('cases').find(x => x.id === id);
+    document.getElementById('caseModalTitle').textContent = 'កែសំណុំរឿងក្ដី';
+    document.getElementById('caseId').value = c.id;
+    document.getElementById('caseNumber').value = c.caseNumber;
+    document.getElementById('caseTitle').value = c.title;
+    
+    const savedCourt = c.court || '';
+    cleanCustom(courtSelect);
+    if (Array.from(courtSelect.options).some(o => o.value === savedCourt)) courtSelect.value = savedCourt;
+    else if (savedCourt) {
+      const o = document.createElement('option');
+      o.value = savedCourt; o.textContent = savedCourt + ' (ចាស់)'; o.dataset.custom = '1';
+      courtSelect.appendChild(o); courtSelect.value = savedCourt;
+    } else courtSelect.value = '';
+    
+    const savedStatus = c.status || '';
+    cleanCustom(statusSelect);
+    if (Array.from(statusSelect.options).some(o => o.value === savedStatus)) statusSelect.value = savedStatus;
+    else if (savedStatus) {
+      const o = document.createElement('option');
+      o.value = savedStatus; o.textContent = savedStatus + ' (ចាស់)'; o.dataset.custom = '1';
+      statusSelect.appendChild(o); statusSelect.value = savedStatus;
+    } else statusSelect.value = '';
+    
+    document.getElementById('caseType').value = c.caseType||'រដ្ឋប្បវេណី';
+    document.getElementById('caseClient').value = c.clientId;
+    document.getElementById('caseHearing').value = c.nextHearing||'';
+    document.getElementById('caseNote').value = c.note||'';
+  } else {
+    document.getElementById('caseModalTitle').textContent = 'បន្ថែមសំណុំរឿងក្ដីថ្មី';
+    ['caseId','caseNumber','caseTitle','caseHearing','caseNote'].forEach(i => document.getElementById(i).value = '');
+    cleanCustom(courtSelect); cleanCustom(statusSelect);
+    courtSelect.value = '';
+    statusSelect.value = 'ដាក់ពាក្យបណ្ដឹង';
+  }
+  document.getElementById('caseModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCaseModal() { 
+  document.getElementById('caseModal').classList.add('hidden'); 
+  document.body.style.overflow = '';
+}
+
+function saveCase() {
+  const id = document.getElementById('caseId').value;
+  const clientVal = document.getElementById('caseClient').value;
+  const data = {
+    caseNumber: document.getElementById('caseNumber').value.trim(),
+    title: document.getElementById('caseTitle').value.trim(),
+    court: document.getElementById('caseCourt').value,
+    caseType: document.getElementById('caseType').value,
+    clientId: clientVal ? parseInt(clientVal) : null,
+    status: document.getElementById('caseStatus').value,
+    nextHearing: document.getElementById('caseHearing').value,
+    note: document.getElementById('caseNote').value.trim()
+  };
+  
+  if (!data.caseNumber || !data.title) return toast('⚠️ សូមបំពេញលេខក្ដី និងចំណងជើង');
+  if (!data.court) return toast('⚠️ សូមជ្រើសរើសតុលាការ');
+  if (!data.status) return toast('⚠️ សូមជ្រើសរើសស្ថានភាព');
+  
+  const cases = DB.get('cases');
+  if (id) {
+    const idx = cases.findIndex(c => c.id == id);
+    cases[idx] = {...cases[idx], ...data};
+    toast('✅ បានកែប្រែ');
+  } else {
+    data.id = Date.now();
+    cases.push(data);
+    toast('✅ បន្ថែមថ្មី');
+  }
+  DB.set('cases', cases);
+  closeCaseModal();
+  renderCases();
+}
+
+function editCase(id) { openCaseModal(id); }
+function deleteCase(id) {
+  showConfirm('លុបរឿងក្ដី', 'តើអ្នកប្រាកដ?', async () => {
+    DB.set('cases', DB.get('cases').filter(c => c.id !== id));
+    try {
+      const files = await FileDB.getByCase(id);
+      for (const f of files) await FileDB.delete(f.id);
+    } catch (e) {}
+    toast('🗑️ បានលុប');
+    renderCases();
+  });
+}
+
+// ============ CLIENTS ============
+function renderClients() {
+  const clients = DB.get('clients');
+  const cases = DB.get('cases');
+  document.getElementById('clientsGrid').innerHTML = clients.length
+    ? clients.map(c => {
+        const caseCount = cases.filter(x => x.clientId === c.id).length;
+        const initials = c.name.split(' ').slice(-2).map(s => s.charAt(0)).join('');
+        return `<div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 text-white rounded-2xl flex items-center justify-center font-bold shrink-0">${initials}</div>
+            <div class="min-w-0 flex-1">
+              <p class="font-bold truncate">${c.name}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">${caseCount} រឿងក្ដី</p>
+            </div>
+          </div>
+          <div class="space-y-1.5 text-sm text-slate-600 dark:text-slate-400">
+            <p class="truncate flex items-center gap-2"><span>📞</span>${c.phone||'-'}</p>
+            <p class="truncate flex items-center gap-2"><span>✉️</span>${c.email||'-'}</p>
+            <p class="truncate flex items-center gap-2"><span>📍</span>${c.address||'-'}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+            <button onclick="editClient(${c.id})" class="flex-1 py-2 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 rounded-xl text-sm font-medium">✏️ កែ</button>
+            <button onclick="deleteClient(${c.id})" class="flex-1 py-2 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium">🗑️ លុប</button>
+          </div>
+        </div>`;
+      }).join('')
+    : '<div class="col-span-full text-center py-12"><div class="empty-icon">👥</div><p class="text-slate-400 text-sm">មិនមានអតិថិជន</p></div>';
+}
+
+function openClientModal(id=null) {
+  if (id) {
+    const c = DB.get('clients').find(x => x.id === id);
+    document.getElementById('clientModalTitle').textContent = 'កែអតិថិជន';
+    document.getElementById('clientId').value = c.id;
+    document.getElementById('clientName').value = c.name;
+    document.getElementById('clientPhone').value = c.phone||'';
+    document.getElementById('clientEmail').value = c.email||'';
+    document.getElementById('clientAddress').value = c.address||'';
+  } else {
+    document.getElementById('clientModalTitle').textContent = 'បន្ថែមអតិថិជនថ្មី';
+    ['clientId','clientName','clientPhone','clientEmail','clientAddress'].forEach(i => document.getElementById(i).value = '');
+  }
+  document.getElementById('clientModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeClientModal() { 
+  document.getElementById('clientModal').classList.add('hidden'); 
+  document.body.style.overflow = '';
+}
+
+function saveClient() {
+  const id = document.getElementById('clientId').value;
+  const data = {
+    name: document.getElementById('clientName').value.trim(),
+    phone: document.getElementById('clientPhone').value.trim(),
+    email: document.getElementById('clientEmail').value.trim(),
+    address: document.getElementById('clientAddress').value.trim()
+  };
+  if (!data.name) return toast('⚠️ សូមបំពេញឈ្មោះ');
+  const clients = DB.get('clients');
+  if (id) {
+    const idx = clients.findIndex(c => c.id == id);
+    clients[idx] = {...clients[idx], ...data};
+    toast('✅ បានកែប្រែ');
+  } else {
+    data.id = Date.now();
+    clients.push(data);
+    toast('✅ បន្ថែមថ្មី');
+  }
+  DB.set('clients', clients);
+  closeClientModal();
+  renderClients();
+}
+
+function editClient(id) { openClientModal(id); }
+function deleteClient(id) {
+  showConfirm('លុបអតិថិជន', 'តើអ្នកប្រាកដ?', () => {
+    DB.set('clients', DB.get('clients').filter(c => c.id !== id));
+    toast('🗑️ បានលុប');
+    renderClients();
+  });
+}
+
+// ============ CALENDAR ============
+function renderCalendar() {
+  const cases = DB.get('cases').filter(c => c.nextHearing).sort((a,b) => new Date(a.nextHearing) - new Date(b.nextHearing));
+  document.getElementById('calendarList').innerHTML = cases.length
+    ? cases.map(c => {
+        const info = getHearingDayInfo(c.nextHearing);
+        if (!info) return '';
+        return `<div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border-l-4 ${info.border}">
+          <div class="text-center bg-gradient-to-br from-brand-500 to-brand-700 text-white rounded-xl px-3 py-2 min-w-[64px] shrink-0">
+            <p class="text-xl font-bold leading-none">${c.nextHearing.slice(8,10)}</p>
+            <p class="text-[10px] mt-1 opacity-90">${c.nextHearing.slice(0,7)}</p>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-bold text-sm truncate">${c.caseNumber}</p>
+            <p class="text-sm text-slate-600 dark:text-slate-400 truncate">${c.title}</p>
+            <p class="text-xs text-slate-500 truncate mt-1">🏛️ ${c.court}</p>
+          </div>
+          <span class="badge ${info.badge} whitespace-nowrap">${info.label}</span>
+        </div>`;
+      }).join('')
+    : '<div class="text-center py-12"><div class="empty-icon">📅</div><p class="text-slate-400 text-sm">មិនមានកាលវិភាគ</p></div>';
+}
+
+// ============ DOCUMENTS ============
+async function renderDocSelect() {
+  const cases = DB.get('cases');
+  const select = document.getElementById('docCaseSelect');
+  
+  if (!cases.length) {
+    select.innerHTML = '<option value="">— មិនមានរឿងក្ដី —</option>';
+    document.getElementById('docsList').innerHTML = `
+      <div class="text-center py-12">
+        <div class="text-5xl mb-3 opacity-40">📁</div>
+        <p class="text-slate-400 text-sm">សូមបង្កើតរឿងក្ដីជាមុន</p>
+      </div>`;
+    return;
+  }
+  
+  const currentValue = select.value;
+  select.innerHTML = cases.map(c => 
+    `<option value="${c.id}">${c.caseNumber} - ${c.title}</option>`
+  ).join('');
+  
+  if (currentValue && cases.find(c => c.id == currentValue)) {
+    select.value = currentValue;
+  }
+  
+  await renderDocs();
+}
+
+async function renderDocs() {
+  const caseId = parseInt(document.getElementById('docCaseSelect').value);
+  const typeFilter = document.getElementById('docFilterType')?.value || '';
+  const listEl = document.getElementById('docsList');
+  const countEl = document.getElementById('docsListCount');
+  const docCountEl = document.getElementById('docCount');
+  const docSizeEl = document.getElementById('docTotalSize');
+  
+  if (!caseId) {
+    listEl.innerHTML = `<div class="text-center py-12">
+      <div class="text-5xl mb-3 opacity-40">📄</div>
+      <p class="text-slate-400 text-sm">សូមជ្រើសរឿងក្ដី</p>
+    </div>`;
+    if (countEl) countEl.textContent = '';
+    return;
+  }
+  
+  try {
+    let docs = await FileDB.getByCase(caseId);
+    
+    if (docCountEl) docCountEl.textContent = docs.length;
+    const totalSize = docs.reduce((sum, d) => sum + (d.size || 0), 0);
+    if (docSizeEl) docSizeEl.textContent = formatFileSize(totalSize);
+    
+    if (typeFilter) docs = docs.filter(d => d.category === typeFilter);
+    docs.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+    
+    if (countEl) countEl.textContent = docs.length ? `${docs.length} ឯកសារ` : '';
+    
+    if (!docs.length) {
+      listEl.innerHTML = `
+        <div class="text-center py-12">
+          <div class="text-5xl mb-3 opacity-40">📄</div>
+          <p class="text-slate-400 text-sm">មិនមានឯកសារ${typeFilter ? ' តាមប្រភេទនេះ' : ''}</p>
+          <p class="text-xs text-slate-400 mt-1">សូម Upload ឯកសារ</p>
+        </div>`;
+      return;
+    }
+    
+    listEl.innerHTML = docs.map(d => {
+      const icon = getFileIcon(d.category);
+      const isImage = d.category === 'image';
+      
+      return `
+        <div class="group flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 overflow-hidden ${isImage ? '' : `bg-${icon.color}-50 dark:bg-${icon.color}-950`}">
+            ${isImage 
+              ? `<img src="${d.data}" alt="${d.name}" class="w-full h-full object-cover cursor-pointer" onclick="previewDoc(${d.id})">`
+              : `<span class="text-2xl">${icon.emoji}</span>`
+            }
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-sm truncate" title="${d.name}">${d.name}</p>
+            <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <span>${formatFileSize(d.size)}</span>
+              <span>•</span>
+              <span>${formatDate(d.uploadedAt)}</span>
+            </div>
+          </div>
+          <div class="flex gap-1 shrink-0">
+            <button onclick="previewDoc(${d.id})" class="w-9 h-9 rounded-lg hover:bg-brand-50 dark:hover:bg-brand-950 text-brand-600 dark:text-brand-400 flex items-center justify-center" title="មើល">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+            <button onclick="downloadDoc(${d.id})" class="w-9 h-9 rounded-lg hover:bg-green-50 dark:hover:bg-green-950 text-green-600 dark:text-green-400 flex items-center justify-center" title="ទាញយក">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+            <button onclick="deleteDoc(${d.id})" class="w-9 h-9 rounded-lg hover:bg-red-50 dark:hover:bg-red-950 text-red-500 flex items-center justify-center" title="លុប">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error(err);
+    listEl.innerHTML = `<div class="text-center py-8 text-red-500 text-sm">❌ មានបញ្ហាក្នុងការផ្ទុកឯកសារ</div>`;
+  }
+}
+
+// ============ UPLOAD ============
+async function handleDocDrop(event) {
+  event.preventDefault();
+  const dropZone = document.getElementById('docDropZone');
+  dropZone.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950');
+  const files = Array.from(event.dataTransfer.files);
+  if (files.length) await uploadFiles(files);
+}
+
+async function handleDocUpload(event) {
+  const files = Array.from(event.target.files);
+  if (files.length) await uploadFiles(files);
+  event.target.value = '';
+}
+
+async function uploadFiles(files) {
+  const caseId = parseInt(document.getElementById('docCaseSelect').value);
+  if (!caseId) return toast('⚠️ សូមជ្រើសរឿងក្ដីជាមុន');
+  
+  const MAX_SIZE = 50 * 1024 * 1024;
+  let uploaded = 0, skipped = 0;
+  
+  toast(`📤 កំពុង Upload ${files.length} ឯកសារ...`);
+  
+  for (const file of files) {
+    if (file.size > MAX_SIZE) {
+      toast(`❌ ${file.name} ធំពេក (> 50MB)`);
+      skipped++;
+      continue;
+    }
+    
+    try {
+      const base64 = await fileToBase64(file);
+      const docData = {
+        id: Date.now() + Math.floor(Math.random() * 10000),
+        caseId: caseId,
+        name: file.name,
+        size: file.size,
+        type: file.type || 'application/octet-stream',
+        category: getFileCategory(file.name, file.type),
+        data: base64,
+        uploadedAt: new Date().toISOString()
+      };
+      await FileDB.add(docData);
+      uploaded++;
+    } catch (err) {
+      console.error(err);
+      skipped++;
+    }
+  }
+  
+  if (uploaded > 0) {
+    toast(`✅ Upload ${uploaded} ឯកសារ${skipped ? ` (${skipped} បរាជ័យ)` : ''}`);
+    renderDocs();
+  } else if (skipped > 0) {
+    toast(`❌ Upload បរាជ័យទាំងអស់`);
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ============ PREVIEW ============
+async function previewDoc(id) {
+  try {
+    const doc = await FileDB.get(id);
+    if (!doc) return toast('❌ រកមិនឃើញឯកសារ');
+    
+    if (doc.category === 'image') {
+      showImagePreview(doc);
+      return;
+    }
+    
+    if (doc.category === 'pdf') {
+      showPdfViewer(doc);
+      return;
+    }
+    
+    downloadDoc(id);
+    toast('ℹ️ ឯកសារត្រូវបាន Download ដើម្បីបើក');
+  } catch (err) {
+    console.error(err);
+    toast('❌ មិនអាចបើកបាន');
+  }
+}
+
+// ============ PDF VIEWER (PDF.js) ============
+async function showPdfViewer(doc) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 bg-black/95 z-[100] flex flex-col animate-fade-in';
+  modal.innerHTML = `
+    <div class="flex-shrink-0 bg-slate-900 text-white px-3 py-2.5 flex items-center gap-2 safe-top">
+      <button onclick="closePdfViewer(this)" class="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center shrink-0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold text-sm truncate">${escapeHtml(doc.name)}</p>
+        <p class="text-xs opacity-70">${formatFileSize(doc.size)}</p>
+      </div>
+      <button onclick="downloadPdfFromDoc(${doc.id})" class="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center shrink-0" title="ទាញយក">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+    </div>
+    
+    <div class="flex-shrink-0 bg-slate-800 text-white px-3 py-2 flex items-center justify-between text-sm">
+      <button onclick="pdfPrevPage()" id="pdfPrevBtn" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 font-medium flex items-center gap-1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+        មុន
+      </button>
+      <div class="flex items-center gap-2">
+        <span id="pdfPageInfo" class="text-xs">កំពុងផ្ទុក...</span>
+      </div>
+      <button onclick="pdfNextPage()" id="pdfNextBtn" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 font-medium flex items-center gap-1">
+        បន្ទាប់
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+    
+    <div id="pdfCanvasContainer" class="flex-1 overflow-auto bg-slate-700 p-2" style="display:flex;align-items:flex-start;justify-content:center;">
+      <div class="pdf-loading text-white">
+        <div class="spinner" style="width:40px;height:40px;border-width:4px"></div>
+        <p class="mt-3 text-sm">កំពុងផ្ទុក PDF...</p>
+      </div>
+    </div>
+    
+    <div class="flex-shrink-0 bg-slate-800 text-white px-3 py-2 flex items-center justify-center gap-2 safe-bottom">
+      <button onclick="pdfZoom(-0.25)" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+      </button>
+      <span id="pdfZoomLevel" class="text-xs w-12 text-center">100%</span>
+      <button onclick="pdfZoom(0.25)" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  document.body.style.overflow = 'hidden';
+  
+  try {
+    const base64Data = doc.data.split(',')[1] || doc.data;
+    const pdfData = atob(base64Data);
+    const pdfArray = new Uint8Array(pdfData.length);
+    for (let i = 0; i < pdfData.length; i++) pdfArray[i] = pdfData.charCodeAt(i);
+    
+    const loadingTask = pdfjsLib.getDocument({ data: pdfArray });
+    const pdf = await loadingTask.promise;
+    
+    currentPdfDoc = { pdf: pdf, pageNum: 1, scale: 1, doc: doc, modal: modal };
+    await renderPdfPage();
+  } catch (err) {
+    console.error('PDF error:', err);
+    document.getElementById('pdfCanvasContainer').innerHTML = `
+      <div class="text-center text-white p-6">
+        <div class="text-5xl mb-3">⚠️</div>
+        <p class="font-semibold mb-2">មិនអាចបង្ហាញ PDF បាន</p>
+        <p class="text-xs opacity-70 mb-4">សូម Download ឯកសារដើម្បីបើក</p>
+        <button onclick="downloadPdfFromDoc(${doc.id})" class="btn-primary text-white px-5 py-2.5 rounded-lg font-medium">⬇️ ទាញយក PDF</button>
+      </div>
+    `;
+  }
+}
+
+async function renderPdfPage() {
+  if (!currentPdfDoc) return;
+  const { pdf, pageNum, scale } = currentPdfDoc;
+  
+  const page = await pdf.getPage(pageNum);
+  const viewport = page.getViewport({ scale: scale * 1.5 });
+  
+  const container = document.getElementById('pdfCanvasContainer');
+  container.innerHTML = '';
+  
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  canvas.style.maxWidth = '100%';
+  canvas.style.height = 'auto';
+  canvas.style.background = 'white';
+  canvas.style.borderRadius = '8px';
+  canvas.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)';
+  container.appendChild(canvas);
+  
+  await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+  
+  document.getElementById('pdfPageInfo').textContent = `ទំព័រ ${pageNum} / ${pdf.numPages}`;
+  document.getElementById('pdfZoomLevel').textContent = Math.round(scale * 100) + '%';
+  document.getElementById('pdfPrevBtn').disabled = pageNum <= 1;
+  document.getElementById('pdfNextBtn').disabled = pageNum >= pdf.numPages;
+  document.getElementById('pdfPrevBtn').style.opacity = pageNum <= 1 ? '0.4' : '1';
+  document.getElementById('pdfNextBtn').style.opacity = pageNum >= pdf.numPages ? '0.4' : '1';
+}
+
+async function pdfPrevPage() {
+  if (!currentPdfDoc || currentPdfDoc.pageNum <= 1) return;
+  currentPdfDoc.pageNum--;
+  await renderPdfPage();
+}
+
+async function pdfNextPage() {
+  if (!currentPdfDoc || currentPdfDoc.pageNum >= currentPdfDoc.pdf.numPages) return;
+  currentPdfDoc.pageNum++;
+  await renderPdfPage();
+}
+
+async function pdfZoom(delta) {
+  if (!currentPdfDoc) return;
+  currentPdfDoc.scale = Math.max(0.5, Math.min(3, currentPdfDoc.scale + delta));
+  await renderPdfPage();
+}
+
+function closePdfViewer(btn) {
+  const modal = btn.closest('.fixed');
+  if (currentPdfDoc?.pdf) {
+    try { currentPdfDoc.pdf.destroy(); } catch(e) {}
+  }
+  currentPdfDoc = null;
+  if (modal) modal.remove();
+  document.body.style.overflow = '';
+}
+
+async function downloadPdfFromDoc(id) {
+  try {
+    const doc = await FileDB.get(id);
+    if (!doc) return;
+    const a = document.createElement('a');
+    a.href = doc.data;
+    a.download = doc.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast('✅ កំពុងទាញយក...');
+  } catch (err) {
+    toast('❌ ទាញយកបរាជ័យ');
+  }
+}
+
+// ============ IMAGE PREVIEW ============
+function showImagePreview(doc) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4';
+  modal.innerHTML = `
+    <div class="relative max-w-5xl w-full max-h-[90vh]">
+      <button onclick="this.closest('.fixed').remove()" class="absolute -top-12 right-0 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl">&times;</button>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="p-3 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+          <div class="min-w-0">
+            <p class="font-semibold text-sm truncate">${escapeHtml(doc.name)}</p>
+            <p class="text-xs text-slate-500">${formatFileSize(doc.size)}</p>
+          </div>
+          <button onclick="this.closest('.fixed').remove()" class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="p-2 overflow-auto flex-1 flex items-center justify-center bg-slate-100 dark:bg-slate-950">
+          <img src="${doc.data}" alt="${doc.name}" class="max-w-full max-h-[70vh] object-contain rounded-lg">
+        </div>
+      </div>
+    </div>
+  `;
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+}
+
+async function downloadDoc(id) {
+  try {
+    const doc = await FileDB.get(id);
+    if (!doc) return toast('❌ រកមិនឃើញ');
+    const a = document.createElement('a');
+    a.href = doc.data;
+    a.download = doc.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast(`✅ ទាញយក ${doc.name}`);
+  } catch (err) {
+    toast('❌ ទាញយកបរាជ័យ');
+  }
+}
+
+async function deleteDoc(id) {
+  try {
+    const doc = await FileDB.get(id);
+    if (!doc) return;
+    showConfirm('លុបឯកសារ', `តើអ្នកប្រាកដជាចង់លុប "${doc.name}"?`, async () => {
+      await FileDB.delete(id);
+      toast('🗑️ បានលុបឯកសារ');
+      renderDocs();
+    }, 'លុប');
+  } catch (err) {
+    toast('❌ លុបបរាជ័យ');
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+// ============ PASSWORD MODAL ============
+function openPasswordModal() {
+  ['oldPass','newPass','newPass2'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('passwordModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closePasswordModal() {
+  document.getElementById('passwordModal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+async function savePassword() {
+  const oldPass = document.getElementById('oldPass').value;
+  const newPass = document.getElementById('newPass').value;
+  const newPass2 = document.getElementById('newPass2').value;
+  if (!oldPass || !newPass || !newPass2) return toast('⚠️ សូមបំពេញគ្រប់ប្រអប់');
+  if (newPass.length < 4) return toast('⚠️ លេខសម្ងាត់ ≥ ៤ តួ');
+  if (newPass !== newPass2) return toast('❌ មិនដូចគ្នា');
+  const auth = DB.get('auth', null);
+  const oldHash = await hashPassword(oldPass);
+  if (!auth || auth.password !== oldHash) return toast('❌ លេខសម្ងាត់មិនត្រឹមត្រូវ');
+  const newHash = await hashPassword(newPass);
+  auth.password = newHash;
+  DB.set('auth', auth);
+  closePasswordModal();
+  toast('✅ បានផ្លាស់ប្ដូរ');
+}
+
+// ============ NAME MODAL ============
+function openNameModal() {
+  document.getElementById('newName').value = currentUser?.name || '';
+  document.getElementById('nameModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeNameModal() {
+  document.getElementById('nameModal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+function saveName() {
+  const newName = document.getElementById('newName').value.trim();
+  if (!newName) return toast('⚠️ សូមបំពេញឈ្មោះ');
+  if (newName.length < 2) return toast('⚠️ ≥ ២ តួ');
+  const auth = DB.get('auth', null);
+  if (!auth) return;
+  auth.name = newName;
+  DB.set('auth', auth);
+  currentUser.name = newName;
+  const storage = localStorage.getItem('user') ? localStorage : sessionStorage;
+  storage.setItem('user', JSON.stringify(currentUser));
+  loadUser();
+  closeNameModal();
+  toast('✅ បានកែឈ្មោះ');
+}
+
+// ============ AUTO BACKUP ============
+const BACKUP_CONFIG = {
+  STORAGE_KEY: 'lastBackupDate',
+  SNOOZE_KEY: 'backupSnoozeUntil',
+  AUTO_BACKUP_KEY: 'autoBackupEnabled',
+  INTERVAL_DAYS: 7,
+  AUTO_BACKUP_DAYS: 1,
+  AUTO_BACKUP_MAX: 5
+};
+
+function shouldShowBackupReminder() {
+  const snoozeUntil = parseInt(localStorage.getItem(BACKUP_CONFIG.SNOOZE_KEY) || '0');
+  if (Date.now() < snoozeUntil) return false;
+  const lastBackup = parseInt(localStorage.getItem(BACKUP_CONFIG.STORAGE_KEY) || '0');
+  if (lastBackup === 0) return true;
+  const daysSince = (Date.now() - lastBackup) / 86400000;
+  return daysSince >= BACKUP_CONFIG.INTERVAL_DAYS;
+}
+
+function checkBackupReminder() {
+  if (!shouldShowBackupReminder()) return;
+  if (!DB.get('cases').length && !DB.get('clients').length) return;
+  
+  const lastBackup = parseInt(localStorage.getItem(BACKUP_CONFIG.STORAGE_KEY) || '0');
+  const textEl = document.getElementById('backupReminderText');
+  if (textEl) {
+    if (lastBackup === 0) textEl.textContent = 'អ្នកមិនធ្លាប់ Backup ទេ';
+    else {
+      const days = Math.floor((Date.now() - lastBackup) / 86400000);
+      textEl.textContent = `ជាង ${days} ថ្ងៃហើយ`;
+    }
+  }
+  document.getElementById('backupReminderBanner')?.classList.remove('hidden');
+}
+
+function hideBackupReminder() {
+  document.getElementById('backupReminderBanner')?.classList.add('hidden');
+}
+
+function snoozeBackup(days) {
+  localStorage.setItem(BACKUP_CONFIG.SNOOZE_KEY, (Date.now() + days * 86400000).toString());
+  hideBackupReminder();
+  toast(`⏰ រំលឹកឡើងវិញក្នុង ${days} ថ្ងៃ`);
+}
+
+async function autoBackup() {
+  if (localStorage.getItem(BACKUP_CONFIG.AUTO_BACKUP_KEY) === 'false') return;
+  try {
+    const lastAuto = parseInt(localStorage.getItem('lastAutoBackup') || '0');
+    const daysSince = (Date.now() - lastAuto) / 86400000;
+    if (daysSince < BACKUP_CONFIG.AUTO_BACKUP_DAYS) return;
+    
+    const files = await FileDB.getAll();
+    const dataFiles = files.filter(f => f.category !== 'autobackup');
+    
+    const backupData = {
+      version: '2.0',
+      appName: 'Case Manager Professional',
+      exportedAt: new Date().toISOString(),
+      autoBackup: true,
+      data: {
+        cases: DB.get('cases'),
+        clients: DB.get('clients'),
+        documents: dataFiles
+      }
+    };
+    
+    const jsonStr = JSON.stringify(backupData);
+    const id = 'autobackup_' + Date.now();
+    
+    await FileDB.add({
+      id: id,
+      caseId: -1,
+      name: `auto-backup-${new Date().toISOString().slice(0,10)}.json`,
+      size: jsonStr.length,
+      type: 'application/json',
+      category: 'autobackup',
+      data: 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(jsonStr))),
+      uploadedAt: new Date().toISOString()
+    });
+    
+    localStorage.setItem('lastAutoBackup', Date.now().toString());
+    await cleanOldAutoBackups();
+    console.log('✅ Auto backup created');
+  } catch (err) {
+    console.error('Auto backup failed:', err);
+  }
+}
+
+async function cleanOldAutoBackups() {
+  try {
+    const all = await FileDB.getAll();
+    const autoBackups = all.filter(f => f.category === 'autobackup').sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+    if (autoBackups.length > BACKUP_CONFIG.AUTO_BACKUP_MAX) {
+      const toDelete = autoBackups.slice(BACKUP_CONFIG.AUTO_BACKUP_MAX);
+      for (const backup of toDelete) await FileDB.delete(backup.id);
+    }
+  } catch (err) {}
+}
+
+async function listAutoBackups() {
+  try {
+    const all = await FileDB.getAll();
+    return all.filter(f => f.category === 'autobackup').sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+  } catch { return []; }
+}
+
+async function restoreFromAutoBackup(id) {
+  try {
+    const backup = await FileDB.get(id);
+    if (!backup) return toast('❌ រកមិនឃើញ Backup');
+    
+    showConfirm('ស្តារទិន្នន័យ', 'តើអ្នកចង់ស្តារទិន្នន័យពី Auto Backup? ទិន្នន័យបច្ចុប្បន្ននឹងត្រូវជំនួស។', async () => {
+      try {
+        const base64 = backup.data.split(',')[1];
+        const json = decodeURIComponent(escape(atob(base64)));
+        const parsed = JSON.parse(json);
+        if (!parsed.data) return toast('❌ Backup ខូច');
+        
+        DB.set('cases', parsed.data.cases || []);
+        DB.set('clients', parsed.data.clients || []);
+        
+        const allFiles = await FileDB.getAll();
+        for (const f of allFiles) {
+          if (f.category !== 'autobackup') await FileDB.delete(f.id);
+        }
+        if (Array.isArray(parsed.data.documents)) {
+          for (const doc of parsed.data.documents) {
+            if (doc.category !== 'autobackup') await FileDB.add(doc);
+          }
+        }
+        
+        toast('✅ បានស្តារទិន្នន័យជោគជ័យ!');
+        renderSettingsStats();
+        showPage('dashboard');
+      } catch (err) {
+        console.error(err);
+        toast('❌ ស្តារបរាជ័យ');
+      }
+    }, 'ស្តារ');
+  } catch (err) {
+    toast('❌ ស្តារបរាជ័យ');
+  }
+}
+
+async function deleteAutoBackup(id) {
+  showConfirm('លុប Auto Backup', 'តើអ្នកប្រាកដ?', async () => {
+    await FileDB.delete(id);
+    toast('🗑️ បានលុប');
+    renderAutoBackupList();
+  }, 'លុប');
+}
+
+function toggleAutoBackup(enabled) {
+  localStorage.setItem(BACKUP_CONFIG.AUTO_BACKUP_KEY, enabled ? 'true' : 'false');
+  toast(enabled ? '✅ បើក Auto Backup' : '⏸️ បិទ Auto Backup');
+  if (enabled) autoBackup();
+}
+
+async function renderAutoBackupList() {
+  const listEl = document.getElementById('autoBackupList');
+  if (!listEl) return;
+  
+  const toggle = document.getElementById('autoBackupToggle');
+  if (toggle) toggle.checked = localStorage.getItem(BACKUP_CONFIG.AUTO_BACKUP_KEY) !== 'false';
+  
+  try {
+    const backups = await listAutoBackups();
+    if (!backups.length) {
+      listEl.innerHTML = '<div class="text-center py-4 text-xs text-slate-500 dark:text-slate-400">មិនមាន Auto Backup</div>';
+      return;
+    }
+    
+    listEl.innerHTML = backups.map(b => {
+      const date = new Date(b.uploadedAt).toLocaleString('km-KH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return `
+        <div class="flex items-center gap-2 p-2 bg-white/60 dark:bg-slate-900/60 rounded-lg">
+          <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-950 rounded-lg flex items-center justify-center shrink-0">
+            <span class="text-sm">💾</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold truncate">${date}</p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400">${formatFileSize(b.size)}</p>
+          </div>
+          <button onclick="restoreFromAutoBackup('${b.id}')" class="px-2 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 rounded text-[10px] font-medium">ស្តារ</button>
+          <button onclick="deleteAutoBackup('${b.id}')" class="w-7 h-7 rounded hover:bg-red-50 dark:hover:bg-red-950 text-red-500 flex items-center justify-center">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    listEl.innerHTML = '<div class="text-center py-4 text-xs text-red-500">❌ មានបញ្ហា</div>';
+  }
+}
+
+function initAutoBackupSystem() {
+  setTimeout(checkBackupReminder, 3000);
+  setTimeout(autoBackup, 5000);
+  setInterval(() => { checkBackupReminder(); autoBackup(); }, 60 * 60 * 1000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) { checkBackupReminder(); autoBackup(); }
+  });
+}
+
+// ============ BACKUP / RESTORE ============
+async function exportData() {
+  try {
+    toast('📦 កំពុងបង្កើត Backup...');
+    const allFiles = await FileDB.getAll();
+    const files = allFiles.filter(f => f.category !== 'autobackup');
+    
+    const data = {
+      version: '2.0',
+      appName: 'Case Manager Professional',
+      exportedAt: new Date().toISOString(),
+      exportedBy: currentUser?.name || 'unknown',
+      data: {
+        cases: DB.get('cases'),
+        clients: DB.get('clients'),
+        documents: files
+      }
+    };
+    
+    const json = JSON.stringify(data);
+    const sizeMB = (json.length / 1024 / 1024).toFixed(2);
+    
+    if (sizeMB > 100) {
+      if (!confirm(`⚠️ Backup ធំ ${sizeMB} MB!\n\nតើអ្នកចង់បន្តទេ?`)) return;
+    }
+    
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    const timeStr = `${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `case-manager-backup-${dateStr}-${timeStr}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    localStorage.setItem(BACKUP_CONFIG.STORAGE_KEY, Date.now().toString());
+    localStorage.removeItem(BACKUP_CONFIG.SNOOZE_KEY);
+    hideBackupReminder();
+    
+    toast(`✅ បានទាញយក Backup (${sizeMB} MB)`);
+  } catch (err) {
+    console.error(err);
+    toast('❌ Backup បរាជ័យ');
+  }
+}
+
+let pendingImportData = null;
+
+function handleDrop(event) {
+  event.preventDefault();
+  document.getElementById('dropZone').classList.remove('border-brand-500', 'bg-brand-50');
+  const file = event.dataTransfer.files[0];
+  if (file) processImportFile(file);
+}
+
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (file) processImportFile(file);
+}
+
+function processImportFile(file) {
+  if (!file.name.endsWith('.json')) return toast('❌ សូមជ្រើស .json');
+  if (file.size > 500 * 1024 * 1024) return toast('❌ File ធំពេក');
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const json = JSON.parse(e.target.result);
+      if (!json.data || (!Array.isArray(json.data.cases) && !Array.isArray(json.data.clients))) {
+        return toast('❌ File មិនត្រឹមត្រូវ');
+      }
+      pendingImportData = json;
+      showImportPreview(json);
+    } catch (err) {
+      toast('❌ File មិនត្រឹមត្រូវ');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function showImportPreview(json) {
+  const preview = document.getElementById('importPreview');
+  const casesCount = json.data.cases?.length || 0;
+  const clientsCount = json.data.clients?.length || 0;
+  const docsCount = json.data.documents?.length || 0;
+  const date = json.exportedAt ? new Date(json.exportedAt).toLocaleString('km-KH') : 'មិនស្គាល់';
+  preview.innerHTML = `
+    <p class="font-semibold mb-2">📋 ទិន្នន័យ:</p>
+    <div class="flex justify-between"><span>📁 រឿងក្ដី:</span><span class="font-semibold">${casesCount}</span></div>
+    <div class="flex justify-between"><span>👥 អតិថិជន:</span><span class="font-semibold">${clientsCount}</span></div>
+    <div class="flex justify-between"><span>📄 ឯកសារ:</span><span class="font-semibold">${docsCount}</span></div>
+    <div class="flex justify-between pt-2 border-t border-slate-200 dark:border-slate-700 mt-2">
+      <span>📅 Export:</span><span class="font-semibold text-[10px]">${date}</span>
+    </div>`;
+  preview.classList.remove('hidden');
+  const btn = document.getElementById('confirmImportBtn');
+  btn.disabled = false;
+  btn.className = 'btn-primary w-full text-white py-3 rounded-xl font-medium flex items-center justify-center gap-2';
+}
+
+async function confirmImport() {
+  if (!pendingImportData) return;
+  const mode = document.querySelector('input[name="importMode"]:checked').value;
+  const incoming = pendingImportData.data;
+  
+  const proceed = async () => {
+    toast('📥 កំពុង Import...');
+    if (mode === 'replace') {
+      DB.set('cases', incoming.cases || []);
+      DB.set('clients', incoming.clients || []);
+      const allFiles = await FileDB.getAll();
+      for (const f of allFiles) {
+        if (f.category !== 'autobackup') await FileDB.delete(f.id);
+      }
+      if (Array.isArray(incoming.documents)) {
+        for (const doc of incoming.documents) {
+          if (doc.category !== 'autobackup') await FileDB.add(doc);
+        }
+      }
+      toast('✅ បានជំនួសទាំងអស់!');
+    } else {
+      const result = mergeData(incoming);
+      if (Array.isArray(incoming.documents)) {
+        const existingFiles = await FileDB.getAll();
+        const existingIds = new Set(existingFiles.map(f => f.id));
+        let added = 0;
+        for (const doc of incoming.documents) {
+          if (!existingIds.has(doc.id) && doc.category !== 'autobackup') { await FileDB.add(doc); added++; }
+        }
+        result.addedDocs = added;
+      }
+      toast(`✅ បញ្ចូល: +${result.addedCases} រឿងក្ដី, +${result.addedClients} អតិថិជន, +${result.addedDocs} ឯកសារ`);
+    }
+    pendingImportData = null;
+    document.getElementById('importFile').value = '';
+    document.getElementById('importPreview').classList.add('hidden');
+    const btn = document.getElementById('confirmImportBtn');
+    btn.disabled = true;
+    btn.className = 'w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed';
+    renderSettingsStats();
+  };
+  
+  if (mode === 'replace') {
+    showConfirm('ជំនួសទាំងអស់', 'ការជំនួសនឹងលុបទិន្នន័យបច្ចុប្បន្នចោលទាំងអស់! តើអ្នកប្រាកដទេ?', proceed, 'ជំនួស');
+  } else {
+    proceed();
+  }
+}
+
+function mergeData(incoming) {
+  const existingCases = DB.get('cases');
+  const existingClients = DB.get('clients');
+  let addedClients = 0;
+  const clientIdMap = {};
+  (incoming.clients || []).forEach(c => {
+    const key = `${c.name}|${c.phone||''}`;
+    const existing = existingClients.find(x => `${x.name}|${x.phone||''}` === key);
+    if (existing) clientIdMap[c.id] = existing.id;
+    else {
+      const newId = Date.now() + Math.floor(Math.random() * 10000);
+      existingClients.push({ ...c, id: newId });
+      clientIdMap[c.id] = newId;
+      addedClients++;
+    }
+  });
+  let addedCases = 0;
+  const caseIdMap = {};
+  const existingCaseNumbers = new Set(existingCases.map(c => c.caseNumber));
+  (incoming.cases || []).forEach(c => {
+    if (existingCaseNumbers.has(c.caseNumber)) {
+      const existing = existingCases.find(x => x.caseNumber === c.caseNumber);
+      caseIdMap[c.id] = existing.id;
+    } else {
+      const newId = Date.now() + Math.floor(Math.random() * 10000);
+      const newClientId = clientIdMap[c.clientId] || c.clientId;
+      existingCases.push({ ...c, id: newId, clientId: newClientId });
+      caseIdMap[c.id] = newId;
+      addedCases++;
+    }
+  });
+  DB.set('cases', existingCases);
+  DB.set('clients', existingClients);
+  return { addedCases, addedClients, addedDocs: 0 };
+}
+
+function clearAllData() {
+  showConfirm('លុបទាំងអស់', 'តើអ្នកប្រាកដជាចង់លុបទិន្នន័យទាំងអស់?', async () => {
+    DB.set('cases', []);
+    DB.set('clients', []);
+    const allFiles = await FileDB.getAll();
+    for (const f of allFiles) {
+      if (f.category !== 'autobackup') await FileDB.delete(f.id);
+    }
+    toast('🗑️ បានលុបទាំងអស់');
+    renderSettingsStats();
+    showPage('dashboard');
+  }, 'លុបទាំងអស់');
+}
+
+async function renderSettingsStats() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('backupCaseCount', DB.get('cases').length);
+  set('backupClientCount', DB.get('clients').length);
+  try {
+    const files = await FileDB.getAll();
+    const dataFiles = files.filter(f => f.category !== 'autobackup');
+    set('backupDocCount', dataFiles.length);
+  } catch { set('backupDocCount', '0'); }
+  
+  await renderAutoBackupList();
+  await updateStorageStatusUI(await isStoragePersistent());
+}
+
+async function isStoragePersistent() {
+  if (!navigator.storage || !navigator.storage.persisted) return false;
+  try { return await navigator.storage.persisted(); }
+  catch { return false; }
+}
+
+// ============ CONFIRM MODAL ============
+let confirmCallback = null;
+function showConfirm(title, msg, callback, okText = 'យល់ព្រម') {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  const btn = document.getElementById('confirmOkBtn');
+  btn.textContent = okText;
+  confirmCallback = callback;
+  document.getElementById('confirmModal').classList.remove('hidden');
+}
+function closeConfirm() {
+  document.getElementById('confirmModal').classList.add('hidden');
+  confirmCallback = null;
+}
+document.getElementById('confirmOkBtn')?.addEventListener('click', async () => {
+  if (confirmCallback) await confirmCallback();
+  closeConfirm();
+});
+
+// ============ UTILITIES ============
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.add('hidden'), 2800);
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (currentPdfDoc) {
+      const modal = document.querySelector('.z-\\[100\\]');
+      if (modal) closePdfViewer(modal.querySelector('button'));
+    }
+    closeCaseModal();
+    closeClientModal();
+    closePasswordModal();
+    closeNameModal();
+    closeConfirm();
+    closeSidebarOnMobile();
+  }
+});
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth >= 1024) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.add('hidden');
+  }
+});
+
+// ============ INIT ============
+async function initApp() {
+  loadUser();
+  await FileDB.init();
+  await requestPersistentStorage(false);
+  showPage('dashboard');
+  initAutoBackupSystem();
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  initTheme();
+  const auth = DB.get('auth', null);
+  
+  if (!auth) {
+    document.getElementById('setupScreen').classList.remove('hidden');
+  } else if (checkSession()) {
+    document.getElementById('app').classList.remove('hidden');
+    await initApp();
+  } else {
+    showLogin();
+  }
+});
+</script>
+</body>
+  </html>
