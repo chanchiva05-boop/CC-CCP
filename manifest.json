@@ -1,1 +1,58 @@
-
+{
+  "name": "ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដី",
+  "short_name": "Case Manager",
+  "description": "ប្រព័ន្ធគ្រប់គ្រងរឿងក្ដីសម្រាប់មេធាវី",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#3563ff",
+  "theme_color": "#3563ff",
+  "lang": "km",
+  "dir": "ltr",
+  "categories": ["productivity", "business", "legal"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "រឿងក្ដី",
+      "short_name": "រឿងក្ដី",
+      "description": "មើលរឿងក្ដីទាំងអស់",
+      "url": "./index.html?page=cases",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "កាលវិភាគ",
+      "short_name": "កាលវិភាគ",
+      "description": "ថ្ងៃកាត់ក្ដីខាងមុខ",
+      "url": "./index.html?page=calendar",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
