@@ -434,7 +434,7 @@ tailwind.config = {
                   <th class="px-5 py-4 font-semibold">តុលាការមានសម្ថកិច្ច</th>
                   <th class="px-5 py-4 font-semibold">អតិថិជន</th>
                   <th class="px-5 py-4 font-semibold">ស្ថានភាព</th>
-                  <th class="px-5 py-4 font-semibold">ថ្ងៃកាលបរិតុលាការ</th>
+                  <th class="px-5 py-4 font-semibold">ថ្ងៃកាលបរិច្ឆេទតុលាការ</th>
                   <th class="px-5 py-4 font-semibold text-right">សកម្មភាព</th>
                 </tr>
               </thead>
@@ -549,7 +549,7 @@ tailwind.config = {
             </div>
             <div class="space-y-2 mb-4 text-sm">
               <div class="flex justify-between p-2.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                <span class="text-slate-600 dark:text-slate-400">📁 រឿងក្ដី</span>
+                <span class="text-slate-600 dark:text-slate-400">📁 សំណុំរឿងក្ដី</span>
                 <span id="backupCaseCount" class="font-semibold">0</span>
               </div>
               <div class="flex justify-between p-2.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
@@ -673,7 +673,7 @@ tailwind.config = {
         <input id="caseTitle" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
       </div>
       <div class="md:col-span-2">
-        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">តុលាការមានសម្ថកិច្ច <span class="text-red-500">*</span></label>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">តុលាការមានសមត្ថកិច្ច <span class="text-red-500">*</span></label>
         <select id="caseCourt" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
           <option value="">— សូមជ្រើសរើសតុលាការ —</option>
           <optgroup label="🏛️ សាលាដំបូង">
@@ -739,7 +739,7 @@ tailwind.config = {
             <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
             <option value="រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ">រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
-            <option value="បណ្ដឹងបានដក">បណ្ដឹងបានដក</option>
+            <option value="ពាក្យបណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
             <option value="លទ្ធផលសះជាគ្នា">លទ្ធផលសះជាគ្នា</option>
           </optgroup>
           <optgroup label="⚖️ នីតិវិធីព្រហ្មទណ្ឌ">
@@ -747,12 +747,11 @@ tailwind.config = {
             <option value="ដំណាក់កាលមន្ត្រីនគរបាល">ដំណាក់កាលមន្ត្រីនគរបាល</option>
             <option value="ដំណាក់កាលព្រះរាជអាជ្ញា">ដំណាក់កាលព្រះរាជអាជ្ញា</option>
             <option value="ដំណាក់កាលចៅក្រមស៊ើបសួរ">ដំណាក់កាលចៅក្រមស៊ើបសួរ</option>
-            <option value="ឃុំខ្លួនបណ្តោះអាសន្ត">ឃុំខ្លួនបណ្តោះអាសន្ត</option>
             <option value="ដំណាក់កាលជំនុំជម្រះ">ដំណាក់កាលជំនុំជម្រះ</option>
             <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
               <option value="រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ">រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
-            <option value="បណ្ដឹងបានដក">បណ្ដឹងបានដក</option>
+            <option value="ពាក្យបណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
           </optgroup>
           <optgroup label="✅ បានបញ្ចប់">
             <option value="បានបញ្ចប់">បានបញ្ចប់</option>
@@ -981,12 +980,9 @@ const STATUS_MAP = {
   // ✅ បានបញ្ចប់ (Closed)
   'បានបញ្ចប់': 'closed',
   'សេចក្ដីសម្រេចចូលជាស្ថាពរ': 'closed',
-  'បណ្ដឹងបានដក': 'closed',
   'លទ្ធផលសះជាគ្នា': 'closed',
-  'ការដកពាក្យបណ្ដឹង': 'closed',
-  'ការសម្រុះសម្រួលក្រៅតុលាការ': 'closed',
-  'ការបិទបញ្ចប់ដោយស្ម័គ្រចិត្ត': 'closed',
-  
+  'ពាក្យបណ្ដឹងបានដក': 'closed',
+
   // ⚠️ រង់ចាំ (Pending)
   'រង់ចាំប្រកាសសេចក្ដីសម្រេច': 'pending',
   'រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ': 'pending',
@@ -997,7 +993,6 @@ const STATUS_MAP = {
   'នីតិវិធីទាញហេតុផលដោយផ្ទាល់មាត់': 'active',
   'ដំណាក់កាលមន្ត្រីនគរបាល': 'active',
   'ដំណាក់កាលព្រះរាជអាជ្ញា': 'active',
-  'ឃុំខ្លួនបណ្តោះអាសន្ត': 'active',
   'ដំណាក់កាលចៅក្រមស៊ើបសួរ': 'active',
   'ដំណាក់កាលជំនុំជម្រះ': 'active',
 };
