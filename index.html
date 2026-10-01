@@ -739,8 +739,6 @@ tailwind.config = {
             <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
             <option value="រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ">រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
-            <option value="ពាក្យបណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
-            <option value="លទ្ធផលសះជាគ្នា">លទ្ធផលសះជាគ្នា</option>
           </optgroup>
           <optgroup label="⚖️ នីតិវិធីព្រហ្មទណ្ឌ">
             <option value="ដាក់ពាក្យបណ្ដឹង">ដាក់ពាក្យបណ្ដឹង</option>
@@ -751,10 +749,12 @@ tailwind.config = {
             <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
               <option value="រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ">រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
-            <option value="ពាក្យបណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
           </optgroup>
-          <optgroup label="✅ បានបញ្ចប់">
-            <option value="បានបញ្ចប់">បានបញ្ចប់</option>
+          <optgroup label="✅ បញ្ចប់សំណុំរឿងក្ដី">
+            <option value="បញ្ចប់ដោយសេចក្ដីសម្រេចតុលាការ">បញ្ចប់ដោយសេចក្ដីសម្រេចតុលាការ</option>
+​​​            <option value="ពាក្យបណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
+            <option value="លទ្ធផលសះជាគ្នា">លទ្ធផលសះជាគ្នា</option>
+            
           </optgroup>
         </select>
       </div>
@@ -978,7 +978,7 @@ let currentPdfDoc = null;
 // ============ STATUS MAP (កំណត់ត្រង់នេះ) ============
 const STATUS_MAP = {
   // ✅ បានបញ្ចប់ (Closed)
-  'បានបញ្ចប់': 'closed',
+  'បញ្ចប់ដោយសេចក្ដីសម្រេចតុលាការ': 'closed',
   'សេចក្ដីសម្រេចចូលជាស្ថាពរ': 'closed',
   'លទ្ធផលសះជាគ្នា': 'closed',
   'ពាក្យបណ្ដឹងបានដក': 'closed',
@@ -1384,7 +1384,7 @@ const pageInfo = {
   dashboard: { title: 'ផ្ទាំងគ្រប់គ្រង', subtitle: 'ទិដ្ឋភាពទូទៅនៃរឿងក្ដីរបស់អ្នក' },
   cases: { title: 'សំណុំរឿងក្ដី', subtitle: 'គ្រប់គ្រងរឿងក្ដីទាំងអស់' },
   clients: { title: 'អតិថិជន', subtitle: 'ព័ត៌មានអតិថិជន' },
-  calendar: { title: 'កាលវិភាគ', subtitle: 'ថ្ងៃកាត់ក្ដីខាងមុខ' },
+  calendar: { title: 'កាលវិភាគ', subtitle: 'ថ្ងៃកាលបរិច្ឆេទ' },
   documents: { title: 'ឯកសារ', subtitle: 'Upload និងគ្រប់គ្រងឯកសាររឿងក្ដី' },
   settings: { title: 'ការកំណត់', subtitle: 'Backup, Restore និងគ្រប់គ្រងទិន្នន័យ' }
 };
