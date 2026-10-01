@@ -19,10 +19,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<title>⚖️</title>
+<title>⚖️ Case Manager</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
 <script>
 tailwind.config = {
   darkMode: 'class',
@@ -133,6 +136,38 @@ tailwind.config = {
     #pageTitle { font-size: 15px !important; }
     #pageSubtitle { font-size: 10.5px !important; }
   }
+  
+  /* QR Code Styles */
+  .qr-grid {
+    display: grid;
+    gap: 6px;
+    background: white;
+    padding: 8px;
+    border-radius: 12px;
+  }
+  .qr-grid[data-cols="1"] { grid-template-columns: repeat(1, 1fr); }
+  .qr-grid[data-cols="2"] { grid-template-columns: repeat(2, 1fr); }
+  .qr-grid[data-cols="3"] { grid-template-columns: repeat(3, 1fr); }
+  .qr-grid[data-cols="4"] { grid-template-columns: repeat(4, 1fr); }
+  .qr-grid canvas {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 6px;
+    display: block;
+  }
+  
+  @keyframes scanFlash {
+    0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+    100% { box-shadow: 0 0 0 20px rgba(34, 197, 94, 0); }
+  }
+  .qr-flash { animation: scanFlash 0.5s ease-out; }
+  
+  @keyframes chunkFlash {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .chunk-new { animation: chunkFlash 0.4s ease-out; }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
@@ -216,6 +251,9 @@ tailwind.config = {
       <div id="loginError" class="hidden text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 p-3 rounded-xl"></div>
       <button id="loginBtn" onclick="login()" class="btn-primary w-full text-white py-3.5 rounded-xl font-semibold text-base flex items-center justify-center gap-2">
         <span id="loginBtnText">ចូលប្រើប្រាស់ →</span>
+      </button>
+      <button onclick="showUserSwitch()" class="w-full py-2.5 text-sm text-brand-600 hover:text-brand-700 font-medium">
+        🔄 ប្តូរគណនីផ្សេង
       </button>
     </div>
   </div>
@@ -367,7 +405,7 @@ tailwind.config = {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
           <div class="relative sm:col-span-2 lg:col-span-2">
             <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input id="caseSearch" oninput="renderCases()" placeholder="ស្វែងរករឿងក្ដី (ឧ.លេខសំណុំរឿង ឬចំណងជើង)" class="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-base">
+            <input id="caseSearch" oninput="renderCases()" placeholder="ស្វែងរករឿងក្ដី..." class="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-base">
           </div>
           <div class="relative">
             <select id="caseFilterCourt" onchange="renderCases()" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-sm">
@@ -412,7 +450,7 @@ tailwind.config = {
           </div>
           <div class="relative">
             <select id="caseFilterStatus" onchange="renderCases()" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-sm">
-              <option value="">⚖️ ស្ថានភាពរឿងក្ដីទាំងអស់</option>
+              <option value="">⚖️ ស្ថានភាពទាំងអស់</option>
               <option value="active">កំពុងដំណើរការ</option>
               <option value="pending">រង់ចាំ</option>
               <option value="closed">បានបញ្ចប់</option>
@@ -431,10 +469,10 @@ tailwind.config = {
                 <tr class="text-left text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
                   <th class="px-5 py-4 font-semibold">លេខសំណុំរឿងក្ដី</th>
                   <th class="px-5 py-4 font-semibold">ចំណងជើង</th>
-                  <th class="px-5 py-4 font-semibold">តុលាការមានសម្ថកិច្ច</th>
+                  <th class="px-5 py-4 font-semibold">តុលាការ</th>
                   <th class="px-5 py-4 font-semibold">អតិថិជន</th>
                   <th class="px-5 py-4 font-semibold">ស្ថានភាព</th>
-                  <th class="px-5 py-4 font-semibold">ថ្ងៃកាលបរិតុលាការ</th>
+                  <th class="px-5 py-4 font-semibold">ថ្ងៃកាត់ក្ដី</th>
                   <th class="px-5 py-4 font-semibold text-right">សកម្មភាព</th>
                 </tr>
               </thead>
@@ -488,14 +526,13 @@ tailwind.config = {
               <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ជ្រើសរឿងក្ដី</label>
               <select id="docCaseSelect" onchange="renderDocs()" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl mb-3 text-sm outline-none"></select>
 
-              <div id="docDropZone" ondragover="event.preventDefault(); this.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950')" ondragleave="this.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950')" ondrop="handleDocDrop(event)" onclick="document.getElementById('docFileInput').click()" class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-6 text-center cursor-pointer transition-all hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950 mb-3">
+              <div id="docDropZone" ondragover="event.preventDefault(); this.classList.add('border-brand-500', 'bg-brand-50')" ondragleave="this.classList.remove('border-brand-500', 'bg-brand-50')" ondrop="handleDocDrop(event)" onclick="document.getElementById('docFileInput').click()" class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-6 text-center cursor-pointer transition-all hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950 mb-3">
                 <div class="w-14 h-14 mx-auto mb-3 bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 </div>
                 <p class="text-sm font-semibold mb-1">ចុច Upload</p>
                 <p class="text-xs text-slate-500 dark:text-slate-400">ឬ Drag & Drop នៅទីនេះ</p>
                 <p class="text-[10px] text-slate-400 mt-2">PDF • Word • Excel • Image</p>
-                <p class="text-[10px] text-slate-400">អតិបរមា 50MB</p>
                 <input type="file" id="docFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.txt,.pptx,.ppt" onchange="handleDocUpload(event)" class="hidden" multiple>
               </div>
 
@@ -537,10 +574,11 @@ tailwind.config = {
       <!-- SETTINGS -->
       <section id="page-settings" class="page hidden animate-fade-in">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 mb-5">
+          <!-- Backup -->
           <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
             <div class="flex items-start gap-3 mb-4">
               <div class="w-11 h-11 bg-green-50 dark:bg-green-950 rounded-xl flex items-center justify-center shrink-0">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
               </div>
               <div>
                 <h3 class="font-bold">Backup ទិន្នន័យ</h3>
@@ -567,10 +605,11 @@ tailwind.config = {
             </button>
           </div>
 
+          <!-- Import -->
           <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
             <div class="flex items-start gap-3 mb-4">
               <div class="w-11 h-11 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center shrink-0">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
               </div>
               <div>
                 <h3 class="font-bold">ដាក់បញ្ចូលទិន្នន័យ</h3>
@@ -605,6 +644,76 @@ tailwind.config = {
           </div>
         </div>
 
+        <!-- Full Account Transfer -->
+        <div class="bg-gradient-to-br from-purple-50 to-brand-50 dark:from-purple-950/30 dark:to-brand-950/30 p-5 rounded-2xl border border-purple-200 dark:border-purple-900 mb-5">
+          <div class="flex items-start gap-3">
+            <div class="w-11 h-11 bg-purple-100 dark:bg-purple-950 rounded-xl flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold">ផ្ទេរគណនីទាំងស្រុង</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                ផ្ទេរទាំងគណនី + ទិន្នន័យ + ឯកសារ ទៅឧបករណ៍ផ្សេង
+              </p>
+              <div class="flex flex-col sm:flex-row gap-2 mt-3">
+                <button onclick="exportFullAccount()" class="flex-1 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  ទាញយក Full Account
+                </button>
+                <button onclick="document.getElementById('fullAccountInput').click()" class="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800 border border-purple-300 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-950 text-purple-700 dark:text-purple-400 rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Import Full Account
+                </button>
+              </div>
+              <input type="file" id="fullAccountInput" accept=".json" class="hidden" onchange="handleFullAccountImport(event)">
+            </div>
+          </div>
+        </div>
+
+        <!-- QR Transfer -->
+        <div class="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/30 dark:to-blue-950/30 p-5 rounded-2xl border border-cyan-200 dark:border-cyan-900 mb-5">
+          <div class="flex items-start gap-3 mb-4">
+            <div class="w-11 h-11 bg-cyan-100 dark:bg-cyan-950 rounded-xl flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold">ផ្ទេរតាម QR Code</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                ផ្ទេរទិន្នន័យរវាងទូរស័ព្ទ ២ ដោយស្កេន QR — គ្មានត្រូវការអ៊ីនធឺណិត
+              </p>
+              <div class="flex flex-col sm:flex-row gap-2 mt-3">
+                <button onclick="openQRTransfer('send')" class="flex-1 px-4 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  📤 បញ្ជូន
+                </button>
+                <button onclick="openQRTransfer('receive')" class="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800 border border-cyan-300 dark:border-cyan-800 hover:bg-cyan-50 dark:hover:bg-cyan-950 text-cyan-700 dark:text-cyan-400 rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  📥 ទទួល
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 mb-5">
+          <div class="flex items-start gap-3 mb-4">
+            <div class="w-11 h-11 bg-blue-50 dark:bg-blue-950 rounded-xl flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold">គណនីអ្នកប្រើទាំងអស់</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">គ្រប់គ្រងគណនីក្នុងឧបករណ៍នេះ</p>
+            </div>
+            <button onclick="openAddUserModal()" class="btn-primary text-white px-3 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              បន្ថែម
+            </button>
+          </div>
+          <div id="usersList" class="space-y-2"></div>
+        </div>
+
+        <!-- Account Info -->
         <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 mb-5">
           <div class="flex items-start gap-3 mb-4">
             <div class="w-11 h-11 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center shrink-0">
@@ -620,6 +729,10 @@ tailwind.config = {
               <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">ឈ្មោះពេញ</p>
               <p id="settingsName" class="font-semibold">-</p>
             </div>
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Username</p>
+              <p id="settingsUsername" class="font-semibold">-</p>
+            </div>
           </div>
           <div class="flex flex-col sm:flex-row gap-2">
             <button onclick="openPasswordModal()" class="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl text-sm font-medium">🔐 ផ្លាស់ប្ដូរលេខសម្ងាត់</button>
@@ -627,6 +740,7 @@ tailwind.config = {
           </div>
         </div>
 
+        <!-- Danger Zone -->
         <div class="bg-red-50 dark:bg-red-950/30 p-5 rounded-2xl border border-red-200 dark:border-red-900">
           <div class="flex items-start gap-3">
             <div class="w-11 h-11 bg-red-100 dark:bg-red-950 rounded-xl flex items-center justify-center shrink-0">
@@ -761,18 +875,11 @@ tailwind.config = {
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">កំណត់កាលបរិច្ឆេទតុលាការ</label>
         <div class="flex gap-2">
           <input id="caseHearing" type="date" class="flex-1 px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
-          <button type="button" onclick="clearHearingDate()" 
-                  class="px-4 py-2.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-950 text-red-600 dark:text-red-400 rounded-xl font-medium flex items-center gap-2 whitespace-nowrap transition-colors"
-                  title="លុបកាលបរិច្ឆេទតុលាការ">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
+          <button type="button" onclick="clearHearingDate()" class="px-4 py-2.5 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 text-red-600 dark:text-red-400 rounded-xl font-medium flex items-center gap-2 whitespace-nowrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
             <span class="hidden sm:inline">សម្អាត</span>
           </button>
         </div>
-        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1.5">
-          💡 ចុច <b>"❌️ ឬ សម្អាត"</b> ដើម្បីលុបកាលបរិច្ឆេទ និងយកសំណុំរឿងចេញពីកាលវិភាគ
-        </p>
       </div>
       <div class="md:col-span-2">
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">កំណត់ចំណាំ</label>
@@ -790,12 +897,7 @@ tailwind.config = {
 <div id="clientModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-wrap flex items-end sm:items-center justify-center">
   <div class="modal-content bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md max-h-[95vh] overflow-y-auto">
     <div class="sticky top-0 bg-white dark:bg-slate-900 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center z-10 rounded-t-3xl">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-        </div>
-        <h3 id="clientModalTitle" class="font-bold">បន្ថែមអតិថិជនថ្មី</h3>
-      </div>
+      <h3 id="clientModalTitle" class="font-bold">បន្ថែមអតិថិជនថ្មី</h3>
       <button onclick="closeClientModal()" class="w-9 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
@@ -804,19 +906,19 @@ tailwind.config = {
       <input type="hidden" id="clientId">
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ឈ្មោះ <span class="text-red-500">*</span></label>
-        <input id="clientName" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        <input id="clientName" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
       </div>
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">លេខទូរស័ព្ទ</label>
-        <input id="clientPhone" type="tel" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        <input id="clientPhone" type="tel" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
       </div>
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">អ៊ីមែល</label>
-        <input id="clientEmail" type="email" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        <input id="clientEmail" type="email" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
       </div>
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">អាសយដ្ឋាន</label>
-        <input id="clientAddress" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        <input id="clientAddress" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
       </div>
     </div>
     <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
@@ -830,12 +932,7 @@ tailwind.config = {
 <div id="passwordModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-wrap flex items-end sm:items-center justify-center">
   <div class="modal-content bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md">
     <div class="sticky top-0 bg-white dark:bg-slate-900 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center z-10 rounded-t-3xl">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-purple-50 dark:bg-purple-950 rounded-xl flex items-center justify-center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </div>
-        <h3 class="font-bold">ផ្លាស់ប្ដូរលេខសម្ងាត់</h3>
-      </div>
+      <h3 class="font-bold">ផ្លាស់ប្ដូរលេខសម្ងាត់</h3>
       <button onclick="closePasswordModal()" class="w-9 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
@@ -843,15 +940,15 @@ tailwind.config = {
     <div class="p-5 space-y-4">
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">លេខសម្ងាត់បច្ចុប្បន្ន</label>
-        <input id="oldPass" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        <input id="oldPass" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
       </div>
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">លេខសម្ងាត់ថ្មី</label>
-        <input id="newPass" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        <input id="newPass" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
       </div>
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">បញ្ជាក់លេខសម្ងាត់ថ្មី</label>
-        <input id="newPass2" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        <input id="newPass2" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
       </div>
     </div>
     <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
@@ -865,12 +962,7 @@ tailwind.config = {
 <div id="nameModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-wrap flex items-end sm:items-center justify-center">
   <div class="modal-content bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md">
     <div class="sticky top-0 bg-white dark:bg-slate-900 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center z-10 rounded-t-3xl">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <h3 class="font-bold">កែឈ្មោះ</h3>
-      </div>
+      <h3 class="font-bold">កែឈ្មោះ</h3>
       <button onclick="closeNameModal()" class="w-9 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
@@ -878,12 +970,326 @@ tailwind.config = {
     <div class="p-5 space-y-4">
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ឈ្មោះពេញថ្មី</label>
-        <input id="newName" type="text" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        <input id="newName" type="text" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
       </div>
     </div>
     <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
       <button onclick="closeNameModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
       <button onclick="saveName()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD USER MODAL -->
+<div id="addUserModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-wrap flex items-end sm:items-center justify-center">
+  <div class="modal-content bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md max-h-[95vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white dark:bg-slate-900 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center z-10 rounded-t-3xl">
+      <h3 class="font-bold">បន្ថែមគណនីថ្មី</h3>
+      <button onclick="closeAddUserModal()" class="w-9 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ឈ្មោះពេញ <span class="text-red-500">*</span></label>
+        <input id="newUserName" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Username <span class="text-red-500">*</span></label>
+        <input id="newUserUsername" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none" placeholder="ឧ. sok_vibol">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">លេខសម្ងាត់ <span class="text-red-500">*</span></label>
+        <input id="newUserPass" type="password" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">តួនាទី</label>
+        <select id="newUserRole" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none">
+          <option value="admin">👑 Admin</option>
+          <option value="lawyer">⚖️ មេធាវី</option>
+          <option value="staff">👤 បុគ្គលិក</option>
+        </select>
+      </div>
+      <div id="addUserError" class="hidden text-sm text-red-600 bg-red-50 dark:bg-red-950/50 p-3 rounded-xl"></div>
+    </div>
+    <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
+      <button onclick="closeAddUserModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
+      <button onclick="saveNewUser()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+    </div>
+  </div>
+</div>
+
+<!-- USER SWITCH MODAL -->
+<div id="userSwitchModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[65] flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm max-h-[80vh] overflow-y-auto">
+    <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 bg-white dark:bg-slate-900 z-10">
+      <h3 class="font-bold">🔄 ប្តូរគណនី</h3>
+      <button onclick="closeUserSwitch()" class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="userSwitchList" class="p-4 space-y-2"></div>
+  </div>
+</div>
+
+<!-- QR SEND MODAL -->
+<div id="qrSendModal" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col">
+  <div class="flex-shrink-0 bg-slate-900 text-white px-4 py-3 flex items-center gap-3 safe-top">
+    <button onclick="closeQRModal('send')" class="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="flex-1">
+      <p class="font-semibold text-sm">📤 បញ្ជូនទិន្នន័យតាម QR</p>
+      <p class="text-xs opacity-70">High-Capacity Transfer</p>
+    </div>
+  </div>
+
+  <div id="qrSendStep1" class="flex-1 overflow-y-auto p-4 bg-slate-900 text-white">
+    <div class="max-w-md mx-auto space-y-3">
+      <div class="bg-slate-800 rounded-2xl p-4">
+        <h3 class="font-bold mb-3 flex items-center gap-2 text-sm">
+          <span class="w-6 h-6 bg-cyan-500 rounded-lg flex items-center justify-center text-xs">១</span>
+          ជ្រើសទិន្នន័យ
+        </h3>
+        <div class="space-y-2">
+          <label class="flex items-center gap-3 p-2.5 bg-slate-700/50 rounded-xl cursor-pointer">
+            <input type="checkbox" id="qrSendAccount" class="w-5 h-5 rounded" checked>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-sm">👤 គណនី</p>
+              <p class="text-xs opacity-70 truncate" id="qrSendAccountInfo">—</p>
+            </div>
+          </label>
+          <label class="flex items-center gap-3 p-2.5 bg-slate-700/50 rounded-xl cursor-pointer">
+            <input type="checkbox" id="qrSendCases" class="w-5 h-5 rounded" checked>
+            <div class="flex-1">
+              <p class="font-medium text-sm">📁 រឿងក្ដី</p>
+              <p class="text-xs opacity-70" id="qrSendCasesCount">0</p>
+            </div>
+          </label>
+          <label class="flex items-center gap-3 p-2.5 bg-slate-700/50 rounded-xl cursor-pointer">
+            <input type="checkbox" id="qrSendClients" class="w-5 h-5 rounded" checked>
+            <div class="flex-1">
+              <p class="font-medium text-sm">👥 អតិថិជន</p>
+              <p class="text-xs opacity-70" id="qrSendClientsCount">0</p>
+            </div>
+          </label>
+          <label class="flex items-center gap-3 p-2.5 bg-slate-700/50 rounded-xl cursor-pointer">
+            <input type="checkbox" id="qrSendDocs" class="w-5 h-5 rounded">
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-sm">📄 ឯកសារ</p>
+              <p class="text-xs opacity-70" id="qrSendDocsCount">0 (អាចធំណាស់)</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-2xl p-4">
+        <h3 class="font-bold mb-3 flex items-center gap-2 text-sm">
+          <span class="w-6 h-6 bg-cyan-500 rounded-lg flex items-center justify-center text-xs">២</span>
+          របៀបផ្ទេរ
+        </h3>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="cursor-pointer">
+            <input type="radio" name="qrMode" value="grid" checked class="peer hidden">
+            <div class="p-3 rounded-xl border-2 border-slate-700 peer-checked:border-cyan-500 peer-checked:bg-cyan-950/40 transition-all text-center">
+              <div class="text-2xl mb-1">⚡</div>
+              <p class="text-xs font-semibold">Grid (លឿន)</p>
+            </div>
+          </label>
+          <label class="cursor-pointer">
+            <input type="radio" name="qrMode" value="single" class="peer hidden">
+            <div class="p-3 rounded-xl border-2 border-slate-700 peer-checked:border-cyan-500 peer-checked:bg-cyan-950/40 transition-all text-center">
+              <div class="text-2xl mb-1">🎯</div>
+              <p class="text-xs font-semibold">Single (ត្រឹមត្រូវ)</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-2xl p-4">
+        <h3 class="font-bold mb-3 flex items-center gap-2 text-sm">
+          <span class="w-6 h-6 bg-cyan-500 rounded-lg flex items-center justify-center text-xs">៣</span>
+          កម្រិតបង្រួម
+        </h3>
+        <select id="qrDensity" class="w-full px-3 py-2.5 bg-slate-900 rounded-xl outline-none text-sm mb-3">
+          <option value="low">🟢 ទិន្នន័យតិច (ងាយស្កេន)</option>
+          <option value="medium" selected>🟡 មធ្យម (តុល្យភាព)</option>
+          <option value="high">🟠 ច្រើន (ចង្អៀត)</option>
+          <option value="ultra">🔴 ច្រើនបំផុត</option>
+        </select>
+        
+        <div class="bg-slate-900 rounded-xl p-3 text-xs space-y-1.5">
+          <div class="flex justify-between">
+            <span class="opacity-60">ទំហំប៉ាន់ស្មាន:</span>
+            <span id="qrEstimateSize" class="font-bold text-cyan-400">0 KB</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="opacity-60">ចំនួន QR:</span>
+            <span id="qrEstimateCount" class="font-bold text-cyan-400">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 rounded-2xl p-4">
+        <label class="flex items-center justify-between cursor-pointer">
+          <div class="flex-1">
+            <p class="font-medium text-sm">⏱️ Auto-Advance</p>
+            <p class="text-xs opacity-60">បង្ហាញ QR បន្ទាប់ស្វ័យប្រវត្តិ</p>
+          </div>
+          <input type="checkbox" id="qrAutoAdvance" class="w-5 h-5 rounded">
+        </label>
+      </div>
+
+      <button onclick="generateQRCodes()" class="w-full py-4 bg-cyan-600 hover:bg-cyan-700 rounded-2xl font-bold text-base flex items-center justify-center gap-2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span id="qrGenerateBtnText">បង្កើត QR Code</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="qrSendStep2" class="hidden flex-1 overflow-y-auto bg-slate-900 text-white">
+    <div class="max-w-3xl mx-auto p-3">
+      <div id="qrDisplayArea" class="bg-white rounded-2xl p-3 mb-3 min-h-[300px] flex items-center justify-center">
+        <div id="qrGrid" class="qr-grid" data-cols="2"></div>
+      </div>
+      
+      <div class="bg-slate-800 rounded-2xl p-3 mb-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium">ដំណើរការ</span>
+          <span id="qrProgressText" class="text-xs font-bold text-cyan-400">0 / 0</span>
+        </div>
+        <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+          <div id="qrProgressBar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 mt-3 text-[10px]">
+          <div class="bg-slate-700/50 p-2 rounded-lg">
+            <p class="opacity-60">ទំហំ</p>
+            <p id="qrTotalSize" class="font-bold text-xs">0 KB</p>
+          </div>
+          <div class="bg-slate-700/50 p-2 rounded-lg">
+            <p class="opacity-60">QR សរុប</p>
+            <p id="qrTotalCount" class="font-bold text-xs">0</p>
+          </div>
+          <div class="bg-slate-700/50 p-2 rounded-lg">
+            <p class="opacity-60">នៅសល់</p>
+            <p id="qrTimeLeft" class="font-bold text-xs">~0s</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-4 gap-2 mb-3">
+        <button onclick="qrPrevChunk()" id="qrPrevBtn" class="py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-medium disabled:opacity-40 flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button onclick="qrToggleAuto()" id="qrPlayBtn" class="py-3 bg-cyan-600 hover:bg-cyan-700 rounded-xl font-medium flex items-center justify-center">
+          <svg id="qrPlayIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+        <button onclick="qrNextChunk()" id="qrNextBtn" class="py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-medium flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <button onclick="qrFullscreen()" class="py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-medium flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+        </button>
+      </div>
+      
+      <div class="bg-blue-900/30 border border-blue-700/50 rounded-xl p-3 text-xs text-blue-200">
+        💡 <b>Grid Mode:</b> បង្ហាញ QR ច្រើនក្នុងអេក្រង់តែមួយ — ស្កេនបានលឿន ៦-១២ ដង!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QR RECEIVE MODAL -->
+<div id="qrReceiveModal" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col">
+  <div class="flex-shrink-0 bg-slate-900 text-white px-4 py-3 flex items-center gap-3 safe-top">
+    <button onclick="closeQRModal('receive')" class="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="flex-1">
+      <p class="font-semibold text-sm">📥 ទទួលទិន្នន័យតាម QR</p>
+      <p class="text-xs opacity-70">ស្កេន QR ពីឧបករណ៍ផ្សេង</p>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-3 bg-slate-900 text-white">
+    <div class="max-w-md mx-auto">
+      <div id="qrCameraWrap" class="bg-black rounded-2xl overflow-hidden mb-3 relative" style="aspect-ratio: 1;">
+        <video id="qrVideo" class="w-full h-full object-cover" playsinline muted></video>
+        <canvas id="qrScanCanvas" class="hidden"></canvas>
+        
+        <div class="absolute inset-0 pointer-events-none">
+          <div class="w-full h-full relative">
+            <div class="absolute inset-0 border-4 border-transparent">
+              <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-cyan-400 rounded-tl-2xl"></div>
+              <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-cyan-400 rounded-tr-2xl"></div>
+              <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-cyan-400 rounded-bl-2xl"></div>
+              <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-cyan-400 rounded-br-2xl"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="absolute top-2 left-2 right-2 flex gap-2 pointer-events-none">
+          <div class="bg-black/60 backdrop-blur rounded-lg px-2 py-1 text-xs">
+            <span id="qrLiveCount" class="font-bold text-green-400">0</span>
+            <span class="opacity-60">/ </span>
+            <span id="qrLiveTotal" class="opacity-60">?</span>
+          </div>
+        </div>
+        
+        <div class="absolute bottom-3 left-3 right-3 flex gap-2">
+          <button onclick="switchCamera()" class="flex-1 py-2 bg-white/20 hover:bg-white/30 backdrop-blur rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            ប្តូរ
+          </button>
+        </div>
+      </div>
+      
+      <div class="bg-slate-800 rounded-2xl p-3 mb-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium">កំពុងទទួល</span>
+          <span id="qrReceiveProgress" class="text-xs font-bold text-cyan-400">រង់ចាំ QR...</span>
+        </div>
+        <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+          <div id="qrReceiveBar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 mt-3 text-[10px]">
+          <div class="bg-slate-700/50 p-2 rounded-lg">
+            <p class="opacity-60">ទទួលបាន</p>
+            <p id="qrReceiveSize" class="font-bold text-xs">0 KB</p>
+          </div>
+          <div class="bg-slate-700/50 p-2 rounded-lg">
+            <p class="opacity-60">Chunks</p>
+            <p id="qrReceiveChunks" class="font-bold text-xs">0 / 0</p>
+          </div>
+          <div class="bg-slate-700/50 p-2 rounded-lg">
+            <p class="opacity-60">នៅសល់</p>
+            <p id="qrReceiveTimeLeft" class="font-bold text-xs">~0s</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-slate-800 rounded-2xl p-3 mb-3">
+        <p class="text-xs font-medium mb-2">📦 Chunks</p>
+        <div id="qrChunksList" class="grid gap-1 max-h-32 overflow-y-auto" style="grid-template-columns: repeat(auto-fill, minmax(28px, 1fr));"></div>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-2 mb-3">
+        <button onclick="resetQRReceive()" class="py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-medium text-sm">
+          🔄 ចាប់ផ្ដើមឡើងវិញ
+        </button>
+        <button id="qrApplyBtn" onclick="applyReceivedData()" disabled class="py-3 bg-green-600 hover:bg-green-700 disabled:bg-slate-700 disabled:opacity-50 rounded-xl font-medium text-sm flex items-center justify-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          អនុវត្ត
+        </button>
+      </div>
+      
+      <details class="bg-slate-800 rounded-2xl p-3 mb-3">
+        <summary class="text-xs font-medium cursor-pointer">⌨️ បញ្ចូលដោយដៃ</summary>
+        <div class="mt-3 space-y-2">
+          <textarea id="qrManualInput" rows="4" placeholder="បិទភ្ជាប់ទិន្នន័យ QR..." class="w-full px-3 py-2 bg-slate-900 rounded-lg outline-none text-[10px] font-mono"></textarea>
+          <button onclick="processManualQR()" class="w-full py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg text-xs font-medium">ដំណើរការ</button>
+        </div>
+      </details>
     </div>
   </div>
 </div>
@@ -910,6 +1316,7 @@ tailwind.config = {
 <!-- TOAST -->
 <div id="toast" class="hidden fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-2xl shadow-2xl z-[80] max-w-[90vw] text-center text-sm font-medium"></div>
 
+<script src="database.js"></script>
 <script>
 // ============ PDF.JS CONFIG ============
 if (window.pdfjsLib) {
@@ -939,11 +1346,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
   const btn = document.getElementById('installBtn');
   if (btn) btn.classList.remove('hidden');
 });
-function isPWA() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
 async function installApp() {
   if (!deferredPrompt) { alert('📲 សូមចុច Menu → "Install App"'); return; }
   deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
+  await deferredPrompt.userChoice;
   deferredPrompt = null;
 }
 if ('serviceWorker' in navigator) {
@@ -952,27 +1358,27 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ============ CRYPTO ============
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password + '|case-manager-salt-2026');
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// ============ DATA ============
-const DB = {
-  get(key, def=[]) {
-    try { return JSON.parse(localStorage.getItem(key)) ?? def; }
-    catch { return def; }
-  },
-  set(key, val) { localStorage.setItem(key, JSON.stringify(val)); },
-  remove(key) { localStorage.removeItem(key); }
-};
-
+// ============ STATE ============
 let statusChart = null;
 let currentUser = null;
+let currentUserId = null;
 let currentPdfDoc = null;
+
+// ============ DATA WRAPPER (Per-User) ============
+const DB = {
+  get(key, def = []) {
+    if (!currentUserId) return def;
+    return UserData.get(currentUserId, key, def);
+  },
+  set(key, val) {
+    if (!currentUserId) return;
+    UserData.set(currentUserId, key, val);
+  },
+  remove(key) {
+    if (!currentUserId) return;
+    UserData.remove(currentUserId, key);
+  }
+};
 
 // ============ STATUS HELPERS ============
 function getStatusCategory(status) {
@@ -992,7 +1398,6 @@ function statusInfo(status) {
   return { label: status || '—', cls: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400', dot: 'bg-slate-400' };
 }
 
-// ============ HEARING DAY HELPER ============
 function getHearingDayInfo(dateStr) {
   if (!dateStr) return null;
   const target = new Date(dateStr);
@@ -1001,138 +1406,19 @@ function getHearingDayInfo(dateStr) {
   today.setHours(0, 0, 0, 0);
   const diff = Math.round((target - today) / 86400000);
   
-  if (diff < 0) {
-    return {
-      label: 'ផុតថ្ងៃ',
-      days: diff,
-      badge: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold',
-      border: 'border-red-500',
-      isExpired: true
-    };
-  }
-  if (diff === 0) {
-    return {
-      label: 'ថ្ងៃនេះ',
-      days: 0,
-      badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400',
-      border: 'border-red-500',
-      isExpired: false
-    };
-  }
-  if (diff <= 3) {
-    return {
-      label: diff + ' ថ្ងៃ',
-      days: diff,
-      badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400',
-      border: 'border-brand-500',
-      isExpired: false
-    };
-  }
-  if (diff <= 7) {
-    return {
-      label: diff + ' ថ្ងៃ',
-      days: diff,
-      badge: 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400',
-      border: 'border-brand-500',
-      isExpired: false
-    };
-  }
-  return {
-    label: diff + ' ថ្ងៃ',
-    days: diff,
-    badge: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400',
-    border: 'border-brand-500',
-    isExpired: false
-  };
+  if (diff < 0) return { label: 'ផុតថ្ងៃ', days: diff, badge: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold', border: 'border-red-500', isExpired: true };
+  if (diff === 0) return { label: 'ថ្ងៃនេះ', days: 0, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-red-500', isExpired: false };
+  if (diff <= 3) return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400', border: 'border-brand-500', isExpired: false };
+  if (diff <= 7) return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400', border: 'border-brand-500', isExpired: false };
+  return { label: diff + ' ថ្ងៃ', days: diff, badge: 'bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400', border: 'border-brand-500', isExpired: false };
 }
 
-// ============ CLEAR HEARING DATE ============
 function clearHearingDate() {
   const input = document.getElementById('caseHearing');
-  if (!input.value) {
-    toast('ℹ️ គ្មានកាលបរិច្ឆេទត្រូវសម្អាត');
-    return;
-  }
+  if (!input.value) return toast('ℹ️ គ្មានកាលបរិច្ឆេទត្រូវសម្អាត');
   input.value = '';
-  toast('✅ បានលុបកាលបរិច្ឆេទតុលាការ');
+  toast('✅ បានលុបកាលបរិច្ឆេទ');
 }
-
-// ============ INDEXEDDB ============
-const FileDB = {
-  dbName: 'CaseManagerFiles',
-  storeName: 'documents',
-  db: null,
-  async init() {
-    return new Promise((resolve, reject) => {
-      const req = indexedDB.open(this.dbName, 1);
-      req.onerror = () => reject(req.error);
-      req.onsuccess = () => { this.db = req.result; resolve(this.db); };
-      req.onupgradeneeded = (e) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          const store = db.createObjectStore(this.storeName, { keyPath: 'id' });
-          store.createIndex('caseId', 'caseId', { unique: false });
-          store.createIndex('uploadedAt', 'uploadedAt', { unique: false });
-        }
-      };
-    });
-  },
-  async add(data) {
-    if (!this.db) await this.init();
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(this.storeName, 'readwrite');
-      const req = tx.objectStore(this.storeName).put(data);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  },
-  async get(id) {
-    if (!this.db) await this.init();
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(this.storeName, 'readonly');
-      const req = tx.objectStore(this.storeName).get(id);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  },
-  async getByCase(caseId) {
-    if (!this.db) await this.init();
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(this.storeName, 'readonly');
-      const idx = tx.objectStore(this.storeName).index('caseId');
-      const req = idx.getAll(Number(caseId));
-      req.onsuccess = () => resolve(req.result || []);
-      req.onerror = () => reject(req.error);
-    });
-  },
-  async getAll() {
-    if (!this.db) await this.init();
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(this.storeName, 'readonly');
-      const req = tx.objectStore(this.storeName).getAll();
-      req.onsuccess = () => resolve(req.result || []);
-      req.onerror = () => reject(req.error);
-    });
-  },
-  async delete(id) {
-    if (!this.db) await this.init();
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(this.storeName, 'readwrite');
-      const req = tx.objectStore(this.storeName).delete(id);
-      req.onsuccess = () => resolve();
-      req.onerror = () => reject(req.error);
-    });
-  },
-  async clear() {
-    if (!this.db) await this.init();
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(this.storeName, 'readwrite');
-      const req = tx.objectStore(this.storeName).clear();
-      req.onsuccess = () => resolve();
-      req.onerror = () => reject(req.error);
-    });
-  }
-};
 
 // ============ FILE HELPERS ============
 function getFileCategory(fileName, mimeType = '') {
@@ -1171,6 +1457,11 @@ function formatDate(dateStr) {
   } catch { return dateStr; }
 }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
 // ============ PASSWORD VISIBILITY ============
 function togglePass(inputId, btn) {
   const input = document.getElementById(inputId);
@@ -1184,7 +1475,7 @@ function togglePass(inputId, btn) {
   }
 }
 
-// ============ SETUP ============
+// ============ AUTH ============
 async function handleSetup() {
   const name = document.getElementById('setupName').value.trim();
   const pass = document.getElementById('setupPass').value;
@@ -1198,49 +1489,76 @@ async function handleSetup() {
   if (pass.length < 4) { err.textContent = '⚠️ លេខសម្ងាត់ត្រូវមាន ≥ ៤ តួ'; err.classList.remove('hidden'); return; }
   if (pass !== pass2) { err.textContent = '❌ លេខសម្ងាត់មិនដូចគ្នា'; err.classList.remove('hidden'); return; }
   
-  const hashedPass = await hashPassword(pass);
-  DB.set('auth', { name, password: hashedPass, role: 'admin', createdAt: new Date().toISOString() });
-  document.getElementById('setupScreen').classList.add('hidden');
-  toast('✅ បង្កើតគណនីជោគជ័យ!');
-  showLogin();
+  try {
+    const username = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now().toString(36).slice(-4);
+    const user = await UserDB.createUser({ name, username, password: pass });
+    
+    // Migrate legacy data
+    const migrated = await UserData.migrateFromLegacy(user.id);
+    if (migrated) toast(`✅ បានផ្ទេរទិន្នន័យចាស់ (${migrated.cases} រឿងក្ដី)`);
+    
+    // Migrate old documents
+    try {
+      const legacyDocs = await FileDB.getAll();
+      for (const doc of legacyDocs) {
+        await UserFileDB.add({ ...doc, userId: user.id });
+      }
+      if (legacyDocs.length) await FileDB.clear();
+    } catch (e) {}
+    
+    await UserDB.setCurrentUser(user.id);
+    document.getElementById('setupScreen').classList.add('hidden');
+    toast('✅ បង្កើតគណនីជោគជ័យ!');
+    showLogin();
+  } catch (e) {
+    err.textContent = e.message === 'USERNAME_EXISTS' ? '⚠️ ឈ្មោះនេះមានរួចហើយ' : '❌ ' + e.message;
+    err.classList.remove('hidden');
+  }
 }
 
-function showLogin() {
-  const auth = DB.get('auth', null);
+async function showLogin() {
+  const userId = await UserDB.getCurrentUser();
   const greeting = document.getElementById('loginGreeting');
-  if (auth && auth.name) {
-    const firstName = auth.name.split(' ').slice(-1)[0] || auth.name;
-    greeting.textContent = `សូមស្វាគមន៍ត្រឡប់មកវិញ, ${firstName}`;
+  
+  if (userId) {
+    const user = await UserDB.getUser(userId);
+    if (user) {
+      const firstName = user.name.split(' ').slice(-1)[0] || user.name;
+      greeting.textContent = `សូមស្វាគមន៍ត្រឡប់មកវិញ, ${firstName}`;
+    }
   }
+  
   document.getElementById('loginScreen').classList.remove('hidden');
   document.getElementById('loginPass').value = '';
   setTimeout(() => document.getElementById('loginPass').focus(), 100);
 }
 
-// ============ LOGIN ============
 function checkLoginLock() {
-  const lock = DB.get('loginLock', null);
-  if (lock && lock.until > Date.now()) {
-    return { locked: true, mins: Math.ceil((lock.until - Date.now()) / 60000) };
-  }
-  if (lock && lock.until <= Date.now()) DB.remove('loginLock');
+  const lock = JSON.parse(localStorage.getItem('loginLock') || 'null');
+  if (lock && lock.until > Date.now()) return { locked: true, mins: Math.ceil((lock.until - Date.now()) / 60000) };
+  if (lock && lock.until <= Date.now()) localStorage.removeItem('loginLock');
   return { locked: false };
 }
+
 function recordFailedLogin() {
-  const attempts = DB.get('loginAttempts', { count: 0, firstAt: Date.now() });
+  const attempts = JSON.parse(localStorage.getItem('loginAttempts') || '{"count":0,"firstAt":' + Date.now() + '}');
   if (Date.now() - attempts.firstAt > 15 * 60 * 1000) {
     attempts.count = 0; attempts.firstAt = Date.now();
   }
   attempts.count++;
-  DB.set('loginAttempts', attempts);
+  localStorage.setItem('loginAttempts', JSON.stringify(attempts));
   if (attempts.count >= 5) {
-    DB.set('loginLock', { until: Date.now() + 15 * 60 * 1000 });
-    DB.remove('loginAttempts');
-    return { locked: true, mins: 15 };
+    localStorage.setItem('loginLock', JSON.stringify({ until: Date.now() + 15 * 60 * 1000 }));
+    localStorage.removeItem('loginAttempts');
+    return { locked: true };
   }
   return { locked: false, remaining: 5 - attempts.count };
 }
-function resetLoginAttempts() { DB.remove('loginAttempts'); DB.remove('loginLock'); }
+
+function resetLoginAttempts() {
+  localStorage.removeItem('loginAttempts');
+  localStorage.removeItem('loginLock');
+}
 
 async function login() {
   const lock = checkLoginLock();
@@ -1255,29 +1573,45 @@ async function login() {
   btn.disabled = true;
   btnText.innerHTML = '<span class="spinner"></span> កំពុងពិនិត្យ...';
   
-  const auth = DB.get('auth', null);
-  const hashedPass = await hashPassword(password);
-  await new Promise(r => setTimeout(r, 300));
-  
-  if (!auth || auth.password !== hashedPass) {
-    const result = recordFailedLogin();
+  try {
+    const userId = await UserDB.getCurrentUser();
+    if (!userId) throw new Error('NO_USER');
+    
+    const user = await UserDB.getUser(userId);
+    if (!user) throw new Error('NO_USER');
+    
+    const isValid = await UserDB.verifyPassword(userId, password);
+    await new Promise(r => setTimeout(r, 300));
+    
+    if (!isValid) {
+      const result = recordFailedLogin();
+      btn.disabled = false;
+      btnText.textContent = 'ចូលប្រើប្រាស់ →';
+      if (result.locked) showLoginError('🔒 ព្យាយាមច្រើនដងពេក');
+      else showLoginError(`❌ លេខសម្ងាត់មិនត្រឹមត្រូវ (នៅសល់ ${result.remaining} ដង)`);
+      return;
+    }
+    
+    resetLoginAttempts();
+    await UserDB.recordLogin(userId);
+    Session.create(userId, remember);
+    
+    currentUserId = userId;
+    currentUser = { id: user.id, name: user.name, username: user.username, role: user.role };
+    
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    await initApp();
+  } catch (e) {
     btn.disabled = false;
     btnText.textContent = 'ចូលប្រើប្រាស់ →';
-    if (result.locked) showLoginError('🔒 ព្យាយាមច្រើនដងពេក');
-    else showLoginError(`❌ លេខសម្ងាត់មិនត្រឹមត្រូវ (នៅសល់ ${result.remaining} ដង)`);
-    return;
+    if (e.message === 'NO_USER') {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('setupScreen').classList.remove('hidden');
+    } else {
+      showLoginError('❌ ' + e.message);
+    }
   }
-  
-  resetLoginAttempts();
-  currentUser = { name: auth.name, role: auth.role };
-  const storage = remember ? localStorage : sessionStorage;
-  storage.setItem('loggedIn', '1');
-  storage.setItem('sessionStart', Date.now().toString());
-  storage.setItem('user', JSON.stringify(currentUser));
-  
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
-  initApp();
 }
 
 function showLoginError(msg) {
@@ -1288,40 +1622,68 @@ function showLoginError(msg) {
 }
 
 function logout() {
-  showConfirm('ចាកចេញ', 'តើអ្នកចង់ចាកចេញ?', () => {
-    ['loggedIn','sessionStart','user'].forEach(k => {
-      localStorage.removeItem(k);
-      sessionStorage.removeItem(k);
-    });
+  showConfirm('ចាកចេញ', 'តើអ្នកចង់ចាកចេញ?', async () => {
+    Session.destroy();
+    await UserDB.clearCurrentUser();
     location.reload();
   }, 'ចាកចេញ');
 }
 
-// ============ SESSION ============
-function checkSession() {
-  const loggedIn = localStorage.getItem('loggedIn') || sessionStorage.getItem('loggedIn');
-  if (!loggedIn) return false;
-  const start = parseInt(localStorage.getItem('sessionStart') || sessionStorage.getItem('sessionStart') || '0');
-  if (Date.now() - start > 8 * 60 * 60 * 1000) {
-    ['loggedIn','sessionStart','user'].forEach(k => {
-      localStorage.removeItem(k);
-      sessionStorage.removeItem(k);
-    });
-    return false;
+// ============ USER SWITCH ============
+async function showUserSwitch() {
+  const users = await UserDB.getAllUsers();
+  const list = document.getElementById('userSwitchList');
+  
+  if (!users.length) {
+    list.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">មិនមានគណនី</p>';
+  } else {
+    list.innerHTML = users.map(u => {
+      const initials = u.name.split(' ').slice(-2).map(s => s.charAt(0)).join('').toUpperCase();
+      return `
+        <button onclick="switchToUser('${u.id}')" class="w-full flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-left">
+          <div class="w-10 h-10 bg-gradient-to-br from-brand-500 to-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm shrink-0">${initials}</div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-sm truncate">${escapeHtml(u.name)}</p>
+            <p class="text-xs text-slate-500 truncate">@${escapeHtml(u.username)}</p>
+          </div>
+        </button>
+      `;
+    }).join('');
   }
-  return true;
+  
+  document.getElementById('userSwitchModal').classList.remove('hidden');
 }
 
-function loadUser() {
-  try {
-    const stored = localStorage.getItem('user') || sessionStorage.getItem('user');
-    if (stored) {
-      currentUser = JSON.parse(stored);
-      const fullName = currentUser.name || 'Admin';
-      document.getElementById('headerName').textContent = fullName;
-      document.getElementById('settingsName').textContent = fullName;
-    }
-  } catch (e) {}
+function closeUserSwitch() {
+  document.getElementById('userSwitchModal').classList.add('hidden');
+}
+
+async function switchToUser(userId) {
+  await UserDB.setCurrentUser(userId);
+  Session.destroy();
+  location.reload();
+}
+
+// ============ SESSION ============
+function checkSession() {
+  return Session.isValid();
+}
+
+async function loadUser() {
+  const session = Session.get();
+  if (!session) return false;
+  
+  const user = await UserDB.getUser(session.userId);
+  if (!user) return false;
+  
+  currentUserId = user.id;
+  currentUser = { id: user.id, name: user.name, username: user.username, role: user.role };
+  
+  document.getElementById('headerName').textContent = user.name;
+  document.getElementById('settingsName').textContent = user.name;
+  document.getElementById('settingsUsername').textContent = '@' + user.username;
+  
+  return true;
 }
 
 // ============ SIDEBAR ============
@@ -1338,12 +1700,12 @@ function closeSidebarOnMobile() {
 
 // ============ NAVIGATION ============
 const pageInfo = {
-  dashboard: { title: 'ផ្ទាំងគ្រប់គ្រង', subtitle: 'ទិដ្ឋភាពទូទៅនៃរឿងក្ដីរបស់អ្នក' },
+  dashboard: { title: 'ផ្ទាំងគ្រប់គ្រង', subtitle: 'ទិដ្ឋភាពទូទៅ' },
   cases: { title: 'សំណុំរឿងក្ដី', subtitle: 'គ្រប់គ្រងរឿងក្ដីទាំងអស់' },
   clients: { title: 'អតិថិជន', subtitle: 'ព័ត៌មានអតិថិជន' },
   calendar: { title: 'កាលវិភាគ', subtitle: 'ថ្ងៃកាត់ក្ដីខាងមុខ' },
-  documents: { title: 'ឯកសារ', subtitle: 'Upload និងគ្រប់គ្រងឯកសាររឿងក្ដី' },
-  settings: { title: 'ការកំណត់', subtitle: 'Backup, Restore និងគ្រប់គ្រងទិន្នន័យ' }
+  documents: { title: 'ឯកសារ', subtitle: 'Upload និងគ្រប់គ្រងឯកសារ' },
+  settings: { title: 'ការកំណត់', subtitle: 'Backup, Restore និងគ្រប់គ្រង' }
 };
 
 function showPage(page) {
@@ -1360,7 +1722,7 @@ function showPage(page) {
   if (page === 'clients') renderClients();
   if (page === 'calendar') renderCalendar();
   if (page === 'documents') renderDocSelect();
-  if (page === 'settings') renderSettingsStats();
+  if (page === 'settings') { renderSettingsStats(); renderUsersList(); }
 }
 
 function handleFAB() {
@@ -1377,7 +1739,6 @@ function renderDashboard() {
   document.getElementById('statPending').textContent = cases.filter(c => getStatusCategory(c.status) === 'pending').length;
   document.getElementById('statClosed').textContent = cases.filter(c => getStatusCategory(c.status) === 'closed').length;
 
-  // ⚠️ Upcoming តែកាលបរិច្ឆេទមិនទាន់ផុត
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
@@ -1463,14 +1824,14 @@ function renderCases() {
         const client = clients.find(x => x.id === c.clientId);
         const s = statusInfo(c.status);
         return `<tr class="border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40">
-          <td class="px-5 py-4 font-semibold text-brand-600 dark:text-brand-400">${c.caseNumber}</td>
-          <td class="px-5 py-4">${c.title}</td>
-          <td class="px-5 py-4 text-slate-600 dark:text-slate-400 text-xs">${c.court||'-'}</td>
-          <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${client?.name||'-'}</td>
+          <td class="px-5 py-4 font-semibold text-brand-600 dark:text-brand-400">${escapeHtml(c.caseNumber)}</td>
+          <td class="px-5 py-4">${escapeHtml(c.title)}</td>
+          <td class="px-5 py-4 text-slate-600 dark:text-slate-400 text-xs">${escapeHtml(c.court||'-')}</td>
+          <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${escapeHtml(client?.name||'-')}</td>
           <td class="px-5 py-4">
             <span class="badge ${s.cls}" style="max-width:200px">
               <span class="w-1.5 h-1.5 rounded-full ${s.dot} flex-shrink-0"></span>
-              <span class="truncate" title="${s.label}">${s.label}</span>
+              <span class="truncate">${escapeHtml(s.label)}</span>
             </span>
           </td>
           <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${c.nextHearing||'-'}</td>
@@ -1493,18 +1854,18 @@ function renderCases() {
         const hearingInfo = c.nextHearing ? getHearingDayInfo(c.nextHearing) : null;
         return `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
           <div class="mb-3">
-            <p class="font-bold text-brand-600 dark:text-brand-400 text-sm">${c.caseNumber}</p>
-            <p class="font-semibold mt-0.5">${c.title}</p>
+            <p class="font-bold text-brand-600 dark:text-brand-400 text-sm">${escapeHtml(c.caseNumber)}</p>
+            <p class="font-semibold mt-0.5">${escapeHtml(c.title)}</p>
           </div>
           <div class="mb-3">
             <span class="badge ${s.cls}">
               <span class="w-1.5 h-1.5 rounded-full ${s.dot}"></span>
-              ${s.label}
+              ${escapeHtml(s.label)}
             </span>
           </div>
           <div class="space-y-1.5 text-sm text-slate-600 dark:text-slate-400">
-            <p class="flex items-start gap-2"><span>🏛️</span><span class="text-xs">${c.court||'-'}</span></p>
-            <p class="flex items-center gap-2"><span>👤</span>${client?.name||'-'}</p>
+            <p class="flex items-start gap-2"><span>🏛️</span><span class="text-xs">${escapeHtml(c.court||'-')}</span></p>
+            <p class="flex items-center gap-2"><span>👤</span>${escapeHtml(client?.name||'-')}</p>
             ${c.nextHearing ? `<p class="flex items-center gap-2 flex-wrap"><span>📅</span>${c.nextHearing} ${hearingInfo ? `<span class="badge ${hearingInfo.badge} text-[10px]">${hearingInfo.label}</span>` : ''}</p>` : ''}
           </div>
           <div class="flex gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
@@ -1519,7 +1880,7 @@ function renderCases() {
 function openCaseModal(id=null) {
   const clients = DB.get('clients');
   document.getElementById('caseClient').innerHTML = clients.length
-    ? clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('')
+    ? clients.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('')
     : '<option value="">— គ្មានអតិថិជន —</option>';
   
   const courtSelect = document.getElementById('caseCourt');
@@ -1545,7 +1906,7 @@ function openCaseModal(id=null) {
       const o = document.createElement('option');
       o.value = savedCourt; o.textContent = savedCourt + ' (ចាស់)'; o.dataset.custom = '1';
       courtSelect.appendChild(o); courtSelect.value = savedCourt;
-    } else courtSelect.value = '';
+    }
     
     const savedStatus = c.status || '';
     cleanCustom(statusSelect);
@@ -1554,7 +1915,7 @@ function openCaseModal(id=null) {
       const o = document.createElement('option');
       o.value = savedStatus; o.textContent = savedStatus + ' (ចាស់)'; o.dataset.custom = '1';
       statusSelect.appendChild(o); statusSelect.value = savedStatus;
-    } else statusSelect.value = '';
+    }
     
     document.getElementById('caseType').value = c.caseType||'រដ្ឋប្បវេណី';
     document.getElementById('caseClient').value = c.clientId;
@@ -1614,8 +1975,8 @@ function deleteCase(id) {
   showConfirm('លុបរឿងក្ដី', 'តើអ្នកប្រាកដ?', async () => {
     DB.set('cases', DB.get('cases').filter(c => c.id !== id));
     try {
-      const files = await FileDB.getByCase(id);
-      for (const f of files) await FileDB.delete(f.id);
+      const files = await UserFileDB.getByCase(currentUserId, id);
+      for (const f of files) await UserFileDB.delete(f.id, currentUserId);
     } catch (e) {}
     toast('🗑️ បានលុប');
     renderCases();
@@ -1634,14 +1995,14 @@ function renderClients() {
           <div class="flex items-center gap-3 mb-4">
             <div class="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 text-white rounded-2xl flex items-center justify-center font-bold shrink-0">${initials}</div>
             <div class="min-w-0 flex-1">
-              <p class="font-bold truncate">${c.name}</p>
+              <p class="font-bold truncate">${escapeHtml(c.name)}</p>
               <p class="text-xs text-slate-500 dark:text-slate-400">${caseCount} រឿងក្ដី</p>
             </div>
           </div>
           <div class="space-y-1.5 text-sm text-slate-600 dark:text-slate-400">
-            <p class="truncate flex items-center gap-2"><span>📞</span>${c.phone||'-'}</p>
-            <p class="truncate flex items-center gap-2"><span>✉️</span>${c.email||'-'}</p>
-            <p class="truncate flex items-center gap-2"><span>📍</span>${c.address||'-'}</p>
+            <p class="truncate flex items-center gap-2"><span>📞</span>${escapeHtml(c.phone||'-')}</p>
+            <p class="truncate flex items-center gap-2"><span>✉️</span>${escapeHtml(c.email||'-')}</p>
+            <p class="truncate flex items-center gap-2"><span>📍</span>${escapeHtml(c.address||'-')}</p>
           </div>
           <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex gap-2">
             <button onclick="editClient(${c.id})" class="flex-1 py-2 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 rounded-xl text-sm font-medium">✏️ កែ</button>
@@ -1707,14 +2068,13 @@ function deleteClient(id) {
   });
 }
 
-// ============ CALENDAR (កែថ្មី!) ============
+// ============ CALENDAR ============
 function renderCalendar() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
   const allCases = DB.get('cases').filter(c => c.nextHearing);
   
-  // ក្រុមទី ១: មិនទាន់ផុត (ថ្ងៃនេះ ឬ អនាគត)
   const activeCases = allCases
     .filter(c => {
       const target = new Date(c.nextHearing);
@@ -1723,7 +2083,6 @@ function renderCalendar() {
     })
     .sort((a, b) => new Date(a.nextHearing) - new Date(b.nextHearing));
   
-  // ក្រុមទី ២: ផុតថ្ងៃ
   const expiredCases = allCases
     .filter(c => {
       const target = new Date(c.nextHearing);
@@ -1740,38 +2099,28 @@ function renderCalendar() {
   
   let html = '';
   
-  // ក្រុមទី ១: មិនទាន់ផុត (ខាងលើ)
   if (activeCases.length) {
     html += `
       <div class="mb-5">
         <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200 dark:border-slate-700">
           <div class="w-1 h-5 bg-green-500 rounded-full"></div>
-          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300">
-            📅 កាលបរិច្ឆេទខាងមុខ
-          </h4>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300">📅 កាលបរិច្ឆេទខាងមុខ</h4>
           <span class="badge bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400 text-[10px]">${activeCases.length}</span>
         </div>
-        <div class="space-y-3">
-          ${activeCases.map(c => renderCalendarItem(c)).join('')}
-        </div>
+        <div class="space-y-3">${activeCases.map(c => renderCalendarItem(c)).join('')}</div>
       </div>
     `;
   }
   
-  // ក្រុមទី ២: ផុតថ្ងៃ (ខាងក្រោម)
   if (expiredCases.length) {
     html += `
       <div>
         <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200 dark:border-slate-700">
           <div class="w-1 h-5 bg-red-500 rounded-full"></div>
-          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300">
-            ⚠️ ផុតថ្ងៃ
-          </h4>
+          <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300">⚠️ ផុតថ្ងៃ</h4>
           <span class="badge bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 text-[10px] font-bold">${expiredCases.length}</span>
         </div>
-        <div class="space-y-3 opacity-60">
-          ${expiredCases.map(c => renderCalendarItem(c)).join('')}
-        </div>
+        <div class="space-y-3 opacity-60">${expiredCases.map(c => renderCalendarItem(c)).join('')}</div>
       </div>
     `;
   }
@@ -1788,9 +2137,9 @@ function renderCalendarItem(c) {
       <p class="text-[10px] mt-1 opacity-90">${c.nextHearing.slice(0,7)}</p>
     </div>
     <div class="flex-1 min-w-0">
-      <p class="font-bold text-sm truncate">${c.caseNumber}</p>
-      <p class="text-sm text-slate-600 dark:text-slate-400 truncate">${c.title}</p>
-      <p class="text-xs text-slate-500 truncate mt-1">🏛️ ${c.court}</p>
+      <p class="font-bold text-sm truncate">${escapeHtml(c.caseNumber)}</p>
+      <p class="text-sm text-slate-600 dark:text-slate-400 truncate">${escapeHtml(c.title)}</p>
+      <p class="text-xs text-slate-500 truncate mt-1">🏛️ ${escapeHtml(c.court)}</p>
     </div>
     <span class="badge ${info.badge} whitespace-nowrap">${info.label}</span>
   </div>`;
@@ -1813,7 +2162,7 @@ async function renderDocSelect() {
   
   const currentValue = select.value;
   select.innerHTML = cases.map(c => 
-    `<option value="${c.id}">${c.caseNumber} - ${c.title}</option>`
+    `<option value="${c.id}">${escapeHtml(c.caseNumber)} - ${escapeHtml(c.title)}</option>`
   ).join('');
   
   if (currentValue && cases.find(c => c.id == currentValue)) {
@@ -1841,7 +2190,7 @@ async function renderDocs() {
   }
   
   try {
-    let docs = await FileDB.getByCase(caseId);
+    let docs = await UserFileDB.getByCase(currentUserId, caseId);
     
     if (docCountEl) docCountEl.textContent = docs.length;
     const totalSize = docs.reduce((sum, d) => sum + (d.size || 0), 0);
@@ -1870,12 +2219,12 @@ async function renderDocs() {
         <div class="group flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 overflow-hidden ${isImage ? '' : `bg-${icon.color}-50 dark:bg-${icon.color}-950`}">
             ${isImage 
-              ? `<img src="${d.data}" alt="${d.name}" class="w-full h-full object-cover cursor-pointer" onclick="previewDoc(${d.id})">`
+              ? `<img src="${d.data}" alt="${escapeHtml(d.name)}" class="w-full h-full object-cover cursor-pointer" onclick="previewDoc(${d.id})">`
               : `<span class="text-2xl">${icon.emoji}</span>`
             }
           </div>
           <div class="flex-1 min-w-0">
-            <p class="font-medium text-sm truncate" title="${d.name}">${d.name}</p>
+            <p class="font-medium text-sm truncate" title="${escapeHtml(d.name)}">${escapeHtml(d.name)}</p>
             <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               <span>${formatFileSize(d.size)}</span>
               <span>•</span>
@@ -1902,11 +2251,10 @@ async function renderDocs() {
   }
 }
 
-// ============ UPLOAD ============
 async function handleDocDrop(event) {
   event.preventDefault();
   const dropZone = document.getElementById('docDropZone');
-  dropZone.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-brand-950');
+  dropZone.classList.remove('border-brand-500', 'bg-brand-50');
   const files = Array.from(event.dataTransfer.files);
   if (files.length) await uploadFiles(files);
 }
@@ -1937,6 +2285,7 @@ async function uploadFiles(files) {
       const base64 = await fileToBase64(file);
       const docData = {
         id: Date.now() + Math.floor(Math.random() * 10000),
+        userId: currentUserId,
         caseId: caseId,
         name: file.name,
         size: file.size,
@@ -1945,7 +2294,7 @@ async function uploadFiles(files) {
         data: base64,
         uploadedAt: new Date().toISOString()
       };
-      await FileDB.add(docData);
+      await UserFileDB.add(docData);
       uploaded++;
     } catch (err) {
       console.error(err);
@@ -1973,7 +2322,7 @@ function fileToBase64(file) {
 // ============ PREVIEW ============
 async function previewDoc(id) {
   try {
-    const doc = await FileDB.get(id);
+    const doc = await UserFileDB.get(id, currentUserId);
     if (!doc) return toast('❌ រកមិនឃើញឯកសារ');
     
     if (doc.category === 'image') {
@@ -1987,17 +2336,14 @@ async function previewDoc(id) {
     }
     
     downloadDoc(id);
-    toast('ℹ️ ឯកសារត្រូវបាន Download ដើម្បីបើក');
   } catch (err) {
-    console.error(err);
     toast('❌ មិនអាចបើកបាន');
   }
 }
 
-// ============ PDF VIEWER ============
 async function showPdfViewer(doc) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-black/95 z-[100] flex flex-col animate-fade-in';
+  modal.className = 'fixed inset-0 bg-black/95 z-[110] flex flex-col animate-fade-in';
   modal.innerHTML = `
     <div class="flex-shrink-0 bg-slate-900 text-white px-3 py-2.5 flex items-center gap-2 safe-top">
       <button onclick="closePdfViewer(this)" class="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center shrink-0">
@@ -2007,40 +2353,19 @@ async function showPdfViewer(doc) {
         <p class="font-semibold text-sm truncate">${escapeHtml(doc.name)}</p>
         <p class="text-xs opacity-70">${formatFileSize(doc.size)}</p>
       </div>
-      <button onclick="downloadPdfFromDoc(${doc.id})" class="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center shrink-0" title="ទាញយក">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </button>
     </div>
     
     <div class="flex-shrink-0 bg-slate-800 text-white px-3 py-2 flex items-center justify-between text-sm">
-      <button onclick="pdfPrevPage()" id="pdfPrevBtn" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 font-medium flex items-center gap-1">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-        មុន
-      </button>
-      <div class="flex items-center gap-2">
-        <span id="pdfPageInfo" class="text-xs">កំពុងផ្ទុក...</span>
-      </div>
-      <button onclick="pdfNextPage()" id="pdfNextBtn" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 font-medium flex items-center gap-1">
-        បន្ទាប់
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
+      <button onclick="pdfPrevPage()" id="pdfPrevBtn" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 font-medium">មុន</button>
+      <span id="pdfPageInfo" class="text-xs">កំពុងផ្ទុក...</span>
+      <button onclick="pdfNextPage()" id="pdfNextBtn" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 font-medium">បន្ទាប់</button>
     </div>
     
     <div id="pdfCanvasContainer" class="flex-1 overflow-auto bg-slate-700 p-2" style="display:flex;align-items:flex-start;justify-content:center;">
-      <div class="pdf-loading text-white">
+      <div class="text-white text-center">
         <div class="spinner" style="width:40px;height:40px;border-width:4px"></div>
         <p class="mt-3 text-sm">កំពុងផ្ទុក PDF...</p>
       </div>
-    </div>
-    
-    <div class="flex-shrink-0 bg-slate-800 text-white px-3 py-2 flex items-center justify-center gap-2 safe-bottom">
-      <button onclick="pdfZoom(-0.25)" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
-      </button>
-      <span id="pdfZoomLevel" class="text-xs w-12 text-center">100%</span>
-      <button onclick="pdfZoom(0.25)" class="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-      </button>
     </div>
   `;
   document.body.appendChild(modal);
@@ -2052,19 +2377,14 @@ async function showPdfViewer(doc) {
     const pdfArray = new Uint8Array(pdfData.length);
     for (let i = 0; i < pdfData.length; i++) pdfArray[i] = pdfData.charCodeAt(i);
     
-    const loadingTask = pdfjsLib.getDocument({ data: pdfArray });
-    const pdf = await loadingTask.promise;
-    
-    currentPdfDoc = { pdf: pdf, pageNum: 1, scale: 1, doc: doc, modal: modal };
+    const pdf = await pdfjsLib.getDocument({ data: pdfArray }).promise;
+    currentPdfDoc = { pdf, pageNum: 1, scale: 1 };
     await renderPdfPage();
   } catch (err) {
-    console.error('PDF error:', err);
     document.getElementById('pdfCanvasContainer').innerHTML = `
       <div class="text-center text-white p-6">
         <div class="text-5xl mb-3">⚠️</div>
         <p class="font-semibold mb-2">មិនអាចបង្ហាញ PDF បាន</p>
-        <p class="text-xs opacity-70 mb-4">សូម Download ឯកសារដើម្បីបើក</p>
-        <button onclick="downloadPdfFromDoc(${doc.id})" class="btn-primary text-white px-5 py-2.5 rounded-lg font-medium">⬇️ ទាញយក PDF</button>
       </div>
     `;
   }
@@ -2073,7 +2393,6 @@ async function showPdfViewer(doc) {
 async function renderPdfPage() {
   if (!currentPdfDoc) return;
   const { pdf, pageNum, scale } = currentPdfDoc;
-  
   const page = await pdf.getPage(pageNum);
   const viewport = page.getViewport({ scale: scale * 1.5 });
   
@@ -2085,20 +2404,15 @@ async function renderPdfPage() {
   canvas.width = viewport.width;
   canvas.height = viewport.height;
   canvas.style.maxWidth = '100%';
-  canvas.style.height = 'auto';
   canvas.style.background = 'white';
   canvas.style.borderRadius = '8px';
-  canvas.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)';
   container.appendChild(canvas);
   
-  await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+  await page.render({ canvasContext: ctx, viewport }).promise;
   
   document.getElementById('pdfPageInfo').textContent = `ទំព័រ ${pageNum} / ${pdf.numPages}`;
-  document.getElementById('pdfZoomLevel').textContent = Math.round(scale * 100) + '%';
   document.getElementById('pdfPrevBtn').disabled = pageNum <= 1;
   document.getElementById('pdfNextBtn').disabled = pageNum >= pdf.numPages;
-  document.getElementById('pdfPrevBtn').style.opacity = pageNum <= 1 ? '0.4' : '1';
-  document.getElementById('pdfNextBtn').style.opacity = pageNum >= pdf.numPages ? '0.4' : '1';
 }
 
 async function pdfPrevPage() {
@@ -2113,57 +2427,29 @@ async function pdfNextPage() {
   await renderPdfPage();
 }
 
-async function pdfZoom(delta) {
-  if (!currentPdfDoc) return;
-  currentPdfDoc.scale = Math.max(0.5, Math.min(3, currentPdfDoc.scale + delta));
-  await renderPdfPage();
-}
-
 function closePdfViewer(btn) {
   const modal = btn.closest('.fixed');
-  if (currentPdfDoc?.pdf) {
-    try { currentPdfDoc.pdf.destroy(); } catch(e) {}
-  }
+  if (currentPdfDoc?.pdf) try { currentPdfDoc.pdf.destroy(); } catch(e) {}
   currentPdfDoc = null;
   if (modal) modal.remove();
   document.body.style.overflow = '';
 }
 
-async function downloadPdfFromDoc(id) {
-  try {
-    const doc = await FileDB.get(id);
-    if (!doc) return;
-    const a = document.createElement('a');
-    a.href = doc.data;
-    a.download = doc.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    toast('✅ កំពុងទាញយក...');
-  } catch (err) {
-    toast('❌ ទាញយកបរាជ័យ');
-  }
-}
-
-// ============ IMAGE PREVIEW ============
 function showImagePreview(doc) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4';
+  modal.className = 'fixed inset-0 bg-black/90 z-[110] flex items-center justify-center p-4';
   modal.innerHTML = `
     <div class="relative max-w-5xl w-full max-h-[90vh]">
       <button onclick="this.closest('.fixed').remove()" class="absolute -top-12 right-0 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl">&times;</button>
-      <div class="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden">
         <div class="p-3 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-          <div class="min-w-0">
-            <p class="font-semibold text-sm truncate">${escapeHtml(doc.name)}</p>
-            <p class="text-xs text-slate-500">${formatFileSize(doc.size)}</p>
-          </div>
-          <button onclick="this.closest('.fixed').remove()" class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+          <p class="font-semibold text-sm truncate">${escapeHtml(doc.name)}</p>
+          <button onclick="this.closest('.fixed').remove()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
-        <div class="p-2 overflow-auto flex-1 flex items-center justify-center bg-slate-100 dark:bg-slate-950">
-          <img src="${doc.data}" alt="${doc.name}" class="max-w-full max-h-[70vh] object-contain rounded-lg">
+        <div class="p-2 overflow-auto flex items-center justify-center bg-slate-100 dark:bg-slate-950">
+          <img src="${doc.data}" alt="${escapeHtml(doc.name)}" class="max-w-full max-h-[70vh] object-contain rounded-lg">
         </div>
       </div>
     </div>
@@ -2174,7 +2460,7 @@ function showImagePreview(doc) {
 
 async function downloadDoc(id) {
   try {
-    const doc = await FileDB.get(id);
+    const doc = await UserFileDB.get(id, currentUserId);
     if (!doc) return toast('❌ រកមិនឃើញ');
     const a = document.createElement('a');
     a.href = doc.data;
@@ -2190,10 +2476,10 @@ async function downloadDoc(id) {
 
 async function deleteDoc(id) {
   try {
-    const doc = await FileDB.get(id);
+    const doc = await UserFileDB.get(id, currentUserId);
     if (!doc) return;
     showConfirm('លុបឯកសារ', `តើអ្នកប្រាកដជាចង់លុប "${doc.name}"?`, async () => {
-      await FileDB.delete(id);
+      await UserFileDB.delete(id, currentUserId);
       toast('🗑️ បានលុបឯកសារ');
       renderDocs();
     }, 'លុប');
@@ -2202,12 +2488,97 @@ async function deleteDoc(id) {
   }
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+// ============ USER MANAGEMENT ============
+async function renderUsersList() {
+  const list = document.getElementById('usersList');
+  if (!list) return;
+  
+  const users = await UserDB.getAllUsers();
+  const currentId = currentUserId;
+  
+  if (!users.length) {
+    list.innerHTML = '<p class="text-sm text-slate-400 text-center py-4">មិនមានគណនី</p>';
+    return;
+  }
+  
+  list.innerHTML = users.map(u => {
+    const isCurrent = u.id === currentId;
+    const initials = u.name.split(' ').slice(-2).map(s => s.charAt(0)).join('').toUpperCase();
+    const roleLabels = { admin: '👑 Admin', lawyer: '⚖️ មេធាវី', staff: '👤 បុគ្គលិក' };
+    
+    return `
+      <div class="flex items-center gap-3 p-3 ${isCurrent ? 'bg-brand-50 dark:bg-brand-950 border-2 border-brand-500' : 'bg-slate-50 dark:bg-slate-800/50'} rounded-xl">
+        <div class="w-10 h-10 bg-gradient-to-br from-brand-500 to-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm shrink-0">
+          ${initials}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <p class="font-semibold text-sm truncate">${escapeHtml(u.name)}</p>
+            ${isCurrent ? '<span class="badge bg-green-100 text-green-700 text-[10px]">បច្ចុប្បន្ន</span>' : ''}
+          </div>
+          <p class="text-xs text-slate-500 truncate">@${escapeHtml(u.username)} • ${roleLabels[u.role] || u.role}</p>
+        </div>
+        ${users.length > 1 && !isCurrent ? `
+          <button onclick="deleteUserAccount('${u.id}', '${escapeHtml(u.name)}')" class="w-8 h-8 rounded-lg hover:bg-red-100 text-red-500 flex items-center justify-center" title="លុប">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
 }
 
-// ============ PASSWORD MODAL ============
+function openAddUserModal() {
+  ['newUserName', 'newUserUsername', 'newUserPass'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('newUserRole').value = 'lawyer';
+  document.getElementById('addUserError').classList.add('hidden');
+  document.getElementById('addUserModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAddUserModal() {
+  document.getElementById('addUserModal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+async function saveNewUser() {
+  const name = document.getElementById('newUserName').value.trim();
+  const username = document.getElementById('newUserUsername').value.trim().toLowerCase();
+  const pass = document.getElementById('newUserPass').value;
+  const role = document.getElementById('newUserRole').value;
+  const err = document.getElementById('addUserError');
+  
+  err.classList.add('hidden');
+  
+  if (!name || name.length < 2) { err.textContent = '⚠️ ឈ្មោះត្រូវមាន ≥ ២ តួ'; err.classList.remove('hidden'); return; }
+  if (!username || username.length < 3) { err.textContent = '⚠️ Username ត្រូវមាន ≥ ៣ តួ'; err.classList.remove('hidden'); return; }
+  if (!/^[a-z0-9_]+$/.test(username)) { err.textContent = '⚠️ Username អាចមានតែ a-z, 0-9, _'; err.classList.remove('hidden'); return; }
+  if (!pass || pass.length < 4) { err.textContent = '⚠️ លេខសម្ងាត់ត្រូវមាន ≥ ៤ តួ'; err.classList.remove('hidden'); return; }
+  
+  try {
+    await UserDB.createUser({ name, username, password: pass, role });
+    closeAddUserModal();
+    toast('✅ បានបង្កើតគណនីថ្មី');
+    await renderUsersList();
+  } catch (e) {
+    err.textContent = e.message === 'USERNAME_EXISTS' ? '⚠️ Username នេះមានរួចហើយ' : '❌ ' + e.message;
+    err.classList.remove('hidden');
+  }
+}
+
+function deleteUserAccount(userId, name) {
+  showConfirm('លុបគណនី', `តើអ្នកប្រាកដជាចង់លុបគណនី "${name}"? ទិន្នន័យទាំងអស់នឹងត្រូវលុបចោល!`, async () => {
+    try {
+      await UserDB.deleteUser(userId);
+      toast('🗑️ បានលុបគណនី');
+      await renderUsersList();
+    } catch (e) {
+      toast('❌ លុបបរាជ័យ: ' + e.message);
+    }
+  }, 'លុបជាអចិន្ត្រៃយ៍');
+}
+
+// ============ PASSWORD & NAME ============
 function openPasswordModal() {
   ['oldPass','newPass','newPass2'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('passwordModal').classList.remove('hidden');
@@ -2224,17 +2595,16 @@ async function savePassword() {
   if (!oldPass || !newPass || !newPass2) return toast('⚠️ សូមបំពេញគ្រប់ប្រអប់');
   if (newPass.length < 4) return toast('⚠️ លេខសម្ងាត់ ≥ ៤ តួ');
   if (newPass !== newPass2) return toast('❌ មិនដូចគ្នា');
-  const auth = DB.get('auth', null);
-  const oldHash = await hashPassword(oldPass);
-  if (!auth || auth.password !== oldHash) return toast('❌ លេខសម្ងាត់មិនត្រឹមត្រូវ');
-  const newHash = await hashPassword(newPass);
-  auth.password = newHash;
-  DB.set('auth', auth);
-  closePasswordModal();
-  toast('✅ បានផ្លាស់ប្ដូរ');
+  
+  try {
+    await UserDB.changePassword(currentUserId, oldPass, newPass);
+    closePasswordModal();
+    toast('✅ បានផ្លាស់ប្ដូរ');
+  } catch (e) {
+    toast(e.message === 'WRONG_PASSWORD' ? '❌ លេខសម្ងាត់មិនត្រឹមត្រូវ' : '❌ ' + e.message);
+  }
 }
 
-// ============ NAME MODAL ============
 function openNameModal() {
   document.getElementById('newName').value = currentUser?.name || '';
   document.getElementById('nameModal').classList.remove('hidden');
@@ -2244,18 +2614,15 @@ function closeNameModal() {
   document.getElementById('nameModal').classList.add('hidden');
   document.body.style.overflow = '';
 }
-function saveName() {
+async function saveName() {
   const newName = document.getElementById('newName').value.trim();
   if (!newName) return toast('⚠️ សូមបំពេញឈ្មោះ');
   if (newName.length < 2) return toast('⚠️ ≥ ២ តួ');
-  const auth = DB.get('auth', null);
-  if (!auth) return;
-  auth.name = newName;
-  DB.set('auth', auth);
+  
+  await UserDB.updateUser(currentUserId, { name: newName });
   currentUser.name = newName;
-  const storage = localStorage.getItem('user') ? localStorage : sessionStorage;
-  storage.setItem('user', JSON.stringify(currentUser));
-  loadUser();
+  document.getElementById('headerName').textContent = newName;
+  document.getElementById('settingsName').textContent = newName;
   closeNameModal();
   toast('✅ បានកែឈ្មោះ');
 }
@@ -2264,13 +2631,14 @@ function saveName() {
 async function exportData() {
   try {
     toast('📦 កំពុងបង្កើត Backup...');
-    const files = await FileDB.getAll();
+    const files = await UserFileDB.getByUser(currentUserId);
     
     const data = {
-      version: '2.0',
+      version: '3.0',
       appName: 'Case Manager Professional',
       exportedAt: new Date().toISOString(),
       exportedBy: currentUser?.name || 'unknown',
+      userId: currentUserId,
       data: {
         cases: DB.get('cases'),
         clients: DB.get('clients'),
@@ -2279,12 +2647,6 @@ async function exportData() {
     };
     
     const json = JSON.stringify(data);
-    const sizeMB = (json.length / 1024 / 1024).toFixed(2);
-    
-    if (sizeMB > 100) {
-      if (!confirm(`⚠️ Backup ធំ ${sizeMB} MB!\n\nតើអ្នកចង់បន្តទេ?`)) return;
-    }
-    
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const now = new Date();
@@ -2298,11 +2660,148 @@ async function exportData() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    toast(`✅ បានទាញយក Backup (${sizeMB} MB)`);
+    toast(`✅ បានទាញយក Backup (${(json.length/1024/1024).toFixed(2)} MB)`);
   } catch (err) {
-    console.error(err);
     toast('❌ Backup បរាជ័យ');
   }
+}
+
+async function exportFullAccount() {
+  if (!currentUserId) return toast('⚠️ សូមចូលជាមុន');
+  
+  const confirmPass = prompt('🔐 សូមបញ្ចូលលេខសម្ងាត់ដើម្បីបញ្ជាក់:');
+  if (!confirmPass) return;
+  
+  const isValid = await UserDB.verifyPassword(currentUserId, confirmPass);
+  if (!isValid) return toast('❌ លេខសម្ងាត់មិនត្រឹមត្រូវ');
+  
+  toast('📦 កំពុងបង្កើត Full Backup...');
+  
+  try {
+    const user = await UserDB.getUser(currentUserId);
+    const cases = DB.get('cases');
+    const clients = DB.get('clients');
+    const documents = await UserFileDB.getByUser(currentUserId);
+    
+    const fullBackup = {
+      version: '3.0',
+      type: 'full-account',
+      appName: 'Case Manager Professional',
+      exportedAt: new Date().toISOString(),
+      account: {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        password: user.password,
+        role: user.role,
+        createdAt: user.createdAt
+      },
+      data: { cases, clients, documents }
+    };
+    
+    const json = JSON.stringify(fullBackup);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `full-account-${user.username}-${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast(`✅ បានទាញយក Full Backup`);
+  } catch (e) {
+    toast('❌ បរាជ័យ: ' + e.message);
+  }
+}
+
+async function handleFullAccountImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+  
+  if (!file.name.endsWith('.json')) return toast('❌ សូមជ្រើស .json');
+  
+  showConfirm('ផ្ទេរគណនី', 'ការនេះនឹងបង្កើតគណនីថ្មីក្នុងឧបករណ៍នេះ ជាមួយទិន្នន័យទាំងអស់។ បន្តទេ?', async () => {
+    try {
+      toast('📥 កំពុង Import...');
+      const text = await file.text();
+      const json = JSON.parse(text);
+      
+      if (json.type !== 'full-account' || !json.account || !json.data) {
+        return toast('❌ File មិនត្រឹមត្រូវ');
+      }
+      
+      const { account, data } = json;
+      const existing = await UserDB.findByUsername(account.username);
+      
+      let targetUserId;
+      
+      if (existing) {
+        const newUsername = account.username + '_imported_' + Date.now().toString(36).slice(-4);
+        const newUser = await UserDB.createUser({
+          name: account.name + ' (Imported)',
+          username: newUsername,
+          password: 'temp_' + Math.random().toString(36),
+          role: account.role || 'lawyer'
+        });
+        
+        const user = await UserDB.getUser(newUser.id);
+        user.password = account.password;
+        await new Promise((res, rej) => {
+          const tx = UserDB.db.transaction(UserDB.storeName, 'readwrite');
+          tx.objectStore(UserDB.storeName).put(user);
+          tx.oncomplete = () => res();
+          tx.onerror = () => rej(tx.error);
+        });
+        
+        targetUserId = newUser.id;
+        toast(`⚠️ Username មានរួច → បង្កើតជា "${newUsername}"`);
+      } else {
+        const newUser = await UserDB.createUser({
+          name: account.name,
+          username: account.username,
+          password: 'placeholder',
+          role: account.role || 'admin'
+        });
+        
+        const user = await UserDB.getUser(newUser.id);
+        user.password = account.password;
+        user.createdAt = account.createdAt;
+        
+        await new Promise((res, rej) => {
+          const tx = UserDB.db.transaction(UserDB.storeName, 'readwrite');
+          tx.objectStore(UserDB.storeName).put(user);
+          tx.oncomplete = () => res();
+          tx.onerror = () => rej(tx.error);
+        });
+        
+        targetUserId = user.id;
+      }
+      
+      if (Array.isArray(data.cases)) UserData.set(targetUserId, 'cases', data.cases);
+      if (Array.isArray(data.clients)) UserData.set(targetUserId, 'clients', data.clients);
+      if (Array.isArray(data.documents)) {
+        for (const doc of data.documents) {
+          await UserFileDB.add({ ...doc, userId: targetUserId });
+        }
+      }
+      
+      toast(`✅ Import: ${data.cases?.length || 0} រឿងក្ដី`);
+      await renderUsersList();
+      
+      setTimeout(() => {
+        showConfirm('ប្តូរទៅគណនីថ្មី?', 'តើអ្នកចង់ចូលទៅគណនីដែលទើប Import?', async () => {
+          await UserDB.setCurrentUser(targetUserId);
+          Session.destroy();
+          location.reload();
+        }, 'ចូលឥឡូវ');
+      }, 1500);
+    } catch (e) {
+      toast('❌ ' + e.message);
+    }
+  }, 'Import');
 }
 
 let pendingImportData = null;
@@ -2321,14 +2820,11 @@ function handleImport(event) {
 
 function processImportFile(file) {
   if (!file.name.endsWith('.json')) return toast('❌ សូមជ្រើស .json');
-  if (file.size > 500 * 1024 * 1024) return toast('❌ File ធំពេក');
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
       const json = JSON.parse(e.target.result);
-      if (!json.data || (!Array.isArray(json.data.cases) && !Array.isArray(json.data.clients))) {
-        return toast('❌ File មិនត្រឹមត្រូវ');
-      }
+      if (!json.data) return toast('❌ File មិនត្រឹមត្រូវ');
       pendingImportData = json;
       showImportPreview(json);
     } catch (err) {
@@ -2368,23 +2864,29 @@ async function confirmImport() {
     if (mode === 'replace') {
       DB.set('cases', incoming.cases || []);
       DB.set('clients', incoming.clients || []);
-      await FileDB.clear();
+      const existingFiles = await UserFileDB.getByUser(currentUserId);
+      for (const f of existingFiles) await UserFileDB.delete(f.id, currentUserId);
       if (Array.isArray(incoming.documents)) {
-        for (const doc of incoming.documents) await FileDB.add(doc);
+        for (const doc of incoming.documents) {
+          await UserFileDB.add({ ...doc, userId: currentUserId });
+        }
       }
       toast('✅ បានជំនួសទាំងអស់!');
     } else {
       const result = mergeData(incoming);
       if (Array.isArray(incoming.documents)) {
-        const existingFiles = await FileDB.getAll();
+        const existingFiles = await UserFileDB.getByUser(currentUserId);
         const existingIds = new Set(existingFiles.map(f => f.id));
         let added = 0;
         for (const doc of incoming.documents) {
-          if (!existingIds.has(doc.id)) { await FileDB.add(doc); added++; }
+          if (!existingIds.has(doc.id)) {
+            await UserFileDB.add({ ...doc, userId: currentUserId });
+            added++;
+          }
         }
         result.addedDocs = added;
       }
-      toast(`✅ បញ្ចូល: +${result.addedCases} រឿងក្ដី, +${result.addedClients} អតិថិជន, +${result.addedDocs} ឯកសារ`);
+      toast(`✅ បញ្ចូល: +${result.addedCases} រឿងក្ដី, +${result.addedClients} អតិថិជន`);
     }
     pendingImportData = null;
     document.getElementById('importFile').value = '';
@@ -2396,7 +2898,7 @@ async function confirmImport() {
   };
   
   if (mode === 'replace') {
-    showConfirm('ជំនួសទាំងអស់', 'ការជំនួសនឹងលុបទិន្នន័យបច្ចុប្បន្នចោលទាំងអស់ រួមទាំងឯកសារ! តើអ្នកប្រាកដទេ?', proceed, 'ជំនួស');
+    showConfirm('ជំនួសទាំងអស់', 'ការជំនួសនឹងលុបទិន្នន័យបច្ចុប្បន្នចោលទាំងអស់! តើអ្នកប្រាកដទេ?', proceed, 'ជំនួស');
   } else {
     proceed();
   }
@@ -2419,17 +2921,12 @@ function mergeData(incoming) {
     }
   });
   let addedCases = 0;
-  const caseIdMap = {};
   const existingCaseNumbers = new Set(existingCases.map(c => c.caseNumber));
   (incoming.cases || []).forEach(c => {
-    if (existingCaseNumbers.has(c.caseNumber)) {
-      const existing = existingCases.find(x => x.caseNumber === c.caseNumber);
-      caseIdMap[c.id] = existing.id;
-    } else {
+    if (!existingCaseNumbers.has(c.caseNumber)) {
       const newId = Date.now() + Math.floor(Math.random() * 10000);
       const newClientId = clientIdMap[c.clientId] || c.clientId;
       existingCases.push({ ...c, id: newId, clientId: newClientId });
-      caseIdMap[c.id] = newId;
       addedCases++;
     }
   });
@@ -2439,10 +2936,11 @@ function mergeData(incoming) {
 }
 
 function clearAllData() {
-  showConfirm('លុបទាំងអស់', 'តើអ្នកប្រាកដជាចង់លុបទិន្នន័យទាំងអស់ រួមទាំងឯកសារ?', async () => {
+  showConfirm('លុបទាំងអស់', 'តើអ្នកប្រាកដជាចង់លុបទិន្នន័យទាំងអស់?', async () => {
     DB.set('cases', []);
     DB.set('clients', []);
-    await FileDB.clear();
+    const files = await UserFileDB.getByUser(currentUserId);
+    for (const f of files) await UserFileDB.delete(f.id, currentUserId);
     toast('🗑️ បានលុបទាំងអស់');
     renderSettingsStats();
     showPage('dashboard');
@@ -2454,9 +2952,659 @@ async function renderSettingsStats() {
   set('backupCaseCount', DB.get('cases').length);
   set('backupClientCount', DB.get('clients').length);
   try {
-    const files = await FileDB.getAll();
+    const files = await UserFileDB.getByUser(currentUserId);
     set('backupDocCount', files.length);
   } catch { set('backupDocCount', '0'); }
+}
+
+// ============ QR TRANSFER SYSTEM ============
+const QRConfig = {
+  densities: {
+    low:    { chunkSize: 800,  qrWidth: 320, ecc: 'L', cols: 2 },
+    medium: { chunkSize: 1200, qrWidth: 280, ecc: 'L', cols: 3 },
+    high:   { chunkSize: 1800, qrWidth: 240, ecc: 'L', cols: 3 },
+    ultra:  { chunkSize: 2400, qrWidth: 220, ecc: 'L', cols: 4 }
+  },
+  gridSizes: { low: 4, medium: 6, high: 9, ultra: 12 },
+  maxChunks: 9999,
+  prefix: 'QRD'
+};
+
+const QRState = {
+  mode: null,
+  sessionId: null,
+  chunks: [],
+  currentPage: 0,
+  itemsPerPage: 6,
+  metadata: null,
+  receivedChunks: {},
+  receivedMeta: null,
+  stream: null,
+  facingMode: 'environment',
+  scanning: false,
+  autoAdvance: false,
+  autoTimer: null,
+  startTime: 0,
+  statsTimer: null
+};
+
+function bytesToBase64URL(bytes) {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64URLToBytes(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  const binary = atob(str);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+async function compressData(str) {
+  try {
+    const bytes = new TextEncoder().encode(str);
+    const compressed = pako.gzip(bytes, { level: 9 });
+    return bytesToBase64URL(compressed);
+  } catch (e) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+}
+
+async function decompressData(base64url) {
+  try {
+    const bytes = base64URLToBytes(base64url);
+    const decompressed = pako.ungzip(bytes);
+    return new TextDecoder().decode(decompressed);
+  } catch (e) {
+    return decodeURIComponent(escape(atob(base64url)));
+  }
+}
+
+async function quickHash(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).slice(0, 4).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function splitIntoChunks(str, size) {
+  const chunks = [];
+  for (let i = 0; i < str.length; i += size) chunks.push(str.slice(i, i + size));
+  return chunks;
+}
+
+function generateSessionId() {
+  return Math.random().toString(36).slice(2, 8).toUpperCase();
+}
+
+async function openQRTransfer(mode) {
+  QRState.mode = mode;
+  
+  if (mode === 'send') {
+    const user = await UserDB.getUser(currentUserId);
+    const cases = DB.get('cases');
+    const clients = DB.get('clients');
+    const docs = await UserFileDB.getByUser(currentUserId);
+    const docSize = docs.reduce((s, d) => s + (d.size || 0), 0);
+    
+    document.getElementById('qrSendAccountInfo').textContent = user?.name || '—';
+    document.getElementById('qrSendCasesCount').textContent = cases.length + ' រឿងក្ដី';
+    document.getElementById('qrSendClientsCount').textContent = clients.length + ' នាក់';
+    document.getElementById('qrSendDocsCount').textContent = docs.length + ' ឯកសារ (' + formatFileSize(docSize) + ')';
+    
+    document.getElementById('qrSendStep1').classList.remove('hidden');
+    document.getElementById('qrSendStep2').classList.add('hidden');
+    document.getElementById('qrSendModal').classList.remove('hidden');
+    
+    updateEstimate();
+    ['qrSendAccount', 'qrSendCases', 'qrSendClients', 'qrDensity'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.onchange = updateEstimate;
+    });
+  } else {
+    document.getElementById('qrReceiveModal').classList.remove('hidden');
+    resetQRReceive();
+    await startCamera();
+  }
+  
+  document.body.style.overflow = 'hidden';
+}
+
+function closeQRModal(mode) {
+  if (mode === 'receive') stopCamera();
+  document.getElementById(mode === 'send' ? 'qrSendModal' : 'qrReceiveModal').classList.add('hidden');
+  document.body.style.overflow = '';
+  
+  if (QRState.autoTimer) { clearInterval(QRState.autoTimer); QRState.autoTimer = null; }
+  if (QRState.statsTimer) { clearInterval(QRState.statsTimer); QRState.statsTimer = null; }
+  
+  QRState.chunks = [];
+  QRState.currentPage = 0;
+  QRState.metadata = null;
+  QRState.autoAdvance = false;
+}
+
+async function updateEstimate() {
+  const density = document.getElementById('qrDensity')?.value || 'medium';
+  const includeAccount = document.getElementById('qrSendAccount')?.checked;
+  const includeCases = document.getElementById('qrSendCases')?.checked;
+  const includeClients = document.getElementById('qrSendClients')?.checked;
+  const includeDocs = document.getElementById('qrSendDocs')?.checked;
+  
+  let estimatedBytes = 0;
+  if (includeAccount) estimatedBytes += 500;
+  if (includeCases) estimatedBytes += DB.get('cases').length * 800;
+  if (includeClients) estimatedBytes += DB.get('clients').length * 300;
+  if (includeDocs) {
+    const docs = await UserFileDB.getByUser(currentUserId);
+    estimatedBytes += docs.reduce((s, d) => s + (d.data?.length || 0), 0);
+  }
+  
+  const compressedBytes = Math.round(estimatedBytes * 0.15);
+  const chunkSize = QRConfig.densities[density].chunkSize;
+  const chunkCount = Math.max(1, Math.ceil(compressedBytes / chunkSize));
+  
+  document.getElementById('qrEstimateSize').textContent = formatFileSize(compressedBytes);
+  document.getElementById('qrEstimateCount').textContent = chunkCount.toLocaleString();
+}
+
+async function generateQRCodes() {
+  const btnText = document.getElementById('qrGenerateBtnText');
+  btnText.innerHTML = '<span class="spinner"></span> កំពុងរៀបចំ...';
+  
+  try {
+    const includeAccount = document.getElementById('qrSendAccount').checked;
+    const includeCases = document.getElementById('qrSendCases').checked;
+    const includeClients = document.getElementById('qrSendClients').checked;
+    const includeDocs = document.getElementById('qrSendDocs').checked;
+    const density = document.getElementById('qrDensity').value;
+    const mode = document.querySelector('input[name="qrMode"]:checked').value;
+    
+    if (!includeAccount && !includeCases && !includeClients && !includeDocs) {
+      btnText.textContent = 'បង្កើត QR Code';
+      return toast('⚠️ សូមជ្រើសយ៉ាងហោចណាស់មួយ');
+    }
+    
+    toast('📦 កំពុងរៀបចំទិន្នន័យ...');
+    
+    const payload = {
+      v: 4,
+      t: new Date().toISOString(),
+      session: generateSessionId()
+    };
+    
+    if (includeAccount) {
+      const user = await UserDB.getUser(currentUserId);
+      payload.a = {
+        name: user.name,
+        username: user.username,
+        password: user.password,
+        role: user.role,
+        createdAt: user.createdAt
+      };
+    }
+    if (includeCases) payload.c = DB.get('cases');
+    if (includeClients) payload.cl = DB.get('clients');
+    if (includeDocs) {
+      const docs = await UserFileDB.getByUser(currentUserId);
+      payload.d = docs.map(d => ({
+        id: d.id, caseId: d.caseId, name: d.name, size: d.size,
+        type: d.type, category: d.category, data: d.data, uploadedAt: d.uploadedAt
+      }));
+    }
+    
+    const jsonStr = JSON.stringify(payload);
+    const compressed = await compressData(jsonStr);
+    const chunkSize = QRConfig.densities[density].chunkSize;
+    const chunks = splitIntoChunks(compressed, chunkSize);
+    
+    if (chunks.length > QRConfig.maxChunks) {
+      btnText.textContent = 'បង្កើត QR Code';
+      return toast(`⚠️ ច្រើនពេក (${chunks.length} QR)!`);
+    }
+    
+    const checksum = await quickHash(compressed);
+    
+    QRState.sessionId = payload.session;
+    QRState.chunks = chunks;
+    QRState.metadata = {
+      totalChunks: chunks.length,
+      totalSize: compressed.length,
+      originalSize: jsonStr.length,
+      checksum,
+      density,
+      mode
+    };
+    
+    document.getElementById('qrTotalSize').textContent = formatFileSize(compressed.length);
+    document.getElementById('qrTotalCount').textContent = chunks.length.toLocaleString();
+    document.getElementById('qrSendStep1').classList.add('hidden');
+    document.getElementById('qrSendStep2').classList.remove('hidden');
+    
+    QRState.itemsPerPage = mode === 'grid' ? QRConfig.gridSizes[density] : 1;
+    document.getElementById('qrGrid').dataset.cols = mode === 'grid' ? QRConfig.densities[density].cols : 1;
+    QRState.currentPage = 0;
+    QRState.startTime = Date.now();
+    startSendStats();
+    
+    await renderQRPage();
+    toast(`✅ បង្កើត ${chunks.length} QR — ចុច ▶️ ដើម្បីចាប់ផ្ដើម`);
+    
+    btnText.textContent = 'បង្កើត QR Code';
+  } catch (e) {
+    console.error(e);
+    btnText.textContent = 'បង្កើត QR Code';
+    toast('❌ បរាជ័យ: ' + e.message);
+  }
+}
+
+async function renderQRPage() {
+  const total = QRState.chunks.length;
+  const perPage = QRState.itemsPerPage;
+  const startIdx = QRState.currentPage * perPage;
+  const endIdx = Math.min(startIdx + perPage, total);
+  
+  const gridEl = document.getElementById('qrGrid');
+  gridEl.innerHTML = '';
+  
+  const checksum = QRState.metadata.checksum;
+  const session = QRState.sessionId;
+  
+  for (let i = startIdx; i < endIdx; i++) {
+    const canvas = document.createElement('canvas');
+    gridEl.appendChild(canvas);
+    
+    const qrData = `${QRConfig.prefix}:${session}:${i + 1}/${total}:${checksum}:${QRState.chunks[i]}`;
+    
+    try {
+      await QRCode.toCanvas(canvas, qrData, {
+        width: QRConfig.densities[QRState.metadata.density].qrWidth,
+        margin: 1,
+        errorCorrectionLevel: QRConfig.densities[QRState.metadata.density].ecc,
+        color: { dark: '#000000', light: '#ffffff' }
+      });
+    } catch (e) {
+      console.error('QR render error:', e);
+    }
+  }
+  
+  document.getElementById('qrProgressText').textContent = `QR ${startIdx + 1}-${endIdx} / ${total}`;
+  document.getElementById('qrProgressBar').style.width = (endIdx / total * 100) + '%';
+  document.getElementById('qrPrevBtn').disabled = QRState.currentPage === 0;
+  document.getElementById('qrNextBtn').disabled = endIdx >= total;
+}
+
+function qrNextChunk() {
+  const totalPages = Math.ceil(QRState.chunks.length / QRState.itemsPerPage);
+  if (QRState.currentPage < totalPages - 1) {
+    QRState.currentPage++;
+    renderQRPage();
+  } else {
+    toast('✅ ដល់ចុងបញ្ចប់');
+  }
+}
+
+function qrPrevChunk() {
+  if (QRState.currentPage > 0) {
+    QRState.currentPage--;
+    renderQRPage();
+  }
+}
+
+function qrToggleAuto() {
+  QRState.autoAdvance = !QRState.autoAdvance;
+  const icon = document.getElementById('qrPlayIcon');
+  const btn = document.getElementById('qrPlayBtn');
+  
+  if (QRState.autoAdvance) {
+    icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    btn.classList.add('bg-green-600');
+    
+    QRState.autoTimer = setInterval(() => {
+      const totalPages = Math.ceil(QRState.chunks.length / QRState.itemsPerPage);
+      if (QRState.currentPage < totalPages - 1) {
+        QRState.currentPage++;
+        renderQRPage();
+      } else {
+        qrToggleAuto();
+        toast('✅ ដល់ចុងបញ្ចប់');
+      }
+    }, 2000);
+  } else {
+    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+    btn.classList.remove('bg-green-600');
+    if (QRState.autoTimer) { clearInterval(QRState.autoTimer); QRState.autoTimer = null; }
+  }
+}
+
+function qrFullscreen() {
+  const el = document.getElementById('qrDisplayArea');
+  if (el.requestFullscreen) el.requestFullscreen();
+}
+
+function startSendStats() {
+  if (QRState.statsTimer) clearInterval(QRState.statsTimer);
+  QRState.statsTimer = setInterval(() => {
+    const elapsed = (Date.now() - QRState.startTime) / 1000;
+    const pagesShown = QRState.currentPage + 1;
+    const totalPages = Math.ceil(QRState.chunks.length / QRState.itemsPerPage);
+    const remaining = totalPages - pagesShown;
+    const timeLeft = elapsed > 0 && pagesShown > 0 ? (remaining * elapsed / pagesShown) : 0;
+    document.getElementById('qrTimeLeft').textContent = '~' + Math.round(timeLeft) + 's';
+  }, 500);
+}
+
+async function startCamera() {
+  try {
+    QRState.stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: QRState.facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
+    const video = document.getElementById('qrVideo');
+    video.srcObject = QRState.stream;
+    await video.play();
+    QRState.scanning = true;
+    QRState.startTime = Date.now();
+    scanLoop();
+  } catch (e) {
+    console.error('Camera error:', e);
+    toast('❌ មិនអាចបើកកាមេរ៉ា');
+  }
+}
+
+function stopCamera() {
+  QRState.scanning = false;
+  if (QRState.stream) {
+    QRState.stream.getTracks().forEach(t => t.stop());
+    QRState.stream = null;
+  }
+  if (QRState.statsTimer) { clearInterval(QRState.statsTimer); QRState.statsTimer = null; }
+}
+
+async function switchCamera() {
+  QRState.facingMode = QRState.facingMode === 'environment' ? 'user' : 'environment';
+  stopCamera();
+  await startCamera();
+}
+
+function scanLoop() {
+  if (!QRState.scanning) return;
+  const video = document.getElementById('qrVideo');
+  const canvas = document.getElementById('qrScanCanvas');
+  
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    
+    const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+    if (code && code.data) handleScannedQR(code.data);
+  }
+  requestAnimationFrame(scanLoop);
+}
+
+function handleScannedQR(data) {
+  if (!data.startsWith(QRConfig.prefix + ':')) return;
+  const parts = data.split(':');
+  if (parts.length < 5) return;
+  
+  const session = parts[1];
+  const progress = parts[2];
+  const checksum = parts[3];
+  const chunkData = parts.slice(4).join(':');
+  const [index, total] = progress.split('/').map(Number);
+  
+  if (!index || !total) return;
+  
+  if (!QRState.receivedMeta) {
+    QRState.receivedMeta = { session, checksum, total };
+    QRState.startTime = Date.now();
+    QRState.receivedChunks = {};
+  }
+  
+  if (QRState.receivedMeta.session !== session) return;
+  if (QRState.receivedChunks[index]) return;
+  
+  QRState.receivedChunks[index] = chunkData;
+  if (navigator.vibrate) navigator.vibrate(30);
+  updateReceiveProgress();
+}
+
+function updateReceiveProgress() {
+  const total = QRState.receivedMeta?.total || 0;
+  const received = Object.keys(QRState.receivedChunks).length;
+  
+  document.getElementById('qrLiveCount').textContent = received;
+  document.getElementById('qrLiveTotal').textContent = total;
+  document.getElementById('qrReceiveChunks').textContent = `${received} / ${total}`;
+  document.getElementById('qrReceiveBar').style.width = total > 0 ? (received / total * 100) + '%' : '0%';
+  
+  const totalSize = Object.values(QRState.receivedChunks).reduce((s, c) => s + c.length, 0);
+  document.getElementById('qrReceiveSize').textContent = formatFileSize(totalSize);
+  
+  const elapsed = (Date.now() - QRState.startTime) / 1000;
+  const speed = elapsed > 0 ? received / elapsed : 0;
+  const remaining = total - received;
+  document.getElementById('qrReceiveTimeLeft').textContent = '~' + (speed > 0 ? Math.round(remaining / speed) : 0) + 's';
+  
+  const el = document.getElementById('qrChunksList');
+  let html = '';
+  const showCount = Math.min(total, 100);
+  for (let i = 1; i <= showCount; i++) {
+    const has = QRState.receivedChunks[i];
+    html += `<div class="aspect-square rounded ${has ? 'bg-green-500 chunk-new' : 'bg-slate-600'} flex items-center justify-center text-[8px] font-bold">${has ? '✓' : ''}</div>`;
+  }
+  el.innerHTML = html;
+  
+  if (received === total && total > 0) {
+    document.getElementById('qrReceiveProgress').textContent = '✅ ពេញលេញ!';
+    document.getElementById('qrReceiveBar').style.background = 'linear-gradient(to right, #22c55e, #16a34a)';
+    document.getElementById('qrApplyBtn').disabled = false;
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+    toast('✅ ទទួលបានពេញលេញ!');
+  } else {
+    document.getElementById('qrReceiveProgress').textContent = `កំពុងទទួល ${received}/${total}`;
+  }
+}
+
+function resetQRReceive() {
+  QRState.receivedChunks = {};
+  QRState.receivedMeta = null;
+  QRState.startTime = Date.now();
+  
+  document.getElementById('qrReceiveProgress').textContent = 'រង់ចាំ QR...';
+  document.getElementById('qrReceiveBar').style.width = '0%';
+  document.getElementById('qrReceiveBar').style.background = 'linear-gradient(to right, #06b6d4, #3b82f6)';
+  document.getElementById('qrReceiveSize').textContent = '0 KB';
+  document.getElementById('qrReceiveChunks').textContent = '0 / 0';
+  document.getElementById('qrReceiveTimeLeft').textContent = '~0s';
+  document.getElementById('qrLiveCount').textContent = '0';
+  document.getElementById('qrLiveTotal').textContent = '?';
+  document.getElementById('qrChunksList').innerHTML = '';
+  document.getElementById('qrApplyBtn').disabled = true;
+}
+
+async function applyReceivedData() {
+  const total = QRState.receivedMeta?.total || 0;
+  const received = Object.keys(QRState.receivedChunks).length;
+  if (received !== total || total === 0) return toast('⚠️ មិនពេញលេញ');
+  
+  try {
+    toast('🔍 កំពុងផ្ទៀងផ្ទាត់...');
+    let compressed = '';
+    for (let i = 1; i <= total; i++) compressed += QRState.receivedChunks[i];
+    
+    const checksum = await quickHash(compressed);
+    if (checksum !== QRState.receivedMeta.checksum) return toast('❌ Checksum មិនត្រឹមត្រូវ');
+    
+    toast('📦 កំពុងឌិគ្រីប...');
+    const jsonStr = await decompressData(compressed);
+    const payload = JSON.parse(jsonStr);
+    
+    const summary = [];
+    if (payload.a) summary.push(`👤 គណនី: ${payload.a.name}`);
+    if (payload.c) summary.push(`📁 រឿងក្ដី: ${payload.c.length}`);
+    if (payload.cl) summary.push(`👥 អតិថិជន: ${payload.cl.length}`);
+    if (payload.d) summary.push(`📄 ឯកសារ: ${payload.d.length}`);
+    
+    const mode = await askImportMode();
+    if (mode === 'cancel') return;
+    
+    showConfirm('បញ្ជាក់', `${summary.join('\n')}\n\nបន្តទេ?`, () => applyPayload(payload, mode), 'អនុវត្ត');
+  } catch (e) {
+    toast('❌ ' + e.message);
+  }
+}
+
+function askImportMode() {
+  return new Promise((resolve) => {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black/70 z-[120] flex items-center justify-center p-4';
+    modal.innerHTML = `
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 max-w-sm w-full">
+        <h3 class="font-bold mb-2">របៀបដាក់បញ្ចូល</h3>
+        <div class="space-y-2 mt-4">
+          <button data-mode="merge" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 hover:border-brand-500 rounded-xl text-left">
+            <p class="font-semibold text-sm">🔗 បញ្ចូលបន្ថែម</p>
+          </button>
+          <button data-mode="replace" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 hover:border-red-500 rounded-xl text-left">
+            <p class="font-semibold text-sm">♻️ ជំនួសទាំងអស់</p>
+          </button>
+          <button data-mode="cancel" class="w-full p-3 border-2 border-transparent hover:border-slate-300 rounded-xl text-left">
+            <p class="font-semibold text-sm text-slate-500">✖️ បោះបង់</p>
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.querySelectorAll('button[data-mode]').forEach(btn => {
+      btn.onclick = () => {
+        const mode = btn.dataset.mode;
+        modal.remove();
+        resolve(mode);
+      };
+    });
+  });
+}
+
+async function applyPayload(payload, mode = 'merge') {
+  try {
+    toast('💾 កំពុងរក្សាទុក...');
+    let targetUserId = currentUserId;
+    let newUserCreated = false;
+    
+    if (payload.a) {
+      const existing = await UserDB.findByUsername(payload.a.username);
+      
+      if (existing && existing.id !== currentUserId) {
+        const newUsername = payload.a.username + '_qr_' + Date.now().toString(36).slice(-4);
+        const newUser = await UserDB.createUser({
+          name: payload.a.name + ' (QR)',
+          username: newUsername,
+          password: 'temp_' + Math.random().toString(36),
+          role: payload.a.role || 'lawyer'
+        });
+        
+        const user = await UserDB.getUser(newUser.id);
+        user.password = payload.a.password;
+        await new Promise((res, rej) => {
+          const tx = UserDB.db.transaction(UserDB.storeName, 'readwrite');
+          tx.objectStore(UserDB.storeName).put(user);
+          tx.oncomplete = () => res();
+          tx.onerror = () => rej(tx.error);
+        });
+        
+        targetUserId = newUser.id;
+        newUserCreated = true;
+      } else if (!existing) {
+        const newUser = await UserDB.createUser({
+          name: payload.a.name,
+          username: payload.a.username,
+          password: 'temp_' + Math.random().toString(36),
+          role: payload.a.role || 'lawyer'
+        });
+        
+        const user = await UserDB.getUser(newUser.id);
+        user.password = payload.a.password;
+        user.createdAt = payload.a.createdAt;
+        await new Promise((res, rej) => {
+          const tx = UserDB.db.transaction(UserDB.storeName, 'readwrite');
+          tx.objectStore(UserDB.storeName).put(user);
+          tx.oncomplete = () => res();
+          tx.onerror = () => rej(tx.error);
+        });
+        
+        targetUserId = newUser.id;
+        newUserCreated = true;
+      }
+    }
+    
+    if (mode === 'replace') {
+      if (payload.c) UserData.set(targetUserId, 'cases', payload.c);
+      if (payload.cl) UserData.set(targetUserId, 'clients', payload.cl);
+    } else {
+      if (payload.cl) {
+        const existing = UserData.get(targetUserId, 'clients', []);
+        const seen = new Set(existing.map(c => `${c.name}|${c.phone || ''}`));
+        payload.cl.forEach(c => {
+          const key = `${c.name}|${c.phone || ''}`;
+          if (!seen.has(key)) {
+            existing.push({ ...c, id: c.id || Date.now() + Math.random() });
+            seen.add(key);
+          }
+        });
+        UserData.set(targetUserId, 'clients', existing);
+      }
+      if (payload.c) {
+        const existing = UserData.get(targetUserId, 'cases', []);
+        const seen = new Set(existing.map(c => c.caseNumber));
+        payload.c.forEach(c => {
+          if (!seen.has(c.caseNumber)) existing.push({ ...c, id: c.id || Date.now() + Math.random() });
+        });
+        UserData.set(targetUserId, 'cases', existing);
+      }
+    }
+    
+    if (payload.d && Array.isArray(payload.d)) {
+      for (const doc of payload.d) await UserFileDB.add({ ...doc, userId: targetUserId });
+    }
+    
+    toast('✅ ទទួលបានជោគជ័យ!');
+    
+    setTimeout(() => {
+      if (newUserCreated) {
+        showConfirm('ប្តូរទៅគណនីថ្មី?', 'តើអ្នកចង់ចូលទៅគណនីដែលទើប Import?', async () => {
+          await UserDB.setCurrentUser(targetUserId);
+          Session.destroy();
+          location.reload();
+        }, 'ចូលឥឡូវ');
+      } else {
+        closeQRModal('receive');
+        showPage('dashboard');
+      }
+    }, 800);
+  } catch (e) {
+    toast('❌ ' + e.message);
+  }
+}
+
+function processManualQR() {
+  const input = document.getElementById('qrManualInput').value.trim();
+  if (!input) return;
+  const lines = input.split(/[\n\r]+/).filter(l => l.trim());
+  let processed = 0;
+  lines.forEach(line => {
+    if (line.startsWith(QRConfig.prefix + ':')) {
+      handleScannedQR(line.trim());
+      processed++;
+    }
+  });
+  document.getElementById('qrManualInput').value = '';
+  toast(`✅ ដំណើរការ ${processed} QR`);
 }
 
 // ============ CONFIRM MODAL ============
@@ -2489,15 +3637,13 @@ function toast(msg) {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (currentPdfDoc) {
-      const modal = document.querySelector('.z-\\[100\\]');
-      if (modal) closePdfViewer(modal.querySelector('button'));
-    }
     closeCaseModal();
     closeClientModal();
     closePasswordModal();
     closeNameModal();
     closeConfirm();
+    closeAddUserModal();
+    closeUserSwitch();
     closeSidebarOnMobile();
   }
 });
@@ -2511,22 +3657,41 @@ window.addEventListener('resize', () => {
 
 // ============ INIT ============
 async function initApp() {
-  loadUser();
-  await FileDB.init();
+  const ok = await loadUser();
+  if (!ok) {
+    Session.destroy();
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
+    return;
+  }
+  await UserFileDB.init();
   showPage('dashboard');
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
   initTheme();
-  const auth = DB.get('auth', null);
   
-  if (!auth) {
-    document.getElementById('setupScreen').classList.remove('hidden');
-  } else if (checkSession()) {
-    document.getElementById('app').classList.remove('hidden');
-    await initApp();
-  } else {
-    showLogin();
+  try {
+    await UserDB.init();
+    await UserFileDB.init();
+    
+    // Also init legacy FileDB for migration
+    try { await FileDB.init(); } catch (e) {}
+    
+    const users = await UserDB.getAllUsers();
+    
+    if (users.length === 0) {
+      document.getElementById('setupScreen').classList.remove('hidden');
+    } else if (checkSession()) {
+      document.getElementById('app').classList.remove('hidden');
+      await initApp();
+    } else {
+      await UserDB.setCurrentUser(users[users.length - 1].id);
+      showLogin();
+    }
+  } catch (e) {
+    console.error('Init error:', e);
+    alert('❌ មានបញ្ហាក្នុងការចាប់ផ្តើម: ' + e.message);
   }
 });
 </script>
