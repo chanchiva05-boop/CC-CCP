@@ -104,6 +104,7 @@ tailwind.config = {
   }
   .btn-primary:hover { box-shadow: 0 6px 20px -4px rgba(53, 99, 255, 0.7); transform: translateY(-1px); }
   .btn-primary:active { transform: translateY(0) scale(0.98); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
   
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -123,6 +124,7 @@ tailwind.config = {
   .dark select option { background: #0f172a; color: #e2e8f0; }
   
   .spinner { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; }
+  .spinner-dark { border: 3px solid rgba(53,99,255,0.2); border-top: 3px solid #3563ff; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   
   #pageTitle, #pageSubtitle { line-height: 1.3; word-break: break-word; }
@@ -132,9 +134,25 @@ tailwind.config = {
     #pageTitle { font-size: 15px !important; }
     #pageSubtitle { font-size: 10.5px !important; }
   }
+
+  /* Loading overlay */
+  #loadingOverlay { transition: opacity 0.3s ease; }
+  .loading-ring {
+    display: inline-block; width: 40px; height: 40px;
+    border: 4px solid rgba(53,99,255,0.2); border-top-color: #3563ff;
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+
+<!-- ============ LOADING OVERLAY ============ -->
+<div id="loadingOverlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+  <div class="text-center">
+    <div class="loading-ring mx-auto mb-4"></div>
+    <p class="text-sm text-slate-500 dark:text-slate-400">កំពុងផ្ទុក...</p>
+  </div>
+</div>
 
 <!-- ============ SETUP SCREEN ============ -->
 <div id="setupScreen" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 safe-top safe-bottom overflow-hidden">
@@ -147,7 +165,7 @@ tailwind.config = {
     <div class="text-center mb-6">
       <img src="icon-512.png" alt="Case Manager Logo" class="w-24 h-24 mx-auto mb-4 rounded-3xl shadow-lg shadow-brand-500/30 object-cover">
       <h1 class="text-xl font-bold text-slate-900 dark:text-white">សូមស្វាគមន៍</h1>
-      <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">សូមបង្កើតគណនីដើម្បីចាប់ផ្ដើមប្រើប្រាស់</p>
+      <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">បង្កើតគណនីថ្មីដើម្បីចាប់ផ្ដើម</p>
     </div>
     <div class="space-y-4">
       <div>
@@ -158,10 +176,17 @@ tailwind.config = {
         </div>
       </div>
       <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">អ៊ីមែល <span class="text-red-500">*</span></label>
+        <div class="relative">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+          <input id="setupEmail" type="email" placeholder="example@gmail.com" class="w-full pl-11 pr-4 py-3 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        </div>
+      </div>
+      <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">លេខសម្ងាត់ <span class="text-red-500">*</span></label>
         <div class="relative">
           <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input id="setupPass" type="password" placeholder="បញ្ចូលលេខសម្ងាត់" class="w-full pl-11 pr-12 py-3 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+          <input id="setupPass" type="password" placeholder="យ៉ាងតិច ៦ តួ" class="w-full pl-11 pr-12 py-3 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
           <button type="button" onclick="togglePass('setupPass', this)" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400" tabindex="-1">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
@@ -178,8 +203,14 @@ tailwind.config = {
         </div>
       </div>
       <div id="setupError" class="hidden text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 p-3 rounded-xl"></div>
-      <button onclick="handleSetup()" class="btn-primary w-full text-white py-3.5 rounded-xl font-semibold text-base">ចាប់ផ្ដើមប្រើប្រាស់ →</button>
-      <p class="text-xs text-slate-500 dark:text-slate-400 text-center leading-relaxed">🔒 ព័ត៌មានរបស់អ្នកត្រូវបានរក្សាទុកក្នុងឧបករណ៍នេះតែប៉ុណ្ណោះ</p>
+      <button id="setupBtn" onclick="handleSetup()" class="btn-primary w-full text-white py-3.5 rounded-xl font-semibold text-base flex items-center justify-center gap-2">
+        <span id="setupBtnText">ចាប់ផ្ដើមប្រើប្រាស់ →</span>
+      </button>
+      <p class="text-xs text-slate-500 dark:text-slate-400 text-center leading-relaxed">🔒 ទិន្នន័យរបស់អ្នកត្រូវបានរក្សាទុកដោយសុវត្ថិភាពលើ Cloud (Firebase)</p>
+      <p class="text-xs text-center text-slate-500 dark:text-slate-400">
+        មានគណនីរួចហើយ? 
+        <button onclick="showLogin()" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">ចូលប្រើ →</button>
+      </p>
     </div>
   </div>
 </div>
@@ -195,9 +226,16 @@ tailwind.config = {
     <div class="text-center mb-8">
       <img src="icon-512.png" alt="Case Manager Logo" class="w-24 h-24 mx-auto mb-4 rounded-3xl shadow-lg shadow-brand-500/30 object-cover">
       <h1 class="text-2xl font-bold text-slate-900 dark:text-white">ប្រព័ន្ធគ្រប់គ្រងសំណុំរឿងក្ដី</h1>
-      <p id="loginGreeting" class="text-slate-500 dark:text-slate-400 text-sm mt-1">សូមបញ្ចូលលេខសម្ងាត់ដើម្បីបន្ត</p>
+      <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">សូមបញ្ចូលព័ត៌មានដើម្បីបន្ត</p>
     </div>
     <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">អ៊ីមែល</label>
+        <div class="relative">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+          <input id="loginEmail" type="email" class="w-full pl-11 pr-4 py-3 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        </div>
+      </div>
       <div>
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">លេខសម្ងាត់</label>
         <div class="relative">
@@ -209,13 +247,17 @@ tailwind.config = {
         </div>
       </div>
       <label class="flex items-center gap-2 cursor-pointer">
-        <input id="rememberMe" type="checkbox" class="w-4 h-4 rounded">
+        <input id="rememberMe" type="checkbox" class="w-4 h-4 rounded" checked>
         <span class="text-sm text-slate-600 dark:text-slate-400">ចងចាំខ្ញុំ</span>
       </label>
       <div id="loginError" class="hidden text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 p-3 rounded-xl"></div>
       <button id="loginBtn" onclick="login()" class="btn-primary w-full text-white py-3.5 rounded-xl font-semibold text-base flex items-center justify-center gap-2">
         <span id="loginBtnText">ចូលប្រើប្រាស់ →</span>
       </button>
+      <p class="text-xs text-center text-slate-500 dark:text-slate-400">
+        មិនទាន់មានគណនី? 
+        <button onclick="showSetup()" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">បង្កើតថ្មី →</button>
+      </p>
     </div>
   </div>
 </div>
@@ -230,7 +272,7 @@ tailwind.config = {
         <img src="icon-512.png" alt="Case Manager Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shrink-0">
         <div>
           <h1 class="text-base font-bold tracking-tight">Case Manager</h1>
-          <p class="text-[10px] text-brand-300 uppercase tracking-widest">Premium - version 1.1</p>
+          <p class="text-[10px] text-brand-300 uppercase tracking-widest">Firebase Cloud - v2.0</p>
         </div>
       </div>
       <button onclick="toggleSidebar()" class="lg:hidden text-brand-300 p-2 hover:text-white">
@@ -550,6 +592,10 @@ tailwind.config = {
               <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">ឈ្មោះពេញ</p>
               <p id="settingsName" class="font-semibold">-</p>
             </div>
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">អ៊ីមែល</p>
+              <p id="settingsEmail" class="font-semibold">-</p>
+            </div>
           </div>
           <div class="flex flex-col sm:flex-row gap-2">
             <button onclick="openPasswordModal()" class="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl text-sm font-medium">🔐 ផ្លាស់ប្ដូរលេខសម្ងាត់</button>
@@ -709,7 +755,7 @@ tailwind.config = {
     </div>
     <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
       <button onclick="closeCaseModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
-      <button onclick="saveCase()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+      <button id="saveCaseBtn" onclick="saveCase()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
     </div>
   </div>
 </div>
@@ -749,7 +795,7 @@ tailwind.config = {
     </div>
     <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
       <button onclick="closeClientModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
-      <button onclick="saveClient()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+      <button id="saveClientBtn" onclick="saveClient()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
     </div>
   </div>
 </div>
@@ -784,7 +830,7 @@ tailwind.config = {
     </div>
     <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
       <button onclick="closePasswordModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
-      <button onclick="savePassword()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+      <button id="savePassBtn" onclick="savePassword()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
     </div>
   </div>
 </div>
@@ -811,7 +857,7 @@ tailwind.config = {
     </div>
     <div class="sticky bottom-0 bg-white dark:bg-slate-900 px-5 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 safe-bottom">
       <button onclick="closeNameModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 font-medium">បោះបង់</button>
-      <button onclick="saveName()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
+      <button id="saveNameBtn" onclick="saveName()" class="btn-primary text-white px-6 py-2.5 rounded-xl font-medium">រក្សាទុក</button>
     </div>
   </div>
 </div>
@@ -839,20 +885,60 @@ tailwind.config = {
 <div id="toast" class="hidden fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-2xl shadow-2xl z-[80] max-w-[90vw] text-center text-sm font-medium"></div>
 
 <script>
+// ============================================================
+// 🔥 FIREBASE CONFIG - ⚠️ ជំនួសដោយ config របស់អ្នក
+// ============================================================
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY_HERE",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+// ============================================================
+
+// Firebase SDK (ES Modules loaded via dynamic import)
+let FB = null;
+let currentUser = null;
+let userProfile = null;
+let cacheCases = [];
+let cacheClients = [];
+let statusChart = null;
+
+// ============ LOAD FIREBASE SDK ============
+async function loadFirebase() {
+  const [{ initializeApp }, authMod, fsMod] = await Promise.all([
+    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
+    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"),
+    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
+  ]);
+  const app = initializeApp(firebaseConfig);
+  const auth = authMod.getAuth(app);
+  const db = fsMod.getFirestore(app);
+  FB = { app, auth, db, ...authMod, ...fsMod };
+}
+
 // ============ THEME ============
 function toggleDark() {
   const isDark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   document.getElementById('themeLabel').textContent = isDark ? 'ផ្ទាំងភ្លឺ' : 'ផ្ទាំងងងឹត';
+  if (document.querySelector('.page:not(.hidden)')?.id === 'page-dashboard') renderDashboard();
 }
 function initTheme() {
   const saved = localStorage.getItem('theme');
   const isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
   if (isDark) {
     document.documentElement.classList.add('dark');
-    document.getElementById('themeLabel').textContent = 'ផ្ទាំងភ្លឺ';
+    const lbl = document.getElementById('themeLabel');
+    if (lbl) lbl.textContent = 'ផ្ទាំងភ្លឺ';
   }
 }
+
+// ============ LOADING OVERLAY ============
+function showLoading() { document.getElementById('loadingOverlay').classList.remove('hidden'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
 
 // ============ PWA ============
 let deferredPrompt = null;
@@ -862,11 +948,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
   const btn = document.getElementById('installBtn');
   if (btn) btn.classList.remove('hidden');
 });
-function isPWA() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
 async function installApp() {
   if (!deferredPrompt) { alert('📲 សូមចុច Menu → "Install App"'); return; }
   deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
+  await deferredPrompt.userChoice;
   deferredPrompt = null;
 }
 if ('serviceWorker' in navigator) {
@@ -874,27 +959,6 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   });
 }
-
-// ============ CRYPTO ============
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password + '|case-manager-salt-2026');
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-// ============ DATA ============
-const DB = {
-  get(key, def=[]) {
-    try { return JSON.parse(localStorage.getItem(key)) ?? def; }
-    catch { return def; }
-  },
-  set(key, val) { localStorage.setItem(key, JSON.stringify(val)); },
-  remove(key) { localStorage.removeItem(key); }
-};
-
-let statusChart = null;
-let currentUser = null;
 
 // ============ STATUS MAP ============
 const STATUS_MAP = {
@@ -911,23 +975,15 @@ const STATUS_MAP = {
   'ដំណាក់កាលចៅក្រមស៊ើបសួរ': 'active',
   'ដំណាក់កាលជំនុំជម្រះ': 'active',
 };
-
 function getStatusCategory(status) {
   if (!status) return 'unknown';
   return STATUS_MAP[status.trim()] || 'unknown';
 }
-
 function statusInfo(status) {
   const cat = getStatusCategory(status);
-  if (cat === 'active') {
-    return { label: status || 'កំពុងដំណើរការ', cls: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400', dot: 'bg-green-500' };
-  }
-  if (cat === 'pending') {
-    return { label: status || 'រង់ចាំ', cls: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400', dot: 'bg-amber-500' };
-  }
-  if (cat === 'closed') {
-    return { label: status || 'បានបញ្ចប់', cls: 'bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-400', dot: 'bg-purple-500' };
-  }
+  if (cat === 'active') return { label: status || 'កំពុងដំណើរការ', cls: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400', dot: 'bg-green-500' };
+  if (cat === 'pending') return { label: status || 'រង់ចាំ', cls: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400', dot: 'bg-amber-500' };
+  if (cat === 'closed') return { label: status || 'បានបញ្ចប់', cls: 'bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-400', dot: 'bg-purple-500' };
   return { label: status || '—', cls: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400', dot: 'bg-slate-400' };
 }
 
@@ -966,133 +1022,191 @@ function togglePass(inputId, btn) {
   }
 }
 
-// ============ SETUP ============
+// ============ SCREEN NAVIGATION ============
+function showSetup() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('setupScreen').classList.remove('hidden');
+}
+function showLogin() {
+  document.getElementById('setupScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  setTimeout(() => document.getElementById('loginEmail')?.focus(), 100);
+}
+
+// ============ SETUP (CREATE ACCOUNT) ============
 async function handleSetup() {
   const name = document.getElementById('setupName').value.trim();
+  const email = document.getElementById('setupEmail').value.trim();
   const pass = document.getElementById('setupPass').value;
   const pass2 = document.getElementById('setupPass2').value;
   const err = document.getElementById('setupError');
+  const btn = document.getElementById('setupBtn');
+  const btnText = document.getElementById('setupBtnText');
   err.classList.add('hidden');
-  if (!name) { err.textContent = '⚠️ សូមបំពេញឈ្មោះពេញ'; err.classList.remove('hidden'); return; }
-  if (name.length < 2) { err.textContent = '⚠️ ឈ្មោះត្រូវមាន ≥ ២ តួ'; err.classList.remove('hidden'); return; }
-  if (!pass) { err.textContent = '⚠️ សូមបញ្ចូលលេខសម្ងាត់'; err.classList.remove('hidden'); return; }
-  if (pass.length < 4) { err.textContent = '⚠️ លេខសម្ងាត់ត្រូវមាន ≥ ៤ តួ'; err.classList.remove('hidden'); return; }
-  if (pass !== pass2) { err.textContent = '❌ លេខសម្ងាត់មិនដូចគ្នា'; err.classList.remove('hidden'); return; }
-  const hashedPass = await hashPassword(pass);
-  DB.set('auth', { name, password: hashedPass, role: 'admin', createdAt: new Date().toISOString() });
-  document.getElementById('setupScreen').classList.add('hidden');
-  toast('✅ បង្កើតគណនីជោគជ័យ!');
-  showLogin();
-}
 
-function showLogin() {
-  const auth = DB.get('auth', null);
-  const greeting = document.getElementById('loginGreeting');
-  if (auth && auth.name) {
-    const firstName = auth.name.split(' ').slice(-1)[0] || auth.name;
-    greeting.textContent = `សូមស្វាគមន៍ត្រឡប់មកវិញ, ${firstName}`;
+  if (!name || name.length < 2) { err.textContent = '⚠️ ឈ្មោះត្រូវមាន ≥ ២ តួ'; err.classList.remove('hidden'); return; }
+  if (!email || !email.includes('@')) { err.textContent = '⚠️ សូមបំពេញអ៊ីមែលត្រឹមត្រូវ'; err.classList.remove('hidden'); return; }
+  if (!pass || pass.length < 6) { err.textContent = '⚠️ លេខសម្ងាត់ ≥ ៦ តួ'; err.classList.remove('hidden'); return; }
+  if (pass !== pass2) { err.textContent = '❌ លេខសម្ងាត់មិនដូចគ្នា'; err.classList.remove('hidden'); return; }
+
+  btn.disabled = true;
+  btnText.innerHTML = '<span class="spinner"></span> កំពុងបង្កើត...';
+
+  try {
+    const cred = await FB.createUserWithEmailAndPassword(FB.auth, email, pass);
+    await FB.updateProfile(cred.user, { displayName: name });
+    await FB.setDoc(FB.doc(FB.db, 'users', cred.user.uid), {
+      name, email, role: 'admin',
+      createdAt: FB.serverTimestamp()
+    });
+    toast('✅ បង្កើតគណនីជោគជ័យ!');
+    // onAuthStateChanged នឹងចាត់ចែងបន្ត
+  } catch (e) {
+    btn.disabled = false;
+    btnText.textContent = 'ចាប់ផ្ដើមប្រើប្រាស់ →';
+    const msgs = {
+      'auth/email-already-in-use': '❌ អ៊ីមែលនេះប្រើរួចហើយ',
+      'auth/invalid-email': '❌ អ៊ីមែលមិនត្រឹមត្រូវ',
+      'auth/weak-password': '❌ លេខសម្ងាត់ខ្សោយ'
+    };
+    err.textContent = msgs[e.code] || '❌ ' + e.message;
+    err.classList.remove('hidden');
   }
-  document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('loginPass').value = '';
-  setTimeout(() => document.getElementById('loginPass').focus(), 100);
 }
 
 // ============ LOGIN ============
-function checkLoginLock() {
-  const lock = DB.get('loginLock', null);
-  if (lock && lock.until > Date.now()) return { locked: true, mins: Math.ceil((lock.until - Date.now()) / 60000) };
-  if (lock && lock.until <= Date.now()) DB.remove('loginLock');
-  return { locked: false };
-}
-function recordFailedLogin() {
-  const attempts = DB.get('loginAttempts', { count: 0, firstAt: Date.now() });
-  if (Date.now() - attempts.firstAt > 15 * 60 * 1000) { attempts.count = 0; attempts.firstAt = Date.now(); }
-  attempts.count++;
-  DB.set('loginAttempts', attempts);
-  if (attempts.count >= 5) {
-    DB.set('loginLock', { until: Date.now() + 15 * 60 * 1000 });
-    DB.remove('loginAttempts');
-    return { locked: true, mins: 15 };
-  }
-  return { locked: false, remaining: 5 - attempts.count };
-}
-function resetLoginAttempts() { DB.remove('loginAttempts'); DB.remove('loginLock'); }
-
 async function login() {
-  const lock = checkLoginLock();
-  if (lock.locked) { showLoginError(`🔒 ចាក់សោ ${lock.mins} នាទីទៀត`); return; }
+  const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPass').value;
   const remember = document.getElementById('rememberMe').checked;
-  if (!password) return showLoginError('⚠️ សូមបញ្ចូលលេខសម្ងាត់');
+  const err = document.getElementById('loginError');
+  err.classList.add('hidden');
+
+  if (!email || !password) {
+    err.textContent = '⚠️ សូមបំពេញអ៊ីមែល និងលេខសម្ងាត់';
+    err.classList.remove('hidden');
+    return;
+  }
+
   const btn = document.getElementById('loginBtn');
   const btnText = document.getElementById('loginBtnText');
   btn.disabled = true;
   btnText.innerHTML = '<span class="spinner"></span> កំពុងពិនិត្យ...';
-  const auth = DB.get('auth', null);
-  const hashedPass = await hashPassword(password);
-  await new Promise(r => setTimeout(r, 300));
-  if (!auth || auth.password !== hashedPass) {
-    const result = recordFailedLogin();
+
+  try {
+    // Set persistence
+    const persistence = remember ? FB.browserLocalPersistence : FB.browserSessionPersistence;
+    await FB.setPersistence(FB.auth, persistence).catch(() => {});
+    await FB.signInWithEmailAndPassword(FB.auth, email, password);
+    // onAuthStateChanged នឹងចាត់ចែងបន្ត
+  } catch (e) {
     btn.disabled = false;
     btnText.textContent = 'ចូលប្រើប្រាស់ →';
-    if (result.locked) showLoginError('🔒 ព្យាយាមច្រើនដងពេក');
-    else showLoginError(`❌ លេខសម្ងាត់មិនត្រឹមត្រូវ (នៅសល់ ${result.remaining} ដង)`);
-    return;
+    const msgs = {
+      'auth/user-not-found': '❌ រកមិនឃើញគណនីនេះ',
+      'auth/wrong-password': '❌ លេខសម្ងាត់មិនត្រឹមត្រូវ',
+      'auth/invalid-credential': '❌ ព័ត៌មានមិនត្រឹមត្រូវ',
+      'auth/invalid-email': '❌ អ៊ីមែលមិនត្រឹមត្រូវ',
+      'auth/too-many-requests': '🔒 ព្យាយាមច្រើនដងពេក សូមរង់ចាំបន្តិច'
+    };
+    err.textContent = msgs[e.code] || '❌ ' + e.message;
+    err.classList.remove('hidden');
   }
-  resetLoginAttempts();
-  currentUser = { name: auth.name, role: auth.role };
-  const storage = remember ? localStorage : sessionStorage;
-  storage.setItem('loggedIn', '1');
-  storage.setItem('sessionStart', Date.now().toString());
-  storage.setItem('user', JSON.stringify(currentUser));
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
-  initApp();
 }
 
 function showLoginError(msg) {
   const err = document.getElementById('loginError');
   err.textContent = msg;
   err.classList.remove('hidden');
-  setTimeout(() => err.classList.add('hidden'), 5000);
 }
 
+// ============ LOGOUT ============
 function logout() {
-  showConfirm('ចាកចេញ', 'តើអ្នកចង់ចាកចេញ?', () => {
-    ['loggedIn','sessionStart','user'].forEach(k => {
-      localStorage.removeItem(k);
-      sessionStorage.removeItem(k);
-    });
+  showConfirm('ចាកចេញ', 'តើអ្នកចង់ចាកចេញ?', async () => {
+    try { await FB.signOut(FB.auth); } catch (e) {}
+    cacheCases = []; cacheClients = [];
     location.reload();
   }, 'ចាកចេញ');
 }
 
-// ============ SESSION ============
-function checkSession() {
-  const loggedIn = localStorage.getItem('loggedIn') || sessionStorage.getItem('loggedIn');
-  if (!loggedIn) return false;
-  const start = parseInt(localStorage.getItem('sessionStart') || sessionStorage.getItem('sessionStart') || '0');
-  if (Date.now() - start > 8 * 60 * 60 * 1000) {
-    ['loggedIn','sessionStart','user'].forEach(k => {
-      localStorage.removeItem(k);
-      sessionStorage.removeItem(k);
-    });
-    return false;
+// ============ FIRESTORE DATA LAYER ============
+async function loadUserData() {
+  if (!currentUser?.uid) return;
+  try {
+    const casesRef = FB.collection(FB.db, 'users', currentUser.uid, 'cases');
+    const clientsRef = FB.collection(FB.db, 'users', currentUser.uid, 'clients');
+    const [casesSnap, clientsSnap] = await Promise.all([
+      FB.getDocs(casesRef),
+      FB.getDocs(clientsRef)
+    ]);
+    cacheCases = casesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    cacheClients = clientsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) {
+    console.error('Load data error:', e);
+    toast('❌ មិនអាចទាញទិន្នន័យ');
   }
-  return true;
 }
 
-function loadUser() {
-  try {
-    const stored = localStorage.getItem('user') || sessionStorage.getItem('user');
-    if (stored) {
-      currentUser = JSON.parse(stored);
-      const fullName = currentUser.name || 'Admin';
-      document.getElementById('headerName').textContent = fullName;
-      document.getElementById('settingsName').textContent = fullName;
+const DB = {
+  get(key) {
+    if (key === 'cases') return cacheCases;
+    if (key === 'clients') return cacheClients;
+    return [];
+  },
+  async saveCase(data, id = null) {
+    const ref = FB.collection(FB.db, 'users', currentUser.uid, 'cases');
+    if (id) {
+      await FB.updateDoc(FB.doc(ref, id), { ...data, updatedAt: FB.serverTimestamp() });
+      const idx = cacheCases.findIndex(c => c.id === id);
+      if (idx >= 0) cacheCases[idx] = { ...cacheCases[idx], ...data, id };
+    } else {
+      const docRef = await FB.addDoc(ref, { ...data, createdAt: FB.serverTimestamp() });
+      cacheCases.push({ id: docRef.id, ...data });
     }
-  } catch (e) {}
-}
+  },
+  async deleteCase(id) {
+    await FB.deleteDoc(FB.doc(FB.db, 'users', currentUser.uid, 'cases', id));
+    cacheCases = cacheCases.filter(c => c.id !== id);
+  },
+  async saveClient(data, id = null) {
+    const ref = FB.collection(FB.db, 'users', currentUser.uid, 'clients');
+    if (id) {
+      await FB.updateDoc(FB.doc(ref, id), data);
+      const idx = cacheClients.findIndex(c => c.id === id);
+      if (idx >= 0) cacheClients[idx] = { ...cacheClients[idx], ...data, id };
+    } else {
+      const docRef = await FB.addDoc(ref, data);
+      cacheClients.push({ id: docRef.id, ...data });
+    }
+  },
+  async deleteClient(id) {
+    await FB.deleteDoc(FB.doc(FB.db, 'users', currentUser.uid, 'clients', id));
+    cacheClients = cacheClients.filter(c => c.id !== id);
+  },
+  async replaceAll(cases, clients) {
+    // Delete existing
+    const casesSnap = await FB.getDocs(FB.collection(FB.db, 'users', currentUser.uid, 'cases'));
+    const clientsSnap = await FB.getDocs(FB.collection(FB.db, 'users', currentUser.uid, 'clients'));
+    const deletes = [
+      ...casesSnap.docs.map(d => FB.deleteDoc(d.ref)),
+      ...clientsSnap.docs.map(d => FB.deleteDoc(d.ref))
+    ];
+    await Promise.all(deletes);
+    // Add new
+    const clientIdMap = {};
+    for (const c of clients) {
+      const { id, ...data } = c;
+      const ref = await FB.addDoc(FB.collection(FB.db, 'users', currentUser.uid, 'clients'), data);
+      clientIdMap[id] = ref.id;
+    }
+    for (const c of cases) {
+      const { id, clientId, ...data } = c;
+      const newClientId = clientIdMap[clientId] || null;
+      await FB.addDoc(FB.collection(FB.db, 'users', currentUser.uid, 'cases'), { ...data, clientId: newClientId });
+    }
+    await loadUserData();
+  }
+};
 
 // ============ SIDEBAR ============
 function toggleSidebar() {
@@ -1138,7 +1252,7 @@ function handleFAB() {
 
 // ============ DASHBOARD ============
 function renderDashboard() {
-  const cases = DB.get('cases');
+  const cases = cacheCases;
   document.getElementById('statTotal').textContent = cases.length;
   document.getElementById('statActive').textContent = cases.filter(c => getStatusCategory(c.status) === 'active').length;
   document.getElementById('statPending').textContent = cases.filter(c => getStatusCategory(c.status) === 'pending').length;
@@ -1148,10 +1262,10 @@ function renderDashboard() {
   today.setHours(0, 0, 0, 0);
   const upcoming = cases
     .filter(c => c.nextHearing)
-    .filter(c => { const target = new Date(c.nextHearing); target.setHours(0, 0, 0, 0); return target >= today; })
+    .filter(c => { const t = new Date(c.nextHearing); t.setHours(0,0,0,0); return t >= today; })
     .sort((a,b) => new Date(a.nextHearing) - new Date(b.nextHearing))
     .slice(0, 4);
-  
+
   document.getElementById('upcomingHearings').innerHTML = upcoming.length
     ? upcoming.map(c => {
         const info = getHearingDayInfo(c.nextHearing);
@@ -1205,13 +1319,13 @@ function renderCases() {
   const search = (document.getElementById('caseSearch')?.value || '').toLowerCase();
   const courtFilter = document.getElementById('caseFilterCourt')?.value || '';
   const statusFilter = document.getElementById('caseFilterStatus')?.value || '';
-  const cases = DB.get('cases');
-  const clients = DB.get('clients');
-  
+  const cases = cacheCases;
+  const clients = cacheClients;
+
   const filtered = cases.filter(c => {
     const matchSearch = !search ||
-      c.caseNumber.toLowerCase().includes(search) ||
-      c.title.toLowerCase().includes(search) ||
+      (c.caseNumber||'').toLowerCase().includes(search) ||
+      (c.title||'').toLowerCase().includes(search) ||
       (c.court||'').toLowerCase().includes(search) ||
       (c.status||'').toLowerCase().includes(search);
     const matchCourt = !courtFilter || c.court === courtFilter;
@@ -1236,10 +1350,10 @@ function renderCases() {
           </td>
           <td class="px-5 py-4 text-slate-600 dark:text-slate-400">${c.nextHearing||'-'}</td>
           <td class="px-5 py-4 text-right whitespace-nowrap">
-            <button onclick="editCase(${c.id})" class="w-8 h-8 rounded-lg hover:bg-brand-50 dark:hover:bg-brand-950 text-brand-600 dark:text-brand-400 mr-1">
+            <button onclick="editCase('${c.id}')" class="w-8 h-8 rounded-lg hover:bg-brand-50 dark:hover:bg-brand-950 text-brand-600 dark:text-brand-400 mr-1">
               <svg class="inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </button>
-            <button onclick="deleteCase(${c.id})" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950 text-red-500">
+            <button onclick="deleteCase('${c.id}')" class="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-950 text-red-500">
               <svg class="inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
             </button>
           </td>
@@ -1269,8 +1383,8 @@ function renderCases() {
             ${c.nextHearing ? `<p class="flex items-center gap-2 flex-wrap"><span>📅</span>${c.nextHearing} ${hearingInfo ? `<span class="badge ${hearingInfo.badge} text-[10px]">${hearingInfo.label}</span>` : ''}</p>` : ''}
           </div>
           <div class="flex gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
-            <button onclick="editCase(${c.id})" class="flex-1 py-2 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 rounded-xl font-medium text-sm">✏️ កែ</button>
-            <button onclick="deleteCase(${c.id})" class="flex-1 py-2 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-xl font-medium text-sm">🗑️ លុប</button>
+            <button onclick="editCase('${c.id}')" class="flex-1 py-2 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 rounded-xl font-medium text-sm">✏️ កែ</button>
+            <button onclick="deleteCase('${c.id}')" class="flex-1 py-2 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-xl font-medium text-sm">🗑️ លុប</button>
           </div>
         </div>`;
       }).join('')
@@ -1278,27 +1392,27 @@ function renderCases() {
 }
 
 function openCaseModal(id=null) {
-  const clients = DB.get('clients');
+  const clients = cacheClients;
   document.getElementById('caseClient').innerHTML = clients.length
     ? clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('')
     : '<option value="">— គ្មានអតិថិជន —</option>';
-  
+
   const courtSelect = document.getElementById('caseCourt');
   const statusSelect = document.getElementById('caseStatus');
-  
   const cleanCustom = (select) => {
     Array.from(select.options).forEach(opt => {
       if (opt.dataset.custom === '1') opt.remove();
     });
   };
-  
+
   if (id) {
-    const c = DB.get('cases').find(x => x.id === id);
+    const c = cacheCases.find(x => x.id === id);
+    if (!c) return;
     document.getElementById('caseModalTitle').textContent = 'កែសំណុំរឿងក្ដី';
     document.getElementById('caseId').value = c.id;
     document.getElementById('caseNumber').value = c.caseNumber;
     document.getElementById('caseTitle').value = c.title;
-    
+
     const savedCourt = c.court || '';
     cleanCustom(courtSelect);
     if (Array.from(courtSelect.options).some(o => o.value === savedCourt)) courtSelect.value = savedCourt;
@@ -1307,7 +1421,7 @@ function openCaseModal(id=null) {
       o.value = savedCourt; o.textContent = savedCourt + ' (ចាស់)'; o.dataset.custom = '1';
       courtSelect.appendChild(o); courtSelect.value = savedCourt;
     } else courtSelect.value = '';
-    
+
     const savedStatus = c.status || '';
     cleanCustom(statusSelect);
     if (Array.from(statusSelect.options).some(o => o.value === savedStatus)) statusSelect.value = savedStatus;
@@ -1316,9 +1430,9 @@ function openCaseModal(id=null) {
       o.value = savedStatus; o.textContent = savedStatus + ' (ចាស់)'; o.dataset.custom = '1';
       statusSelect.appendChild(o); statusSelect.value = savedStatus;
     } else statusSelect.value = '';
-    
+
     document.getElementById('caseType').value = c.caseType||'រដ្ឋប្បវេណី';
-    document.getElementById('caseClient').value = c.clientId;
+    document.getElementById('caseClient').value = c.clientId || '';
     document.getElementById('caseHearing').value = c.nextHearing||'';
     document.getElementById('caseNote').value = c.note||'';
   } else {
@@ -1332,12 +1446,12 @@ function openCaseModal(id=null) {
   document.body.style.overflow = 'hidden';
 }
 
-function closeCaseModal() { 
-  document.getElementById('caseModal').classList.add('hidden'); 
+function closeCaseModal() {
+  document.getElementById('caseModal').classList.add('hidden');
   document.body.style.overflow = '';
 }
 
-function saveCase() {
+async function saveCase() {
   const id = document.getElementById('caseId').value;
   const clientVal = document.getElementById('caseClient').value;
   const data = {
@@ -1345,7 +1459,7 @@ function saveCase() {
     title: document.getElementById('caseTitle').value.trim(),
     court: document.getElementById('caseCourt').value,
     caseType: document.getElementById('caseType').value,
-    clientId: clientVal ? parseInt(clientVal) : null,
+    clientId: clientVal || null,
     status: document.getElementById('caseStatus').value,
     nextHearing: document.getElementById('caseHearing').value,
     note: document.getElementById('caseNote').value.trim()
@@ -1353,38 +1467,44 @@ function saveCase() {
   if (!data.caseNumber || !data.title) return toast('⚠️ សូមបំពេញលេខក្ដី និងចំណងជើង');
   if (!data.court) return toast('⚠️ សូមជ្រើសរើសតុលាការ');
   if (!data.status) return toast('⚠️ សូមជ្រើសរើសស្ថានភាព');
-  const cases = DB.get('cases');
-  if (id) {
-    const idx = cases.findIndex(c => c.id == id);
-    cases[idx] = {...cases[idx], ...data};
-    toast('✅ បានកែប្រែ');
-  } else {
-    data.id = Date.now();
-    cases.push(data);
-    toast('✅ បន្ថែមថ្មី');
+
+  const btn = document.getElementById('saveCaseBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> កំពុងរក្សាទុក...';
+
+  try {
+    await DB.saveCase(data, id || null);
+    toast(id ? '✅ បានកែប្រែ' : '✅ បន្ថែមថ្មី');
+    closeCaseModal();
+    renderCases();
+  } catch (e) {
+    console.error(e);
+    toast('❌ បរាជ័យ: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'រក្សាទុក';
   }
-  DB.set('cases', cases);
-  closeCaseModal();
-  renderCases();
 }
 
 function editCase(id) { openCaseModal(id); }
 function deleteCase(id) {
-  showConfirm('លុបរឿងក្ដី', 'តើអ្នកប្រាកដ?', () => {
-    DB.set('cases', DB.get('cases').filter(c => c.id !== id));
-    toast('🗑️ បានលុប');
-    renderCases();
+  showConfirm('លុបរឿងក្ដី', 'តើអ្នកប្រាកដ?', async () => {
+    try {
+      await DB.deleteCase(id);
+      toast('🗑️ បានលុប');
+      renderCases();
+    } catch (e) { toast('❌ បរាជ័យ'); }
   });
 }
 
 // ============ CLIENTS ============
 function renderClients() {
-  const clients = DB.get('clients');
-  const cases = DB.get('cases');
+  const clients = cacheClients;
+  const cases = cacheCases;
   document.getElementById('clientsGrid').innerHTML = clients.length
     ? clients.map(c => {
         const caseCount = cases.filter(x => x.clientId === c.id).length;
-        const initials = c.name.split(' ').slice(-2).map(s => s.charAt(0)).join('');
+        const initials = (c.name||'').split(' ').slice(-2).map(s => s.charAt(0)).join('');
         return `<div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
           <div class="flex items-center gap-3 mb-4">
             <div class="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 text-white rounded-2xl flex items-center justify-center font-bold shrink-0">${initials}</div>
@@ -1399,8 +1519,8 @@ function renderClients() {
             <p class="truncate flex items-center gap-2"><span>📍</span>${c.address||'-'}</p>
           </div>
           <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex gap-2">
-            <button onclick="editClient(${c.id})" class="flex-1 py-2 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 rounded-xl text-sm font-medium">✏️ កែ</button>
-            <button onclick="deleteClient(${c.id})" class="flex-1 py-2 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium">🗑️ លុប</button>
+            <button onclick="editClient('${c.id}')" class="flex-1 py-2 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 rounded-xl text-sm font-medium">✏️ កែ</button>
+            <button onclick="deleteClient('${c.id}')" class="flex-1 py-2 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium">🗑️ លុប</button>
           </div>
         </div>`;
       }).join('')
@@ -1409,7 +1529,8 @@ function renderClients() {
 
 function openClientModal(id=null) {
   if (id) {
-    const c = DB.get('clients').find(x => x.id === id);
+    const c = cacheClients.find(x => x.id === id);
+    if (!c) return;
     document.getElementById('clientModalTitle').textContent = 'កែអតិថិជន';
     document.getElementById('clientId').value = c.id;
     document.getElementById('clientName').value = c.name;
@@ -1424,12 +1545,12 @@ function openClientModal(id=null) {
   document.body.style.overflow = 'hidden';
 }
 
-function closeClientModal() { 
-  document.getElementById('clientModal').classList.add('hidden'); 
+function closeClientModal() {
+  document.getElementById('clientModal').classList.add('hidden');
   document.body.style.overflow = '';
 }
 
-function saveClient() {
+async function saveClient() {
   const id = document.getElementById('clientId').value;
   const data = {
     name: document.getElementById('clientName').value.trim(),
@@ -1438,27 +1559,32 @@ function saveClient() {
     address: document.getElementById('clientAddress').value.trim()
   };
   if (!data.name) return toast('⚠️ សូមបំពេញឈ្មោះ');
-  const clients = DB.get('clients');
-  if (id) {
-    const idx = clients.findIndex(c => c.id == id);
-    clients[idx] = {...clients[idx], ...data};
-    toast('✅ បានកែប្រែ');
-  } else {
-    data.id = Date.now();
-    clients.push(data);
-    toast('✅ បន្ថែមថ្មី');
+
+  const btn = document.getElementById('saveClientBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> កំពុងរក្សាទុក...';
+
+  try {
+    await DB.saveClient(data, id || null);
+    toast(id ? '✅ បានកែប្រែ' : '✅ បន្ថែមថ្មី');
+    closeClientModal();
+    renderClients();
+  } catch (e) {
+    toast('❌ បរាជ័យ: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'រក្សាទុក';
   }
-  DB.set('clients', clients);
-  closeClientModal();
-  renderClients();
 }
 
 function editClient(id) { openClientModal(id); }
 function deleteClient(id) {
-  showConfirm('លុបអតិថិជន', 'តើអ្នកប្រាកដ?', () => {
-    DB.set('clients', DB.get('clients').filter(c => c.id !== id));
-    toast('🗑️ បានលុប');
-    renderClients();
+  showConfirm('លុបអតិថិជន', 'តើអ្នកប្រាកដ?', async () => {
+    try {
+      await DB.deleteClient(id);
+      toast('🗑️ បានលុប');
+      renderClients();
+    } catch (e) { toast('❌ បរាជ័យ'); }
   });
 }
 
@@ -1466,20 +1592,20 @@ function deleteClient(id) {
 function renderCalendar() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const allCases = DB.get('cases').filter(c => c.nextHearing);
+  const allCases = cacheCases.filter(c => c.nextHearing);
   const activeCases = allCases
-    .filter(c => { const target = new Date(c.nextHearing); target.setHours(0, 0, 0, 0); return target >= today; })
+    .filter(c => { const t = new Date(c.nextHearing); t.setHours(0,0,0,0); return t >= today; })
     .sort((a, b) => new Date(a.nextHearing) - new Date(b.nextHearing));
   const expiredCases = allCases
-    .filter(c => { const target = new Date(c.nextHearing); target.setHours(0, 0, 0, 0); return target < today; })
+    .filter(c => { const t = new Date(c.nextHearing); t.setHours(0,0,0,0); return t < today; })
     .sort((a, b) => new Date(b.nextHearing) - new Date(a.nextHearing));
-  
+
   if (!activeCases.length && !expiredCases.length) {
-    document.getElementById('calendarList').innerHTML = 
+    document.getElementById('calendarList').innerHTML =
       '<div class="text-center py-12"><div class="empty-icon">📅</div><p class="text-slate-400 text-sm">មិនមានកាលវិភាគ</p></div>';
     return;
   }
-  
+
   let html = '';
   if (activeCases.length) {
     html += `
@@ -1542,21 +1668,36 @@ async function savePassword() {
   const newPass = document.getElementById('newPass').value;
   const newPass2 = document.getElementById('newPass2').value;
   if (!oldPass || !newPass || !newPass2) return toast('⚠️ សូមបំពេញគ្រប់ប្រអប់');
-  if (newPass.length < 4) return toast('⚠️ លេខសម្ងាត់ ≥ ៤ តួ');
+  if (newPass.length < 6) return toast('⚠️ លេខសម្ងាត់ ≥ ៦ តួ');
   if (newPass !== newPass2) return toast('❌ មិនដូចគ្នា');
-  const auth = DB.get('auth', null);
-  const oldHash = await hashPassword(oldPass);
-  if (!auth || auth.password !== oldHash) return toast('❌ លេខសម្ងាត់មិនត្រឹមត្រូវ');
-  const newHash = await hashPassword(newPass);
-  auth.password = newHash;
-  DB.set('auth', auth);
-  closePasswordModal();
-  toast('✅ បានផ្លាស់ប្ដូរ');
+
+  const btn = document.getElementById('savePassBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> កំពុងរក្សាទុក...';
+
+  try {
+    const user = FB.auth.currentUser;
+    const cred = FB.EmailAuthProvider.credential(user.email, oldPass);
+    await FB.reauthenticateWithCredential(user, cred);
+    await FB.updatePassword(user, newPass);
+    closePasswordModal();
+    toast('✅ បានផ្លាស់ប្ដូរ');
+  } catch (e) {
+    const msgs = {
+      'auth/wrong-password': '❌ លេខសម្ងាត់ចាស់មិនត្រឹមត្រូវ',
+      'auth/invalid-credential': '❌ លេខសម្ងាត់ចាស់មិនត្រឹមត្រូវ',
+      'auth/weak-password': '❌ លេខសម្ងាត់ថ្មីខ្សោយ'
+    };
+    toast(msgs[e.code] || '❌ បរាជ័យ: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'រក្សាទុក';
+  }
 }
 
 // ============ NAME MODAL ============
 function openNameModal() {
-  document.getElementById('newName').value = currentUser?.name || '';
+  document.getElementById('newName').value = userProfile?.name || '';
   document.getElementById('nameModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 }
@@ -1564,20 +1705,28 @@ function closeNameModal() {
   document.getElementById('nameModal').classList.add('hidden');
   document.body.style.overflow = '';
 }
-function saveName() {
+async function saveName() {
   const newName = document.getElementById('newName').value.trim();
   if (!newName) return toast('⚠️ សូមបំពេញឈ្មោះ');
   if (newName.length < 2) return toast('⚠️ ≥ ២ តួ');
-  const auth = DB.get('auth', null);
-  if (!auth) return;
-  auth.name = newName;
-  DB.set('auth', auth);
-  currentUser.name = newName;
-  const storage = localStorage.getItem('user') ? localStorage : sessionStorage;
-  storage.setItem('user', JSON.stringify(currentUser));
-  loadUser();
-  closeNameModal();
-  toast('✅ បានកែឈ្មោះ');
+
+  const btn = document.getElementById('saveNameBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> កំពុងរក្សាទុក...';
+
+  try {
+    await FB.updateDoc(FB.doc(FB.db, 'users', currentUser.uid), { name: newName });
+    await FB.updateProfile(FB.auth.currentUser, { displayName: newName });
+    userProfile.name = newName;
+    loadUserUI();
+    closeNameModal();
+    toast('✅ បានកែឈ្មោះ');
+  } catch (e) {
+    toast('❌ បរាជ័យ: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'រក្សាទុក';
+  }
 }
 
 // ============ BACKUP / RESTORE ============
@@ -1588,10 +1737,10 @@ function exportData() {
       version: '2.0',
       appName: 'Case Manager Professional',
       exportedAt: new Date().toISOString(),
-      exportedBy: currentUser?.name || 'unknown',
+      exportedBy: userProfile?.name || 'unknown',
       data: {
-        cases: DB.get('cases'),
-        clients: DB.get('clients')
+        cases: cacheCases,
+        clients: cacheClients
       }
     };
     const json = JSON.stringify(data);
@@ -1622,12 +1771,10 @@ function handleDrop(event) {
   const file = event.dataTransfer.files[0];
   if (file) processImportFile(file);
 }
-
 function handleImport(event) {
   const file = event.target.files[0];
   if (file) processImportFile(file);
 }
-
 function processImportFile(file) {
   if (!file.name.endsWith('.json')) return toast('❌ សូមជ្រើស .json');
   if (file.size > 500 * 1024 * 1024) return toast('❌ File ធំពេក');
@@ -1669,83 +1816,90 @@ async function confirmImport() {
   if (!pendingImportData) return;
   const mode = document.querySelector('input[name="importMode"]:checked').value;
   const incoming = pendingImportData.data;
-  
-  const proceed = () => {
+
+  const proceed = async () => {
     toast('📥 កំពុង Import...');
-    if (mode === 'replace') {
-      DB.set('cases', incoming.cases || []);
-      DB.set('clients', incoming.clients || []);
-      toast('✅ បានជំនួសទាំងអស់!');
-    } else {
-      const result = mergeData(incoming);
-      toast(`✅ បញ្ចូល: +${result.addedCases} រឿងក្ដី, +${result.addedClients} អតិថិជន`);
+    try {
+      if (mode === 'replace') {
+        await DB.replaceAll(incoming.cases || [], incoming.clients || []);
+        toast('✅ បានជំនួសទាំងអស់!');
+      } else {
+        const result = await mergeData(incoming);
+        toast(`✅ បញ្ចូល: +${result.addedCases} រឿងក្ដី, +${result.addedClients} អតិថិជន`);
+      }
+      pendingImportData = null;
+      document.getElementById('importFile').value = '';
+      document.getElementById('importPreview').classList.add('hidden');
+      const btn = document.getElementById('confirmImportBtn');
+      btn.disabled = true;
+      btn.className = 'w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed';
+      renderSettingsStats();
+    } catch (e) {
+      console.error(e);
+      toast('❌ Import បរាជ័យ');
     }
-    pendingImportData = null;
-    document.getElementById('importFile').value = '';
-    document.getElementById('importPreview').classList.add('hidden');
-    const btn = document.getElementById('confirmImportBtn');
-    btn.disabled = true;
-    btn.className = 'w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed';
-    renderSettingsStats();
   };
-  
+
   if (mode === 'replace') {
     showConfirm('ជំនួសទាំងអស់', 'ការជំនួសនឹងលុបទិន្នន័យបច្ចុប្បន្នចោលទាំងអស់! តើអ្នកប្រាកដទេ?', proceed, 'ជំនួស');
   } else {
-    proceed();
+    await proceed();
   }
 }
 
-function mergeData(incoming) {
-  const existingCases = DB.get('cases');
-  const existingClients = DB.get('clients');
+async function mergeData(incoming) {
   let addedClients = 0;
   const clientIdMap = {};
-  (incoming.clients || []).forEach(c => {
+  const existingClients = [...cacheClients];
+
+  for (const c of (incoming.clients || [])) {
     const key = `${c.name}|${c.phone||''}`;
     const existing = existingClients.find(x => `${x.name}|${x.phone||''}` === key);
     if (existing) clientIdMap[c.id] = existing.id;
     else {
-      const newId = Date.now() + Math.floor(Math.random() * 10000);
-      existingClients.push({ ...c, id: newId });
-      clientIdMap[c.id] = newId;
+      const { id, ...data } = c;
+      const ref = await FB.addDoc(FB.collection(FB.db, 'users', currentUser.uid, 'clients'), data);
+      clientIdMap[c.id] = ref.id;
       addedClients++;
     }
-  });
+  }
+
   let addedCases = 0;
-  const caseIdMap = {};
-  const existingCaseNumbers = new Set(existingCases.map(c => c.caseNumber));
-  (incoming.cases || []).forEach(c => {
-    if (existingCaseNumbers.has(c.caseNumber)) {
-      const existing = existingCases.find(x => x.caseNumber === c.caseNumber);
-      caseIdMap[c.id] = existing.id;
-    } else {
-      const newId = Date.now() + Math.floor(Math.random() * 10000);
-      const newClientId = clientIdMap[c.clientId] || c.clientId;
-      existingCases.push({ ...c, id: newId, clientId: newClientId });
-      caseIdMap[c.id] = newId;
+  const existingCaseNumbers = new Set(cacheCases.map(c => c.caseNumber));
+  for (const c of (incoming.cases || [])) {
+    if (!existingCaseNumbers.has(c.caseNumber)) {
+      const { id, clientId, ...data } = c;
+      const newClientId = clientIdMap[clientId] || null;
+      await FB.addDoc(FB.collection(FB.db, 'users', currentUser.uid, 'cases'), { ...data, clientId: newClientId });
       addedCases++;
     }
-  });
-  DB.set('cases', existingCases);
-  DB.set('clients', existingClients);
+  }
+  await loadUserData();
   return { addedCases, addedClients };
 }
 
 function clearAllData() {
-  showConfirm('លុបទាំងអស់', 'តើអ្នកប្រាកដជាចង់លុបទិន្នន័យទាំងអស់?', () => {
-    DB.set('cases', []);
-    DB.set('clients', []);
-    toast('🗑️ បានលុបទាំងអស់');
-    renderSettingsStats();
-    showPage('dashboard');
+  showConfirm('លុបទាំងអស់', 'តើអ្នកប្រាកដជាចង់លុបទិន្នន័យទាំងអស់?', async () => {
+    try {
+      const casesSnap = await FB.getDocs(FB.collection(FB.db, 'users', currentUser.uid, 'cases'));
+      const clientsSnap = await FB.getDocs(FB.collection(FB.db, 'users', currentUser.uid, 'clients'));
+      const deletes = [
+        ...casesSnap.docs.map(d => FB.deleteDoc(d.ref)),
+        ...clientsSnap.docs.map(d => FB.deleteDoc(d.ref))
+      ];
+      await Promise.all(deletes);
+      cacheCases = []; cacheClients = [];
+      toast('🗑️ បានលុបទាំងអស់');
+      renderSettingsStats();
+      showPage('dashboard');
+    } catch (e) { toast('❌ បរាជ័យ'); }
   }, 'លុបទាំងអស់');
 }
 
 function renderSettingsStats() {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  set('backupCaseCount', DB.get('cases').length);
-  set('backupClientCount', DB.get('clients').length);
+  set('backupCaseCount', cacheCases.length);
+  set('backupClientCount', cacheClients.length);
 }
 
 // ============ CONFIRM MODAL ============
@@ -1763,8 +1917,9 @@ function closeConfirm() {
   confirmCallback = null;
 }
 document.getElementById('confirmOkBtn')?.addEventListener('click', async () => {
-  if (confirmCallback) await confirmCallback();
+  const cb = confirmCallback;
   closeConfirm();
+  if (cb) await cb();
 });
 
 // ============ UTILITIES ============
@@ -1794,23 +1949,85 @@ window.addEventListener('resize', () => {
   }
 });
 
-// ============ INIT ============
-function initApp() {
-  loadUser();
-  showPage('dashboard');
+// ============ UI HELPERS ============
+function loadUserUI() {
+  const fullName = userProfile?.name || currentUser?.displayName || 'Admin';
+  document.getElementById('headerName').textContent = fullName;
+  document.getElementById('settingsName').textContent = fullName;
+  document.getElementById('settingsEmail').textContent = currentUser?.email || '-';
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+// ============ BOOT ============
+window.addEventListener('DOMContentLoaded', async () => {
   initTheme();
-  const auth = DB.get('auth', null);
-  if (!auth) {
-    document.getElementById('setupScreen').classList.remove('hidden');
-  } else if (checkSession()) {
-    document.getElementById('app').classList.remove('hidden');
-    initApp();
-  } else {
-    showLogin();
+  showLoading();
+
+  try {
+    await loadFirebase();
+  } catch (e) {
+    console.error('Firebase load error:', e);
+    hideLoading();
+    alert('❌ មិនអាចភ្ជាប់ Firebase បានទេ។ សូមពិនិត្យការតភ្ជាប់អ៊ីនធឺណិត។');
+    return;
   }
+
+  // Auth state listener
+  FB.onAuthStateChanged(FB.auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      // Load profile
+      try {
+        const snap = await FB.getDoc(FB.doc(FB.db, 'users', user.uid));
+        userProfile = snap.exists()
+          ? { uid: user.uid, ...snap.data() }
+          : { uid: user.uid, name: user.displayName, email: user.email };
+      } catch (e) {
+        userProfile = { uid: user.uid, name: user.displayName, email: user.email };
+      }
+
+      await loadUserData();
+      loadUserUI();
+
+      document.getElementById('setupScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+
+      showPage('dashboard');
+      hideLoading();
+    } else {
+      currentUser = null;
+      userProfile = null;
+      cacheCases = []; cacheClients = [];
+
+      document.getElementById('app').classList.add('hidden');
+      // ពិនិត្យថាតើធ្លាប់មាន setup ឬអត់
+      const hasSetup = localStorage.getItem('hasSetup') === '1';
+      if (!hasSetup) {
+        document.getElementById('setupScreen').classList.remove('hidden');
+        document.getElementById('loginScreen').classList.add('hidden');
+      } else {
+        document.getElementById('setupScreen').classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+      }
+      hideLoading();
+    }
+  });
+
+  // សម្គាល់ថាបាន setup រួច (ពេលបង្កើតគណនីដំបូងជោគជ័យ)
+  const origSetup = window.handleSetup;
+  window.handleSetup = async function() {
+    await origSetup();
+    // ប្រសិនបើជោគជ័យ onAuthStateChanged នឹងដំណើរការ
+  };
+
+  // កំណត់ flag ពេលបង្កើតគណនីជោគជ័យ
+  const checkSetupDone = setInterval(() => {
+    if (currentUser && !localStorage.getItem('hasSetup')) {
+      localStorage.setItem('hasSetup', '1');
+      clearInterval(checkSetupDone);
+    }
+  }, 500);
+  setTimeout(() => clearInterval(checkSetupDone), 60000);
 });
 </script>
 </body>
