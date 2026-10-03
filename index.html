@@ -140,135 +140,6 @@ tailwind.config = {
     border: 4px solid rgba(53,99,255,0.2); border-top-color: #3563ff;
     border-radius: 50%; animation: spin 0.8s linear infinite;
   }
-
-  /* ============ DEVELOPER CREDIT ============ */
-  .dev-credit {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, rgba(53, 99, 255, 0.12), rgba(139, 92, 246, 0.12));
-    border: 1px solid rgba(53, 99, 255, 0.25);
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: #598cff;
-    transition: all 0.3s ease;
-    overflow: hidden;
-  }
-  .dark .dev-credit {
-    background: linear-gradient(135deg, rgba(53, 99, 255, 0.2), rgba(139, 92, 246, 0.2));
-    border-color: rgba(142, 180, 255, 0.3);
-    color: #8eb4ff;
-  }
-  .dev-credit::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transition: left 0.6s ease;
-  }
-  .dev-credit:hover::before { left: 100%; }
-  .dev-credit:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px -6px rgba(53, 99, 255, 0.4);
-    border-color: rgba(53, 99, 255, 0.5);
-  }
-  .dev-credit .heart {
-    display: inline-block;
-    animation: heartbeat 1.5s ease-in-out infinite;
-    color: #ef4444;
-    font-size: 11px;
-  }
-  @keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    25% { transform: scale(1.2); }
-    50% { transform: scale(1); }
-    75% { transform: scale(1.15); }
-  }
-
-  /* Dev card សម្រាប់ Setup/Login */
-  .dev-card {
-    position: relative;
-    margin-top: 24px;
-    padding: 14px 18px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(53, 99, 255, 0.08), rgba(139, 92, 246, 0.08));
-    border: 1px solid rgba(53, 99, 255, 0.2);
-    text-align: center;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-  .dark .dev-card {
-    background: linear-gradient(135deg, rgba(53, 99, 255, 0.15), rgba(139, 92, 246, 0.15));
-    border-color: rgba(142, 180, 255, 0.25);
-  }
-  .dev-card::before {
-    content: '';
-    position: absolute;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(53, 99, 255, 0.15), transparent 60%);
-    animation: rotate 8s linear infinite;
-  }
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .dev-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px -10px rgba(53, 99, 255, 0.4);
-    border-color: rgba(53, 99, 255, 0.5);
-  }
-  .dev-card-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .dev-card-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #598cff;
-    opacity: 0.85;
-  }
-  .dark .dev-card-label { color: #8eb4ff; }
-  .dev-card-name {
-    font-size: 13px;
-    font-weight: 800;
-    background: linear-gradient(135deg, #3563ff, #8b5cf6, #ec4899);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: gradientShift 3s ease infinite;
-    letter-spacing: 0.02em;
-  }
-  @keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-  .dev-card-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px; height: 20px;
-    border-radius: 6px;
-    background: linear-gradient(135deg, #3563ff, #8b5cf6);
-    color: white;
-    font-size: 10px;
-    font-weight: 800;
-    box-shadow: 0 4px 10px -2px rgba(53, 99, 255, 0.5);
-  }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
@@ -338,15 +209,6 @@ tailwind.config = {
         មានគណនីរួចហើយ? 
         <button onclick="showLogin()" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">ចូលប្រើ →</button>
       </p>
-
-      <!-- ✨ DEVELOPER CARD -->
-      <div class="dev-card">
-        <div class="dev-card-inner">
-          <span class="dev-card-icon">💻</span>
-          <span class="dev-card-label">Developed by</span>
-          <span class="dev-card-name">Mr. CHAN CHIVA</span>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -394,15 +256,6 @@ tailwind.config = {
         មិនទាន់មានគណនី? 
         <button onclick="showSetup()" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">បង្កើតថ្មី →</button>
       </p>
-
-      <!-- ✨ DEVELOPER CARD -->
-      <div class="dev-card">
-        <div class="dev-card-inner">
-          <span class="dev-card-icon">💻</span>
-          <span class="dev-card-label">Developed by</span>
-          <span class="dev-card-name">Mr. CHAN CHIVA</span>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -463,14 +316,6 @@ tailwind.config = {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
         ចាកចេញ
       </button>
-
-      <!-- ✨ DEVELOPER CREDIT -->
-      <div class="pt-3 mt-2 border-t border-white/10 flex justify-center">
-        <div class="dev-credit" style="background: linear-gradient(135deg, rgba(53, 99, 255, 0.2), rgba(139, 92, 246, 0.2)); border-color: rgba(142, 180, 255, 0.3); color: #8eb4ff;">
-          <span class="heart">❤</span>
-          <span>Developed by <span style="color: white; font-weight: 800;">Mr. CHAN CHIVA</span></span>
-        </div>
-      </div>
     </div>
   </aside>
 
@@ -756,7 +601,7 @@ tailwind.config = {
           </div>
         </div>
 
-        <div class="bg-red-50 dark:bg-red-950/30 p-5 rounded-2xl border border-red-200 dark:border-red-900 mb-5">
+        <div class="bg-red-50 dark:bg-red-950/30 p-5 rounded-2xl border border-red-200 dark:border-red-900">
           <div class="flex items-start gap-3">
             <div class="w-11 h-11 bg-red-100 dark:bg-red-950 rounded-xl flex items-center justify-center shrink-0">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
@@ -766,15 +611,6 @@ tailwind.config = {
               <p class="text-xs text-red-600 dark:text-red-400/80 mt-1">សកម្មភាពទាំងនេះមិនអាចត្រឡប់វិញបានទេ</p>
               <button onclick="clearAllData()" class="mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium">🗑️ លុបទិន្នន័យទាំងអស់</button>
             </div>
-          </div>
-        </div>
-
-        <!-- ✨ DEVELOPER CARD -->
-        <div class="dev-card">
-          <div class="dev-card-inner">
-            <span class="dev-card-icon">💻</span>
-            <span class="dev-card-label">Developed by</span>
-            <span class="dev-card-name">Mr. CHAN CHIVA</span>
           </div>
         </div>
       </section>
@@ -1048,7 +884,7 @@ tailwind.config = {
 
 <script type="module">
 // ============================================================
-// 🔥 FIREBASE CONFIG
+// 🔥 FIREBASE CONFIG (របស់អ្នក)
 // ============================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { 
@@ -1076,6 +912,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Expose to window សម្រាប់ functions ខាងក្រោម
+window.FB = {
+  auth, db,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  signOut, onAuthStateChanged, updateProfile, updatePassword,
+  EmailAuthProvider, reauthenticateWithCredential,
+  setPersistence, browserLocalPersistence, browserSessionPersistence,
+  collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
+  serverTimestamp
+};
+
 // ============================================================
 // STATE
 // ============================================================
@@ -1086,7 +933,7 @@ let cacheClients = [];
 let statusChart = null;
 
 // ============================================================
-// GLOBAL FUNCTIONS
+// GLOBAL FUNCTIONS (window.xxx) - ត្រូវហៅពី HTML
 // ============================================================
 window.toggleDark = function() {
   const isDark = document.documentElement.classList.toggle('dark');
@@ -2139,6 +1986,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+// Safety: hide loading after 10s in case Firebase is slow
 setTimeout(hideLoading, 10000);
 </script>
 </body>
