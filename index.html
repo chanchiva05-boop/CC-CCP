@@ -271,10 +271,6 @@ tailwind.config = {
         <button onclick="showSetup()" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">បង្កើតថ្មី →</button>
       </p>
 
-      <!-- DEVELOPED BY -->
-      <div class="pt-4 mt-2 border-t border-slate-200/60 dark:border-slate-700/60 text-center">
-        <p class="dev-credit text-[9px] text-slate-400 dark:text-slate-500 uppercase font-medium">Developed by</p>
-        <p class="text-sm font-bold dev-name mt-0.5">Mr.CHAN CHIVA</p>
       </div>
     </div>
   </div>
@@ -290,7 +286,7 @@ tailwind.config = {
         <img src="icon-512.png" alt="Case Manager Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shrink-0">
         <div>
           <h1 class="text-base font-bold tracking-tight">Case Manager</h1>
-          <p class="text-[10px] text-brand-300 uppercase tracking-widest">Firebase Cloud - v2.0</p>
+          <p class="text-[10px] text-brand-300 uppercase tracking-widest">VERSION 2.0</p>
         </div>
       </div>
       <button onclick="toggleSidebar()" class="lg:hidden text-brand-300 p-2 hover:text-white">
@@ -340,7 +336,7 @@ tailwind.config = {
       <!-- DEVELOPED BY -->
       <div class="pt-3 mt-1 border-t border-white/10 text-center">
         <p class="dev-credit text-[8px] text-brand-400/70 uppercase font-medium">Developed by</p>
-        <p class="text-xs font-bold text-brand-100 mt-0.5 tracking-wide">Mr.CHAN CHIVA</p>
+        <p class="text-xs font-bold text-brand-100 mt-0.5 tracking-wide">Mr. CHAN CHIVA</p>
       </div>
     </div>
   </aside>
@@ -655,10 +651,10 @@ tailwind.config = {
             </div>
             <div class="w-full h-px bg-gradient-to-r from-transparent via-brand-300/50 dark:via-brand-700/50 to-transparent my-1"></div>
             <p class="dev-credit text-[9px] text-slate-400 dark:text-slate-500 uppercase font-medium">Developed by</p>
-            <p class="text-base font-bold dev-name">Mr.CHAN CHIVA</p>
+            <p class="text-base font-bold dev-name">Mr. CHAN CHIVA</p>
           </div>
           <p class="text-[10px] text-slate-400 dark:text-slate-600 mt-4">
-            © 2025 — All rights reserved
+            © 2026 — All rights reserved
           </p>
         </div>
       </section>
@@ -1082,7 +1078,7 @@ window.login = async function() {
     const msgs = {
       'auth/user-not-found': '❌ រកមិនឃើញគណនីនេះ',
       'auth/wrong-password': '❌ លេខសម្ងាត់មិនត្រឹមត្រូវ',
-      'auth/invalid-credential': '❌ ព័ត៌មានមិនត្រឹមត្រូវ',
+      'auth/invalid-credential': '❌ គណនីមិនត្រឹមត្រូវ',
       'auth/invalid-email': '❌ អ៊ីមែលមិនត្រឹមត្រូវ',
       'auth/too-many-requests': '🔒 ព្យាយាមច្រើនដងពេក',
       'auth/network-request-failed': '❌ បញ្ហាបណ្តាញ'
@@ -1144,7 +1140,7 @@ window.handleFAB = function() {
 // ============ STATUS HELPERS ============
 const STATUS_MAP = {
   'សេចក្ដីសម្រេចចូលជាស្ថាពរ': 'closed',
-  'លទ្ធផលសះជាគ្នា': 'closed',
+  'លទ្ធផលសះជាគ្នា': 'pending',
   'ពាក្យបណ្ដឹងបានដក': 'closed',
   'រង់ចាំប្រកាសសេចក្ដីសម្រេច': 'pending',
   'រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ': 'pending',
