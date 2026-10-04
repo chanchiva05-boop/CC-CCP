@@ -721,7 +721,7 @@ tailwind.config = {
           <option value="ពាណិជ្ជកម្ម">ពាណិជ្ជកម្ម</option>
           <option value="រដ្ឋបាល">រដ្ឋបាល</option>
           <option value="ការងារ">ការងារ</option>
-          <option value="__custom__">✏️ ផ្សេងៗ (សរសេរដោយដៃ)</option>
+          <option value="__custom__">ផ្សេងៗ (សរសេរដោយដៃ)</option>
         </select>
         <input id="caseTypeCustom" type="text" placeholder="សរសេរប្រភេទសំណុំរឿងក្ដី..." class="hidden w-full mt-2 px-3.5 py-2.5 bg-amber-50 dark:bg-amber-950/30 border-2 border-dashed border-amber-300 dark:border-amber-700 focus:border-brand-500 rounded-xl outline-none text-base">
       </div>
@@ -753,8 +753,9 @@ tailwind.config = {
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
             <option value="ពាក្យបណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
             <option value="លទ្ធផលសះជាគ្នា">លទ្ធផលសះជាគ្នា</option>
+            <option value="បញ្ចប់">បញ្ចប់</option>
           </optgroup>
-          <option value="__custom__">✏️ ផ្សេងៗ (សរសេរដោយដៃ)</option>
+          <option value="__custom__">ផ្សេងៗ (សរសេរដោយដៃ)</option>
         </select>
         <input id="caseStatusCustom" type="text" placeholder="សរសេរស្ថានភាពសំណុំរឿងក្ដី..." class="hidden w-full mt-2 px-3.5 py-2.5 bg-amber-50 dark:bg-amber-950/30 border-2 border-dashed border-amber-300 dark:border-amber-700 focus:border-brand-500 rounded-xl outline-none text-base">
       </div>
@@ -1127,6 +1128,7 @@ const STATUS_MAP = {
   'សេចក្ដីសម្រេចចូលជាស្ថាពរ': 'closed',
   'លទ្ធផលសះជាគ្នា': 'closed',
   'ពាក្យបណ្ដឹងបានដក': 'closed',
+  'បញ្ចប់': 'closed',
   'រង់ចាំប្រកាសសេចក្ដីសម្រេច': 'pending',
   'រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ': 'pending',
   'ដាក់ពាក្យបណ្ដឹង': 'active',
