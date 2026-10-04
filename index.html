@@ -152,6 +152,35 @@ tailwind.config = {
     -webkit-text-fill-color: transparent;
     letter-spacing: 0.05em;
   }
+
+  /* ✅ Calendar Item Hover Effect */
+  .calendar-item {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+  }
+  .calendar-item:hover {
+    transform: translateX(2px);
+    box-shadow: 0 8px 20px -6px rgba(53, 99, 255, 0.25);
+  }
+  .calendar-item:active {
+    transform: scale(0.98);
+  }
+
+  /* ✅ Dashboard Hearing Item Hover */
+  .hearing-item {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+  }
+  .hearing-item:hover {
+    background: rgba(53, 99, 255, 0.06);
+    transform: translateX(2px);
+  }
+  .dark .hearing-item:hover {
+    background: rgba(53, 99, 255, 0.12);
+  }
+  .hearing-item:active {
+    transform: scale(0.98);
+  }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
@@ -526,6 +555,10 @@ tailwind.config = {
             </span>
             <h3 class="font-bold">កាលវិភាគកាលបរិច្ឆេទតុលាការ</h3>
           </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            ចុចលើសំណុំរឿងណាមួយ ដើម្បីកែសម្រួល
+          </p>
           <div id="calendarList" class="space-y-3"></div>
         </div>
       </section>
@@ -1140,7 +1173,6 @@ const STATUS_MAP = {
   'ដំណាក់កាលជំនុំជម្រះ': 'active',
 };
 
-// ✅ គាំទ្រ Custom status ដោយទាយពី keyword
 function getStatusCategory(status) {
   if (!status) return 'unknown';
   const s = status.trim();
@@ -1226,6 +1258,7 @@ function getCaseStatusValue() {
 }
 
 // ============ DASHBOARD ============
+// ✅ កែ: Upcoming Hearings ចុចបាន នាំទៅកែសំណុំរឿង
 function renderDashboard() {
   const cases = cacheCases;
   document.getElementById('statTotal').textContent = cases.length;
@@ -1245,7 +1278,9 @@ function renderDashboard() {
     ? upcoming.map(c => {
         const info = getHearingDayInfo(c.nextHearing);
         if (!info) return '';
-        return `<div class="flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl">
+        return `<div onclick="openCaseModal('${c.id}')" 
+          class="hearing-item flex items-center gap-3 p-3 rounded-xl"
+          title="ចុចដើម្បីកែសំណុំរឿង">
           <div class="w-11 h-11 bg-gradient-to-br from-brand-500 to-brand-700 text-white rounded-xl flex flex-col items-center justify-center shrink-0">
             <p class="text-sm font-bold leading-none">${c.nextHearing.slice(8,10)}</p>
             <p class="text-[9px] opacity-80 mt-0.5">${c.nextHearing.slice(5,7)}</p>
@@ -1254,7 +1289,15 @@ function renderDashboard() {
             <p class="font-semibold text-sm truncate">${c.caseNumber}</p>
             <p class="text-xs text-slate-500 dark:text-slate-400 truncate">${c.title}</p>
           </div>
-          <span class="badge ${info.badge} whitespace-nowrap">${info.label}</span>
+          <div class="flex flex-col items-end gap-1 shrink-0">
+            <span class="badge ${info.badge} whitespace-nowrap">${info.label}</span>
+            <span class="text-[10px] text-brand-500 dark:text-brand-400 font-medium flex items-center gap-1">
+              កែ
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </span>
+          </div>
         </div>`;
       }).join('')
     : `<div class="text-center py-8"><div class="empty-icon">📅</div><p class="text-slate-400 text-sm">មិនមានកាលវិភាគ</p></div>`;
@@ -1413,7 +1456,14 @@ window.clearCaseSearch = function() {
 };
 
 // ============ CASES MODAL ============
+// ✅ កែ: បើកពី Calendar/Dashboard សូមប្ដូរទៅទំព័រ Cases ជាមុន
 window.openCaseModal = function(id=null) {
+  // បើបើកពី Calendar ឬ Dashboard សូមប្ដូរទៅទំព័រ Cases ជាមុន
+  const currentPage = document.querySelector('.page:not(.hidden)')?.id;
+  if (id && currentPage && currentPage !== 'page-cases') {
+    showPage('cases');
+  }
+  
   const clients = cacheClients;
   document.getElementById('caseClient').innerHTML = clients.length
     ? clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('')
@@ -1438,7 +1488,10 @@ window.openCaseModal = function(id=null) {
 
   if (id) {
     const c = cacheCases.find(x => x.id === id);
-    if (!c) return;
+    if (!c) {
+      toast('❌ រកមិនឃើញសំណុំរឿង');
+      return;
+    }
     document.getElementById('caseModalTitle').textContent = 'កែសំណុំរឿងក្ដី';
     document.getElementById('caseId').value = c.id;
     document.getElementById('caseNumber').value = c.caseNumber;
@@ -1686,6 +1739,7 @@ async function loadUserData() {
 }
 
 // ============ CALENDAR ============
+// ✅ កែ: Calendar Items ចុចបាន នាំទៅកែសំណុំរឿង
 function renderCalendar() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -1733,10 +1787,13 @@ function renderCalendar() {
   document.getElementById('calendarList').innerHTML = html;
 }
 
+// ✅ កែ: បន្ថែម onclick + hover + ព្រួញ "កែ"
 function renderCalendarItem(c) {
   const info = getHearingDayInfo(c.nextHearing);
   if (!info) return '';
-  return `<div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border-l-4 ${info.border}">
+  return `<div onclick="openCaseModal('${c.id}')" 
+    class="calendar-item flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/40 hover:bg-brand-50 dark:hover:bg-brand-950/40 rounded-2xl border-l-4 ${info.border}"
+    title="ចុចដើម្បីកែសំណុំរឿង">
     <div class="text-center bg-gradient-to-br from-brand-500 to-brand-700 text-white rounded-xl px-3 py-2 min-w-[64px] shrink-0">
       <p class="text-xl font-bold leading-none">${c.nextHearing.slice(8,10)}</p>
       <p class="text-[10px] mt-1 opacity-90">${c.nextHearing.slice(0,7)}</p>
@@ -1746,7 +1803,15 @@ function renderCalendarItem(c) {
       <p class="text-sm text-slate-600 dark:text-slate-400 truncate">${c.title}</p>
       <p class="text-xs text-slate-500 truncate mt-1">🏛️ ${c.court}</p>
     </div>
-    <span class="badge ${info.badge} whitespace-nowrap">${info.label}</span>
+    <div class="flex flex-col items-end gap-1 shrink-0">
+      <span class="badge ${info.badge} whitespace-nowrap">${info.label}</span>
+      <span class="text-[10px] text-brand-500 dark:text-brand-400 font-medium flex items-center gap-1">
+        កែ
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </span>
+    </div>
   </div>`;
 }
 
