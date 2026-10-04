@@ -152,6 +152,13 @@ tailwind.config = {
     -webkit-text-fill-color: transparent;
     letter-spacing: 0.05em;
   }
+
+  /* ✅ Search result highlight */
+  .search-highlight {
+    background: linear-gradient(135deg, rgba(53,99,255,0.15), rgba(139,92,246,0.15));
+    border-radius: 4px;
+    padding: 1px 3px;
+  }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
@@ -221,8 +228,6 @@ tailwind.config = {
         មានគណនីរួចហើយ? 
         <button onclick="showLogin()" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">ចូលប្រើ →</button>
       </p>
-
-      </div>
     </div>
   </div>
 </div>
@@ -270,8 +275,6 @@ tailwind.config = {
         មិនទាន់មានគណនី? 
         <button onclick="showSetup()" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">បង្កើតថ្មី →</button>
       </p>
-
-      </div>
     </div>
   </div>
 </div>
@@ -333,7 +336,6 @@ tailwind.config = {
         ចាកចេញ
       </button>
 
-      <!-- DEVELOPED BY -->
       <div class="pt-3 mt-1 border-t border-white/10 text-center">
         <p class="dev-credit text-[8px] text-brand-400/70 uppercase font-medium">Developed by</p>
         <p class="text-xs font-bold text-brand-100 mt-0.5 tracking-wide">Mr. CHAN CHIVA</p>
@@ -421,10 +423,13 @@ tailwind.config = {
 
       <!-- CASES -->
       <section id="page-cases" class="page hidden animate-fade-in">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-3">
           <div class="relative sm:col-span-2 lg:col-span-2">
-            <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input id="caseSearch" oninput="renderCases()" placeholder="ស្វែងរករឿងក្ដី (ឧ.លេខសំណុំរឿង ឬចំណងជើង)" class="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-base">
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input id="caseSearch" oninput="renderCases()" placeholder="ស្វែងរក (លេខក្ដី, ចំណងជើង, ឈ្មោះអតិថិជន, លេខទូរស័ព្ទ...)" class="w-full pl-11 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-base">
+            <button type="button" onclick="clearCaseSearch()" id="clearSearchBtn" class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
           </div>
           <div class="relative">
             <select id="caseFilterCourt" onchange="renderCases()" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-sm">
@@ -469,7 +474,7 @@ tailwind.config = {
           </div>
           <div class="relative">
             <select id="caseFilterStatus" onchange="renderCases()" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-brand-500 rounded-xl outline-none text-sm">
-              <option value="">⚖️ ស្ថានភាពរឿងក្ដីទាំងអស់</option>
+              <option value="">⚖️ ស្ថានភាពទាំងអស់</option>
               <option value="active">កំពុងដំណើរការ</option>
               <option value="pending">រង់ចាំ</option>
               <option value="closed">បានបញ្ចប់</option>
@@ -480,6 +485,9 @@ tailwind.config = {
             បន្ថែម
           </button>
         </div>
+
+        <!-- ✅ ចំនួនលទ្ធផលស្វែងរក -->
+        <div id="caseResultCount" class="hidden mb-3 px-4 py-2 bg-brand-50 dark:bg-brand-950/40 border border-brand-100 dark:border-brand-900/50 rounded-xl text-xs text-brand-700 dark:text-brand-300 font-medium"></div>
 
         <div class="desktop-table bg-white dark:bg-slate-900 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 overflow-hidden">
           <div class="overflow-x-auto">
@@ -907,7 +915,7 @@ tailwind.config = {
 
 <script type="module">
 // ============================================================
-// 🔥 FIREBASE CONFIG (របស់អ្នក)
+// 🔥 FIREBASE CONFIG
 // ============================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { 
@@ -935,7 +943,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Expose to window សម្រាប់ functions ខាងក្រោម
 window.FB = {
   auth, db,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
@@ -956,7 +963,7 @@ let cacheClients = [];
 let statusChart = null;
 
 // ============================================================
-// GLOBAL FUNCTIONS (window.xxx) - ត្រូវហៅពី HTML
+// GLOBAL FUNCTIONS
 // ============================================================
 window.toggleDark = function() {
   const isDark = document.documentElement.classList.toggle('dark');
@@ -1228,28 +1235,71 @@ function renderDashboard() {
   });
 }
 
-// ============ CASES ============
+// ============================================================
+// ✅ CASES - FIXED SEARCH + FILTER + CLIENT NAME SEARCH
+// ============================================================
 function renderCases() {
-  const search = (document.getElementById('caseSearch')?.value || '').toLowerCase();
-  const courtFilter = document.getElementById('caseFilterCourt')?.value || '';
-  const statusFilter = document.getElementById('caseFilterStatus')?.value || '';
+  const searchEl = document.getElementById('caseSearch');
+  const courtEl = document.getElementById('caseFilterCourt');
+  const statusEl = document.getElementById('caseFilterStatus');
+  const clearBtn = document.getElementById('clearSearchBtn');
+  const resultCountEl = document.getElementById('caseResultCount');
+
+  const search = (searchEl?.value || '').toLowerCase().trim();
+  const courtFilter = courtEl?.value || '';
+  const statusFilter = statusEl?.value || '';
   const cases = cacheCases;
   const clients = cacheClients;
 
+  // បង្ហាញ/លាក់ប៊ូតុង clear
+  if (clearBtn) {
+    if (search) clearBtn.classList.remove('hidden');
+    else clearBtn.classList.add('hidden');
+  }
+
+  // Map clientId -> client សម្រាប់ស្វែងរកលឿន
+  const clientMap = {};
+  clients.forEach(c => { clientMap[c.id] = c; });
+
   const filtered = cases.filter(c => {
+    const client = clientMap[c.clientId];
+    const clientName = (client?.name || '').toLowerCase();
+    const clientPhone = (client?.phone || '').toLowerCase();
+    const clientEmail = (client?.email || '').toLowerCase();
+
+    // ✅ ស្វែងរកតាម: លេខក្ដី, ចំណងជើង, តុលាការ, ស្ថានភាព, ចំណាំ, ឈ្មោះអតិថិជន, ទូរស័ព្ទ, អ៊ីមែល
     const matchSearch = !search ||
-      (c.caseNumber||'').toLowerCase().includes(search) ||
-      (c.title||'').toLowerCase().includes(search) ||
-      (c.court||'').toLowerCase().includes(search) ||
-      (c.status||'').toLowerCase().includes(search);
+      (c.caseNumber || '').toLowerCase().includes(search) ||
+      (c.title || '').toLowerCase().includes(search) ||
+      (c.court || '').toLowerCase().includes(search) ||
+      (c.status || '').toLowerCase().includes(search) ||
+      (c.caseType || '').toLowerCase().includes(search) ||
+      (c.note || '').toLowerCase().includes(search) ||
+      clientName.includes(search) ||
+      clientPhone.includes(search) ||
+      clientEmail.includes(search);
+
     const matchCourt = !courtFilter || c.court === courtFilter;
     const matchStatus = !statusFilter || getStatusCategory(c.status) === statusFilter;
+
     return matchSearch && matchCourt && matchStatus;
   });
 
+  // ✅ បង្ហាញចំនួនលទ្ធផលស្វែងរក
+  if (resultCountEl) {
+    const hasFilter = search || courtFilter || statusFilter;
+    if (hasFilter) {
+      resultCountEl.classList.remove('hidden');
+      resultCountEl.innerHTML = `🔍 រកឃើញ <b>${filtered.length}</b> ក្នុងចំណោម <b>${cases.length}</b> សំណុំរឿងក្ដី`;
+    } else {
+      resultCountEl.classList.add('hidden');
+    }
+  }
+
+  // Desktop table
   document.getElementById('casesTable').innerHTML = filtered.length
     ? filtered.map(c => {
-        const client = clients.find(x => x.id === c.clientId);
+        const client = clientMap[c.clientId];
         const s = statusInfo(c.status);
         return `<tr class="border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40">
           <td class="px-5 py-4 font-semibold text-brand-600 dark:text-brand-400">${c.caseNumber}</td>
@@ -1275,9 +1325,10 @@ function renderCases() {
       }).join('')
     : '<tr><td colspan="7" class="px-5 py-12 text-center"><div class="empty-icon">📁</div><p class="text-slate-400 text-sm">មិនមានរឿងក្ដី</p></td></tr>';
 
+  // Mobile cards
   document.getElementById('casesCards').innerHTML = filtered.length
     ? filtered.map(c => {
-        const client = clients.find(x => x.id === c.clientId);
+        const client = clientMap[c.clientId];
         const s = statusInfo(c.status);
         const hearingInfo = c.nextHearing ? getHearingDayInfo(c.nextHearing) : null;
         return `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
@@ -1305,6 +1356,17 @@ function renderCases() {
     : '<div class="text-center py-12"><div class="empty-icon">📁</div><p class="text-slate-400 text-sm">មិនមានរឿងក្ដី</p></div>';
 }
 
+// ✅ Expose ទៅ window ដើម្បីឲ្យ HTML oninput/onchange ហៅបាន
+window.renderCases = renderCases;
+
+// ✅ សម្អាតការស្វែងរក
+window.clearCaseSearch = function() {
+  const el = document.getElementById('caseSearch');
+  if (el) { el.value = ''; el.focus(); }
+  renderCases();
+};
+
+// ============ CASES MODAL ============
 window.openCaseModal = function(id=null) {
   const clients = cacheClients;
   document.getElementById('caseClient').innerHTML = clients.length
@@ -2010,7 +2072,6 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// Safety: hide loading after 10s in case Firebase is slow
 setTimeout(hideLoading, 10000);
 </script>
 </body>
