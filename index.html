@@ -1257,6 +1257,7 @@ function getCaseStatusValue() {
 
 // ============ DASHBOARD ============
 // ✅ Upcoming Hearings ចុចបាន - Modal លោតនៅ Dashboard តែម្ដង
+// ✅ លុបអក្សរ "កែ" និងព្រួញចេញ
 function renderDashboard() {
   const cases = cacheCases;
   document.getElementById('statTotal').textContent = cases.length;
@@ -1287,15 +1288,7 @@ function renderDashboard() {
             <p class="font-semibold text-sm truncate">${c.caseNumber}</p>
             <p class="text-xs text-slate-500 dark:text-slate-400 truncate">${c.title}</p>
           </div>
-          <div class="flex flex-col items-end gap-1 shrink-0">
-            <span class="badge ${info.badge} whitespace-nowrap">${info.label}</span>
-            <span class="text-[10px] text-brand-500 dark:text-brand-400 font-medium flex items-center gap-1">
-              កែ
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M9 18l6-6-6-6"/>
-              </svg>
-            </span>
-          </div>
+          <span class="badge ${info.badge} whitespace-nowrap shrink-0">${info.label}</span>
         </div>`;
       }).join('')
     : `<div class="text-center py-8"><div class="empty-icon">📅</div><p class="text-slate-400 text-sm">មិនមានកាលវិភាគ</p></div>`;
@@ -1740,6 +1733,7 @@ async function loadUserData() {
 
 // ============ CALENDAR ============
 // ✅ ចុចលើសំណុំរឿង → Modal លោតនៅ Calendar តែម្ដង
+// ✅ លុបអក្សរ "កែ" និងព្រួញចេញ
 function renderCalendar() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -1787,6 +1781,7 @@ function renderCalendar() {
   document.getElementById('calendarList').innerHTML = html;
 }
 
+// ✅ លុបអក្សរ "កែ" និងព្រួញ - នៅសល់តែ badge
 function renderCalendarItem(c) {
   const info = getHearingDayInfo(c.nextHearing);
   if (!info) return '';
@@ -1802,15 +1797,7 @@ function renderCalendarItem(c) {
       <p class="text-sm text-slate-600 dark:text-slate-400 truncate">${c.title}</p>
       <p class="text-xs text-slate-500 truncate mt-1">🏛️ ${c.court}</p>
     </div>
-    <div class="flex flex-col items-end gap-1 shrink-0">
-      <span class="badge ${info.badge} whitespace-nowrap">${info.label}</span>
-      <span class="text-[10px] text-brand-500 dark:text-brand-400 font-medium flex items-center gap-1">
-        កែ
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M9 18l6-6-6-6"/>
-        </svg>
-      </span>
-    </div>
+    <span class="badge ${info.badge} whitespace-nowrap shrink-0">${info.label}</span>
   </div>`;
 }
 
