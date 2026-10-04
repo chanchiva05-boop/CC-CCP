@@ -39,14 +39,12 @@ tailwind.config = {
       animation: {
         'fade-in': 'fadeIn 0.3s ease',
         'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
-        'slide-in-right': 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+        'pulse-soft': 'pulseSoft 2s ease-in-out infinite'
       },
       keyframes: {
         fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
         slideUp: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
-        pulseSoft: { '0%,100%': { opacity: 1 }, '50%': { opacity: 0.6 } },
-        slideInRight: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(0)' } }
+        pulseSoft: { '0%,100%': { opacity: 1 }, '50%': { opacity: 0.6 } }
       }
     }
   }
@@ -143,7 +141,10 @@ tailwind.config = {
     border-radius: 50%; animation: spin 0.8s linear infinite;
   }
 
-  .dev-credit { font-family: 'Inter', sans-serif; letter-spacing: 0.15em; }
+  .dev-credit {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.15em;
+  }
   .dev-name {
     background: linear-gradient(135deg, #598cff, #8b5cf6);
     -webkit-background-clip: text;
@@ -220,6 +221,8 @@ tailwind.config = {
         មានគណនីរួចហើយ? 
         <button onclick="showLogin()" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">ចូលប្រើ →</button>
       </p>
+
+      </div>
     </div>
   </div>
 </div>
@@ -267,6 +270,8 @@ tailwind.config = {
         មិនទាន់មានគណនី? 
         <button onclick="showSetup()" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">បង្កើតថ្មី →</button>
       </p>
+
+      </div>
     </div>
   </div>
 </div>
@@ -281,7 +286,7 @@ tailwind.config = {
         <img src="icon-512.png" alt="Case Manager Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shrink-0">
         <div>
           <h1 class="text-base font-bold tracking-tight">Case Manager</h1>
-          <p class="text-[10px] text-brand-300 uppercase tracking-widest">VERSION 2.1</p>
+          <p class="text-[10px] text-brand-300 uppercase tracking-widest">VERSION 2.0</p>
         </div>
       </div>
       <button onclick="toggleSidebar()" class="lg:hidden text-brand-300 p-2 hover:text-white">
@@ -328,6 +333,7 @@ tailwind.config = {
         ចាកចេញ
       </button>
 
+      <!-- DEVELOPED BY -->
       <div class="pt-3 mt-1 border-t border-white/10 text-center">
         <p class="dev-credit text-[8px] text-brand-400/70 uppercase font-medium">Developed by</p>
         <p class="text-xs font-bold text-brand-100 mt-0.5 tracking-wide">Mr. CHAN CHIVA</p>
@@ -347,21 +353,9 @@ tailwind.config = {
             <p id="pageSubtitle" class="text-[11px] md:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">ទិដ្ឋភាពទូទៅនៃរឿងក្ដីរបស់អ្នក</p>
           </div>
         </div>
-        
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <!-- Notification Bell -->
-          <button onclick="toggleNotifications()" class="relative w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors" title="ការជូនដំណឹង">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
-            <span id="notifBadge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
-          </button>
-
-          <button onclick="showPage('settings')" class="max-w-[140px] md:max-w-[240px] px-3.5 md:px-5 py-2 rounded-full bg-gradient-to-r from-brand-50 to-purple-50 dark:from-brand-950 dark:to-purple-950 border border-brand-100 dark:border-brand-900/50 hover:shadow-md active:scale-95 transition-all duration-200">
-            <span id="headerName" class="block text-xs md:text-sm font-semibold bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent truncate">Admin</span>
-          </button>
-        </div>
+        <button onclick="showPage('settings')" class="flex-shrink-0 max-w-[140px] md:max-w-[240px] px-3.5 md:px-5 py-2 rounded-full bg-gradient-to-r from-brand-50 to-purple-50 dark:from-brand-950 dark:to-purple-950 border border-brand-100 dark:border-brand-900/50 hover:shadow-md active:scale-95 transition-all duration-200">
+          <span id="headerName" class="block text-xs md:text-sm font-semibold bg-gradient-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent truncate">Admin</span>
+        </button>
       </div>
     </header>
 
@@ -538,57 +532,6 @@ tailwind.config = {
 
       <!-- SETTINGS -->
       <section id="page-settings" class="page hidden animate-fade-in">
-        
-        <!-- NOTIFICATION SETTINGS -->
-        <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 mb-5">
-          <div class="flex items-start gap-3 mb-4">
-            <div class="w-11 h-11 bg-amber-50 dark:bg-amber-950 rounded-xl flex items-center justify-center shrink-0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            </div>
-            <div class="flex-1">
-              <h3 class="font-bold">ការជូនដំណឹង</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">រំលឹក ២ ថ្ងៃមុនកាលបរិច្ឆេទតុលាការ</p>
-            </div>
-          </div>
-          <div class="space-y-3">
-            <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-              <div class="min-w-0 flex-1 mr-2">
-                <p class="text-sm font-medium">ស្ថានភាព Notification</p>
-                <p id="notifStatusText" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">កំពុងពិនិត្យ...</p>
-              </div>
-              <button id="notifToggleBtn" onclick="requestNotifPermission()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium whitespace-nowrap">បើក</button>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-              <div>
-                <p class="text-sm font-medium">ចំនួនថ្ងៃរំលឹកមុន</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">កំណត់ចំនួនថ្ងៃជូនដំណឹងមុនកាលបរិច្ឆេទ</p>
-              </div>
-              <select id="notifDaysBefore" onchange="updateNotifDays()" class="px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
-                <option value="1">១ ថ្ងៃ</option>
-                <option value="2" selected>២ ថ្ងៃ</option>
-                <option value="3">៣ ថ្ងៃ</option>
-                <option value="5">៥ ថ្ងៃ</option>
-                <option value="7">៧ ថ្ងៃ</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-3 gap-2">
-              <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-center">
-                <p class="text-xl font-bold text-brand-600 dark:text-brand-400" id="statNotifTotal">0</p>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">សរុប</p>
-              </div>
-              <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-center">
-                <p class="text-xl font-bold text-amber-600 dark:text-amber-400" id="statNotifPending">0</p>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">រង់ចាំ</p>
-              </div>
-              <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-center">
-                <p class="text-xl font-bold text-green-600 dark:text-green-400" id="statNotifSent">0</p>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">បានផ្ញើ</p>
-              </div>
-            </div>
-            <button onclick="testNotification()" class="w-full px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm font-medium transition-colors">🔔 សាកល្បងការជូនដំណឹង</button>
-          </div>
-        </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 mb-5">
           <div class="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800">
             <div class="flex items-start gap-3 mb-4">
@@ -701,41 +644,6 @@ tailwind.config = {
     </button>
   </main>
 </div>
-
-<!-- NOTIFICATION PANEL -->
-<div id="notificationPanel" class="hidden fixed top-0 right-0 h-full w-full sm:w-96 bg-white dark:bg-slate-900 shadow-2xl z-[60] flex flex-col">
-  <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center glass sticky top-0 z-10">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-brand-50 dark:bg-brand-950 rounded-xl flex items-center justify-center">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3563ff" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      </div>
-      <h3 class="font-bold">ការជូនដំណឹង</h3>
-    </div>
-    <div class="flex gap-2">
-      <button onclick="markAllNotifRead()" class="text-xs text-brand-600 dark:text-brand-400 font-medium px-3 py-1.5 rounded-lg hover:bg-brand-50 dark:hover:bg-brand-950">អានទាំងអស់</button>
-      <button onclick="toggleNotifications()" class="w-9 h-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <div id="notifPermissionBanner" class="hidden p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border-b border-amber-200 dark:border-amber-900">
-    <div class="flex items-start gap-3">
-      <div class="w-10 h-10 bg-amber-100 dark:bg-amber-950 rounded-xl flex items-center justify-center shrink-0">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      </div>
-      <div class="flex-1">
-        <p class="font-semibold text-sm text-amber-900 dark:text-amber-400">បើកការជូនដំណឹង</p>
-        <p class="text-xs text-amber-700 dark:text-amber-500 mt-1">ទទួលការរំលឹក ២ ថ្ងៃមុនកាលបរិច្ឆេទតុលាការ</p>
-        <button onclick="requestNotifPermission()" class="mt-2 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-semibold">បើកឥឡូវ</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="notifList" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
-</div>
-
-<div id="notifOverlay" onclick="toggleNotifications()" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]"></div>
 
 <!-- CASE MODAL -->
 <div id="caseModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-wrap flex items-end sm:items-center justify-center">
@@ -858,7 +766,7 @@ tailwind.config = {
           </button>
         </div>
         <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1.5">
-          💡 ប្រព័ន្ធនឹងជូនដំណឹង ២ ថ្ងៃមុនកាលបរិច្ឆេទតុលាការ
+          💡 ចុច <b>"❌️ ឬ សម្អាត"</b> ដើម្បីលុបកាលបរិច្ឆេទ និងយកសំណុំរឿងចេញពីកាលវិភាគ
         </p>
       </div>
       <div class="md:col-span-2">
@@ -999,7 +907,7 @@ tailwind.config = {
 
 <script type="module">
 // ============================================================
-// 🔥 FIREBASE CONFIG
+// 🔥 FIREBASE CONFIG (របស់អ្នក)
 // ============================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { 
@@ -1027,6 +935,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Expose to window សម្រាប់ functions ខាងក្រោម
 window.FB = {
   auth, db,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
@@ -1045,15 +954,9 @@ let userProfile = null;
 let cacheCases = [];
 let cacheClients = [];
 let statusChart = null;
-let notifDaysBefore = parseInt(localStorage.getItem('notifDaysBefore') || '2');
-
-// Apply days before to NotificationManager
-if (window.NotificationManager) {
-  NotificationManager.DAYS_BEFORE = notifDaysBefore;
-}
 
 // ============================================================
-// GLOBAL FUNCTIONS
+// GLOBAL FUNCTIONS (window.xxx) - ត្រូវហៅពី HTML
 // ============================================================
 window.toggleDark = function() {
   const isDark = document.documentElement.classList.toggle('dark');
@@ -1167,7 +1070,6 @@ window.login = async function() {
 window.logout = function() {
   showConfirm('ចាកចេញ', 'តើអ្នកចង់ចាកចេញ?', async () => {
     try { await signOut(auth); } catch (e) {}
-    NotificationManager.stopAutoCheck();
     cacheCases = []; cacheClients = [];
     location.reload();
   }, 'ចាកចេញ');
@@ -1205,11 +1107,7 @@ window.showPage = function(page) {
   if (page === 'cases') renderCases();
   if (page === 'clients') renderClients();
   if (page === 'calendar') renderCalendar();
-  if (page === 'settings') {
-    renderSettingsStats();
-    updateNotifSettingsUI();
-    renderNotifStats();
-  }
+  if (page === 'settings') renderSettingsStats();
 };
 
 window.handleFAB = function() {
@@ -1489,27 +1387,7 @@ window.saveCase = async function() {
   btn.innerHTML = '<span class="spinner"></span> កំពុងរក្សាទុក...';
 
   try {
-    const savedId = await saveCaseToFirestore(data, id || null);
-    
-    // 🔔 កំណត់ Notification
-    try {
-      const caseId = savedId || id;
-      if (data.nextHearing && caseId) {
-        await NotificationManager.scheduleForCase(currentUser.uid, {
-          id: caseId,
-          caseNumber: data.caseNumber,
-          title: data.title,
-          court: data.court,
-          nextHearing: data.nextHearing
-        });
-      } else if (caseId) {
-        await NotificationDB.deleteByCase(caseId, currentUser.uid);
-      }
-      await updateNotifBadge();
-    } catch (notifErr) {
-      console.warn('Notification schedule error:', notifErr);
-    }
-    
+    await saveCaseToFirestore(data, id || null);
     toast(id ? '✅ បានកែប្រែ' : '✅ បន្ថែមថ្មី');
     closeCaseModal();
     renderCases();
@@ -1523,16 +1401,13 @@ window.saveCase = async function() {
 };
 
 window.editCase = function(id) { openCaseModal(id); };
-
 window.deleteCase = function(id) {
   showConfirm('លុបរឿងក្ដី', 'តើអ្នកប្រាកដ?', async () => {
     try {
       await deleteDoc(doc(db, 'users', currentUser.uid, 'cases', id));
-      await NotificationDB.deleteByCase(id, currentUser.uid);
       cacheCases = cacheCases.filter(c => c.id !== id);
       toast('🗑️ បានលុប');
       renderCases();
-      await updateNotifBadge();
     } catch (e) { toast('❌ បរាជ័យ'); }
   });
 };
@@ -1643,11 +1518,9 @@ async function saveCaseToFirestore(data, id) {
     await updateDoc(doc(db, 'users', currentUser.uid, 'cases', id), { ...data, updatedAt: serverTimestamp() });
     const idx = cacheCases.findIndex(c => c.id === id);
     if (idx >= 0) cacheCases[idx] = { ...cacheCases[idx], ...data, id };
-    return id;
   } else {
     const docRef = await addDoc(collection(db, 'users', currentUser.uid, 'cases'), { ...data, createdAt: serverTimestamp() });
     cacheCases.push({ id: docRef.id, ...data });
-    return docRef.id;
   }
 }
 
@@ -1733,278 +1606,6 @@ function renderCalendarItem(c) {
   </div>`;
 }
 
-// ============ NOTIFICATION FUNCTIONS ============
-window.toggleNotifications = function() {
-  const panel = document.getElementById('notificationPanel');
-  const overlay = document.getElementById('notifOverlay');
-  const isHidden = panel.classList.contains('hidden');
-  
-  if (isHidden) {
-    panel.classList.remove('hidden');
-    overlay.classList.remove('hidden');
-    renderNotifications();
-  } else {
-    panel.classList.add('hidden');
-    overlay.classList.add('hidden');
-  }
-};
-
-window.requestNotifPermission = async function() {
-  const granted = await NotificationManager.requestPermission();
-  if (granted) {
-    toast('✅ បានបើកការជូនដំណឹង');
-    checkNotifPermission();
-    updateNotifSettingsUI();
-    await NotificationManager.checkAndFire();
-    await NotificationManager.rescheduleAll(currentUser.uid, cacheCases);
-    await updateNotifBadge();
-    renderNotifStats();
-  } else {
-    toast('❌ មិនបានអនុញ្ញាត');
-    updateNotifSettingsUI();
-  }
-};
-
-window.markAllNotifRead = async function() {
-  if (!currentUser) return;
-  await NotificationManager.markAllAsRead(currentUser.uid);
-  await updateNotifBadge();
-  renderNotifications();
-};
-
-window.updateNotifDays = async function() {
-  const val = parseInt(document.getElementById('notifDaysBefore').value);
-  notifDaysBefore = val;
-  localStorage.setItem('notifDaysBefore', val.toString());
-  NotificationManager.DAYS_BEFORE = val;
-  
-  if (currentUser) {
-    toast(`⏰ កំណត់ជូនដំណឹង ${val} ថ្ងៃមុន`);
-    await NotificationManager.rescheduleAll(currentUser.uid, cacheCases);
-    await updateNotifBadge();
-    renderNotifStats();
-  }
-};
-
-window.testNotification = async function() {
-  const granted = await NotificationManager.requestPermission();
-  if (!granted) return toast('❌ សូមបើកការជូនដំណឹងជាមុន');
-  
-  const fakeCase = {
-    id: 'test_' + Date.now(),
-    caseNumber: 'TEST-001',
-    title: 'សាកល្បងការជូនដំណឹង',
-    court: 'សាលាដំបូងរាជធានីភ្នំពេញ',
-    nextHearing: new Date(Date.now() + notifDaysBefore * 86400000).toISOString().slice(0, 10)
-  };
-  
-  await NotificationManager.showNotification({
-    caseId: fakeCase.id,
-    caseNumber: fakeCase.caseNumber,
-    caseTitle: fakeCase.title,
-    court: fakeCase.court,
-    hearingDate: fakeCase.nextHearing
-  }, notifDaysBefore);
-  
-  toast(`🔔 បានផ្ញើការជូនដំណឹងសាកល្បង (${notifDaysBefore} ថ្ងៃ)`);
-};
-
-function checkNotifPermission() {
-  const banner = document.getElementById('notifPermissionBanner');
-  const status = NotificationManager.getPermissionStatus();
-  if (status === 'default' && banner) {
-    banner.classList.remove('hidden');
-  } else if (banner) {
-    banner.classList.add('hidden');
-  }
-}
-
-function updateNotifSettingsUI() {
-  const statusText = document.getElementById('notifStatusText');
-  const toggleBtn = document.getElementById('notifToggleBtn');
-  const daysSelect = document.getElementById('notifDaysBefore');
-  
-  if (daysSelect) daysSelect.value = notifDaysBefore.toString();
-  
-  if (!statusText || !toggleBtn) return;
-  
-  const status = NotificationManager.getPermissionStatus();
-  
-  if (status === 'granted') {
-    statusText.textContent = '✅ បើករួចហើយ';
-    statusText.className = 'text-xs text-green-600 dark:text-green-400 mt-0.5';
-    toggleBtn.textContent = 'រួចហើយ';
-    toggleBtn.disabled = true;
-    toggleBtn.className = 'px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium cursor-not-allowed';
-  } else if (status === 'denied') {
-    statusText.textContent = '❌ បដិសេធ (បើកក្នុង Browser)';
-    statusText.className = 'text-xs text-red-600 dark:text-red-400 mt-0.5';
-    toggleBtn.textContent = 'បើក';
-    toggleBtn.disabled = false;
-    toggleBtn.className = 'px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium';
-  } else if (status === 'unsupported') {
-    statusText.textContent = '⚠️ Browser មិនគាំទ្រ';
-    statusText.className = 'text-xs text-amber-600 dark:text-amber-400 mt-0.5';
-    toggleBtn.disabled = true;
-  } else {
-    statusText.textContent = 'មិនទាន់បើក';
-    statusText.className = 'text-xs text-slate-500 dark:text-slate-400 mt-0.5';
-    toggleBtn.textContent = 'បើក';
-    toggleBtn.disabled = false;
-    toggleBtn.className = 'px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium';
-  }
-}
-
-async function renderNotifStats() {
-  if (!currentUser) return;
-  const all = await NotificationDB.getByUser(currentUser.uid);
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-  set('statNotifTotal', all.length);
-  set('statNotifPending', all.filter(n => n.status === 'pending').length);
-  set('statNotifSent', all.filter(n => n.status === 'sent').length);
-}
-
-async function updateNotifBadge() {
-  if (!currentUser) return;
-  const count = await NotificationManager.getUnreadCount(currentUser.uid);
-  const badge = document.getElementById('notifBadge');
-  if (badge) {
-    if (count > 0) {
-      badge.textContent = count > 9 ? '9+' : count;
-      badge.classList.remove('hidden');
-    } else {
-      badge.classList.add('hidden');
-    }
-  }
-}
-
-async function renderNotifications() {
-  if (!currentUser) return;
-  const list = document.getElementById('notifList');
-  if (!list) return;
-
-  const notifs = await NotificationManager.getUserNotifications(currentUser.uid);
-  const sent = notifs.filter(n => n.status === 'sent');
-  const pending = notifs.filter(n => n.status === 'pending');
-  const expired = notifs.filter(n => n.status === 'expired');
-
-  if (!notifs.length) {
-    list.innerHTML = `<div class="text-center py-16"><div class="empty-icon">🔔</div><p class="text-slate-400 text-sm">មិនមានការជូនដំណឹង</p><p class="text-xs text-slate-400 mt-2">ពេលអ្នកកំណត់កាលបរិច្ឆេទតុលាការ ប្រព័ន្ធនឹងជូនដំណឹង ${notifDaysBefore} ថ្ងៃមុន</p></div>`;
-    return;
-  }
-
-  let html = '';
-
-  if (sent.length) {
-    html += `<p class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold px-2 mb-2">ថ្មីៗ</p>`;
-    html += sent.map(n => renderNotifItem(n, 'sent')).join('');
-  }
-
-  if (pending.length) {
-    html += `<p class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold px-2 mt-4 mb-2">កំណត់ជូនដំណឹង</p>`;
-    html += pending.map(n => renderNotifItem(n, 'pending')).join('');
-  }
-
-  if (expired.length) {
-    html += `<p class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold px-2 mt-4 mb-2">ផុតកំណត់</p>`;
-    html += expired.slice(0, 5).map(n => renderNotifItem(n, 'expired')).join('');
-  }
-
-  list.innerHTML = html;
-}
-
-function renderNotifItem(n, type) {
-  const hearingDate = new Date(n.hearingDate);
-  hearingDate.setHours(0, 0, 0, 0);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const daysLeft = Math.round((hearingDate - today) / 86400000);
-
-  let iconBg, icon, subtitle, borderColor;
-  
-  if (type === 'sent') {
-    if (daysLeft < 0) {
-      iconBg = 'bg-slate-100 dark:bg-slate-800';
-      icon = '✅';
-      subtitle = 'ផុតកំណត់';
-      borderColor = 'border-slate-300 dark:border-slate-700';
-    } else if (daysLeft === 0) {
-      iconBg = 'bg-red-100 dark:bg-red-950';
-      icon = '⚖️';
-      subtitle = 'ថ្ងៃនេះ!';
-      borderColor = 'border-red-500';
-    } else if (daysLeft <= 2) {
-      iconBg = 'bg-amber-100 dark:bg-amber-950';
-      icon = '⚠️';
-      subtitle = `នៅសល់ ${daysLeft} ថ្ងៃ`;
-      borderColor = 'border-amber-500';
-    } else {
-      iconBg = 'bg-brand-50 dark:bg-brand-950';
-      icon = '📅';
-      subtitle = `នៅសល់ ${daysLeft} ថ្ងៃ`;
-      borderColor = 'border-brand-500';
-    }
-  } else if (type === 'pending') {
-    iconBg = 'bg-brand-50 dark:bg-brand-950';
-    icon = '⏰';
-    subtitle = `ជូនដំណឹង ${n.daysBefore} ថ្ងៃមុន`;
-    borderColor = 'border-brand-300 dark:border-brand-800';
-  } else {
-    iconBg = 'bg-slate-100 dark:bg-slate-800';
-    icon = '✓';
-    subtitle = 'ផុតកំណត់';
-    borderColor = 'border-slate-200 dark:border-slate-800';
-  }
-
-  const isUnread = type === 'sent' && !n.readAt;
-  const opacity = type === 'expired' ? 'opacity-50' : '';
-
-  return `
-    <div onclick="onNotifClick('${n.id}', '${n.caseId}')" class="flex items-start gap-3 p-3 rounded-2xl border-l-4 ${borderColor} bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-all ${opacity} ${isUnread ? 'ring-2 ring-brand-100 dark:ring-brand-950' : ''}">
-      <div class="w-10 h-10 ${iconBg} rounded-xl flex items-center justify-center shrink-0 text-lg">${icon}</div>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2">
-          <p class="font-bold text-sm truncate">${n.caseNumber}</p>
-          ${isUnread ? '<span class="w-2 h-2 bg-brand-500 rounded-full flex-shrink-0"></span>' : ''}
-        </div>
-        <p class="text-xs text-slate-600 dark:text-slate-400 truncate mt-0.5">${n.caseTitle}</p>
-        <p class="text-[10px] text-slate-500 dark:text-slate-500 truncate mt-1">🏛️ ${n.court || '-'}</p>
-        <div class="flex items-center gap-2 mt-1.5 flex-wrap">
-          <span class="badge ${daysLeft <= 2 && daysLeft >= 0 ? 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'} text-[10px]">${subtitle}</span>
-          <span class="text-[10px] text-slate-400">${n.hearingDate}</span>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-window.onNotifClick = async function(notifId, caseId) {
-  await NotificationManager.markAsRead(notifId);
-  await updateNotifBadge();
-  toggleNotifications();
-  showPage('calendar');
-};
-
-// Service Worker message handler
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.addEventListener('message', (event) => {
-    if (event.data?.type === 'NOTIFICATION_CLICK') {
-      toggleNotifications();
-      showPage('calendar');
-    }
-  });
-}
-
-// Listen for in-app notification events
-window.addEventListener('hearing-notification', (e) => {
-  const { daysLeft } = e.detail;
-  updateNotifBadge();
-  if (document.getElementById('notificationPanel')?.classList.contains('hidden') === false) {
-    renderNotifications();
-  }
-  toast(`🔔 ការជូនដំណឹងថ្មី (${daysLeft} ថ្ងៃ)`);
-});
-
 // ============ PASSWORD MODAL ============
 window.openPasswordModal = function() {
   ['oldPass','newPass','newPass2'].forEach(id => document.getElementById(id).value = '');
@@ -2086,7 +1687,7 @@ window.exportData = function() {
   try {
     toast('📦 កំពុងបង្កើត Backup...');
     const data = {
-      version: '2.1',
+      version: '2.0',
       appName: 'Case Manager Professional',
       developer: 'Mr.CHAN CHIVA',
       exportedAt: new Date().toISOString(),
@@ -2185,13 +1786,6 @@ window.confirmImport = async function() {
       btn.disabled = true;
       btn.className = 'w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed';
       renderSettingsStats();
-      
-      // 🔔 Reschedule notifications after import
-      if (currentUser) {
-        await NotificationManager.rescheduleAll(currentUser.uid, cacheCases);
-        await updateNotifBadge();
-        renderNotifStats();
-      }
     } catch (e) {
       console.error(e);
       toast('❌ Import បរាជ័យ');
@@ -2268,12 +1862,9 @@ window.clearAllData = function() {
         ...clientsSnap.docs.map(d => deleteDoc(d.ref))
       ];
       await Promise.all(deletes);
-      await NotificationDB.clearUser(currentUser.uid);
       cacheCases = []; cacheClients = [];
       toast('🗑️ បានលុបទាំងអស់');
       renderSettingsStats();
-      await updateNotifBadge();
-      renderNotifStats();
       showPage('dashboard');
     } catch (e) { toast('❌ បរាជ័យ'); }
   }, 'លុបទាំងអស់');
@@ -2332,8 +1923,6 @@ document.addEventListener('keydown', (e) => {
     closeNameModal();
     closeConfirm();
     closeSidebarOnMobile();
-    const panel = document.getElementById('notificationPanel');
-    if (panel && !panel.classList.contains('hidden')) toggleNotifications();
   }
 });
 window.addEventListener('resize', () => {
@@ -2357,7 +1946,6 @@ window.installApp = async function() {
   await deferredPrompt.userChoice;
   deferredPrompt = null;
 };
-
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -2403,46 +1991,11 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('app').classList.remove('hidden');
 
     showPage('dashboard');
-
-    // 🔔 ចាប់ផ្ដើមប្រព័ន្ធជូនដំណឹង
-    try {
-      // Init notification DB
-      await NotificationDB.init();
-      
-      // Set days before
-      NotificationManager.DAYS_BEFORE = notifDaysBefore;
-      
-      // Reschedule all notifications from current cases
-      await NotificationManager.rescheduleAll(currentUser.uid, cacheCases);
-      
-      // Check and fire any overdue notifications
-      await NotificationManager.checkAndFire();
-      
-      // Start auto-checking
-      NotificationManager.startAutoCheck(currentUser.uid);
-      
-      // Update UI
-      await updateNotifBadge();
-      checkNotifPermission();
-      updateNotifSettingsUI();
-      
-      // Update badge every minute
-      setInterval(updateNotifBadge, 60000);
-      
-      console.log('✅ Notification system initialized');
-    } catch (e) {
-      console.warn('Notification setup error:', e);
-    }
-    
     hideLoading();
   } else {
     currentUser = null;
     userProfile = null;
     cacheCases = []; cacheClients = [];
-
-    NotificationManager.stopAutoCheck();
-    const badge = document.getElementById('notifBadge');
-    if (badge) badge.classList.add('hidden');
 
     document.getElementById('app').classList.add('hidden');
     const hasSetup = localStorage.getItem('hasSetup') === '1';
