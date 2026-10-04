@@ -152,13 +152,6 @@ tailwind.config = {
     -webkit-text-fill-color: transparent;
     letter-spacing: 0.05em;
   }
-
-  /* ✅ Search result highlight */
-  .search-highlight {
-    background: linear-gradient(135deg, rgba(53,99,255,0.15), rgba(139,92,246,0.15));
-    border-radius: 4px;
-    padding: 1px 3px;
-  }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
@@ -486,7 +479,6 @@ tailwind.config = {
           </button>
         </div>
 
-        <!-- ✅ ចំនួនលទ្ធផលស្វែងរក -->
         <div id="caseResultCount" class="hidden mb-3 px-4 py-2 bg-brand-50 dark:bg-brand-950/40 border border-brand-100 dark:border-brand-900/50 rounded-xl text-xs text-brand-700 dark:text-brand-300 font-medium"></div>
 
         <div class="desktop-table bg-white dark:bg-slate-900 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 overflow-hidden">
@@ -719,23 +711,30 @@ tailwind.config = {
           </optgroup>
         </select>
       </div>
+
+      <!-- ✅ ប្រភេទសំណុំរឿងក្ដី - គាំទ្រ Custom -->
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ប្រភេទសំណុំរឿងក្ដី</label>
-        <select id="caseType" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
-          <option>រដ្ឋប្បវេណី</option>
-          <option>ព្រហ្មទណ្ឌ</option>
-          <option>ពាណិជ្ជកម្ម</option>
-          <option>រដ្ឋបាល</option>
-          <option>ការងារ</option>
+        <select id="caseType" onchange="toggleCaseTypeCustom()" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+          <option value="រដ្ឋប្បវេណី">រដ្ឋប្បវេណី</option>
+          <option value="ព្រហ្មទណ្ឌ">ព្រហ្មទណ្ឌ</option>
+          <option value="ពាណិជ្ជកម្ម">ពាណិជ្ជកម្ម</option>
+          <option value="រដ្ឋបាល">រដ្ឋបាល</option>
+          <option value="ការងារ">ការងារ</option>
+          <option value="__custom__">✏️ ផ្សេងៗ (សរសេរដោយដៃ)</option>
         </select>
+        <input id="caseTypeCustom" type="text" placeholder="សរសេរប្រភេទសំណុំរឿងក្ដី..." class="hidden w-full mt-2 px-3.5 py-2.5 bg-amber-50 dark:bg-amber-950/30 border-2 border-dashed border-amber-300 dark:border-amber-700 focus:border-brand-500 rounded-xl outline-none text-base">
       </div>
+
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">អតិថិជន</label>
         <select id="caseClient" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base"></select>
       </div>
+
+      <!-- ✅ ស្ថានភាពសំណុំរឿងក្ដី - គាំទ្រ Custom -->
       <div class="md:col-span-2">
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ស្ថានភាពសំណុំរឿងក្ដី <span class="text-red-500">*</span></label>
-        <select id="caseStatus" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
+        <select id="caseStatus" onchange="toggleCaseStatusCustom()" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
           <option value="">— សូមជ្រើសរើសស្ថានភាពសំណុំរឿងក្ដី —</option>
           <optgroup label="📋 នីតិវិធីរដ្ឋប្បវេណី">
             <option value="ដាក់ពាក្យបណ្ដឹង">ដាក់ពាក្យបណ្ដឹង</option>
@@ -745,21 +744,21 @@ tailwind.config = {
             <option value="រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ">រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
           </optgroup>
           <optgroup label="⚖️ នីតិវិធីព្រហ្មទណ្ឌ">
-            <option value="ដាក់ពាក្យបណ្ដឹង">ដាក់ពាក្យបណ្ដឹង</option>
             <option value="ដំណាក់កាលមន្ត្រីនគរបាល">ដំណាក់កាលមន្ត្រីនគរបាល</option>
             <option value="ដំណាក់កាលព្រះរាជអាជ្ញា">ដំណាក់កាលព្រះរាជអាជ្ញា</option>
             <option value="ដំណាក់កាលចៅក្រមស៊ើបសួរ">ដំណាក់កាលចៅក្រមស៊ើបសួរ</option>
             <option value="ដំណាក់កាលជំនុំជម្រះ">ដំណាក់កាលជំនុំជម្រះ</option>
-            <option value="រង់ចាំប្រកាសសេចក្ដីសម្រេច">រង់ចាំប្រកាសសេចក្ដីសម្រេច</option>
-            <option value="រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ">រង់ចាំសេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
           </optgroup>
           <optgroup label="✅ បញ្ចប់សំណុំរឿងក្ដី">
             <option value="សេចក្ដីសម្រេចចូលជាស្ថាពរ">សេចក្ដីសម្រេចចូលជាស្ថាពរ</option>
             <option value="ពាក្យបណ្ដឹងបានដក">ពាក្យបណ្ដឹងបានដក</option>
             <option value="លទ្ធផលសះជាគ្នា">លទ្ធផលសះជាគ្នា</option>
           </optgroup>
+          <option value="__custom__">✏️ ផ្សេងៗ (សរសេរដោយដៃ)</option>
         </select>
+        <input id="caseStatusCustom" type="text" placeholder="សរសេរស្ថានភាពសំណុំរឿងក្ដី..." class="hidden w-full mt-2 px-3.5 py-2.5 bg-amber-50 dark:bg-amber-950/30 border-2 border-dashed border-amber-300 dark:border-amber-700 focus:border-brand-500 rounded-xl outline-none text-base">
       </div>
+
       <div class="md:col-span-2">
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">កំណត់កាលបរិច្ឆេទតុលាការ</label>
         <div class="flex gap-2">
@@ -1138,10 +1137,22 @@ const STATUS_MAP = {
   'ដំណាក់កាលចៅក្រមស៊ើបសួរ': 'active',
   'ដំណាក់កាលជំនុំជម្រះ': 'active',
 };
+
+// ✅ គាំទ្រ Custom status ដោយទាយពី keyword
 function getStatusCategory(status) {
   if (!status) return 'unknown';
-  return STATUS_MAP[status.trim()] || 'unknown';
+  const s = status.trim();
+  
+  if (STATUS_MAP[s]) return STATUS_MAP[s];
+  
+  const lower = s.toLowerCase();
+  if (lower.includes('បញ្ចប់') || lower.includes('ស្ថាពរ') || lower.includes('ដក') || lower.includes('សះ')) return 'closed';
+  if (lower.includes('រង់ចាំ') || lower.includes('ព្យួរ')) return 'pending';
+  if (lower.includes('ដំណើរការ') || lower.includes('ដាក់') || lower.includes('នីតិវិធី') || lower.includes('ដំណាក់កាល') || lower.includes('ជំនុំ')) return 'active';
+  
+  return 'active';
 }
+
 function statusInfo(status) {
   const cat = getStatusCategory(status);
   if (cat === 'active') return { label: status || 'កំពុងដំណើរការ', cls: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400', dot: 'bg-green-500' };
@@ -1170,6 +1181,47 @@ window.clearHearingDate = function() {
   input.value = '';
   toast('✅ បានលុបកាលបរិច្ឆេទតុលាការ');
 };
+
+// ============ CUSTOM TYPE / STATUS TOGGLE ============
+window.toggleCaseTypeCustom = function() {
+  const select = document.getElementById('caseType');
+  const customInput = document.getElementById('caseTypeCustom');
+  if (select.value === '__custom__') {
+    customInput.classList.remove('hidden');
+    customInput.value = '';
+    setTimeout(() => customInput.focus(), 100);
+  } else {
+    customInput.classList.add('hidden');
+    customInput.value = '';
+  }
+};
+
+window.toggleCaseStatusCustom = function() {
+  const select = document.getElementById('caseStatus');
+  const customInput = document.getElementById('caseStatusCustom');
+  if (select.value === '__custom__') {
+    customInput.classList.remove('hidden');
+    customInput.value = '';
+    setTimeout(() => customInput.focus(), 100);
+  } else {
+    customInput.classList.add('hidden');
+    customInput.value = '';
+  }
+};
+
+function getCaseTypeValue() {
+  const select = document.getElementById('caseType');
+  const customInput = document.getElementById('caseTypeCustom');
+  if (select.value === '__custom__') return customInput.value.trim();
+  return select.value;
+}
+
+function getCaseStatusValue() {
+  const select = document.getElementById('caseStatus');
+  const customInput = document.getElementById('caseStatusCustom');
+  if (select.value === '__custom__') return customInput.value.trim();
+  return select.value;
+}
 
 // ============ DASHBOARD ============
 function renderDashboard() {
@@ -1236,7 +1288,7 @@ function renderDashboard() {
 }
 
 // ============================================================
-// ✅ CASES - FIXED SEARCH + FILTER + CLIENT NAME SEARCH
+// ✅ CASES - SEARCH + FILTER + CLIENT NAME SEARCH
 // ============================================================
 function renderCases() {
   const searchEl = document.getElementById('caseSearch');
@@ -1251,13 +1303,11 @@ function renderCases() {
   const cases = cacheCases;
   const clients = cacheClients;
 
-  // បង្ហាញ/លាក់ប៊ូតុង clear
   if (clearBtn) {
     if (search) clearBtn.classList.remove('hidden');
     else clearBtn.classList.add('hidden');
   }
 
-  // Map clientId -> client សម្រាប់ស្វែងរកលឿន
   const clientMap = {};
   clients.forEach(c => { clientMap[c.id] = c; });
 
@@ -1267,7 +1317,6 @@ function renderCases() {
     const clientPhone = (client?.phone || '').toLowerCase();
     const clientEmail = (client?.email || '').toLowerCase();
 
-    // ✅ ស្វែងរកតាម: លេខក្ដី, ចំណងជើង, តុលាការ, ស្ថានភាព, ចំណាំ, ឈ្មោះអតិថិជន, ទូរស័ព្ទ, អ៊ីមែល
     const matchSearch = !search ||
       (c.caseNumber || '').toLowerCase().includes(search) ||
       (c.title || '').toLowerCase().includes(search) ||
@@ -1285,7 +1334,6 @@ function renderCases() {
     return matchSearch && matchCourt && matchStatus;
   });
 
-  // ✅ បង្ហាញចំនួនលទ្ធផលស្វែងរក
   if (resultCountEl) {
     const hasFilter = search || courtFilter || statusFilter;
     if (hasFilter) {
@@ -1296,7 +1344,6 @@ function renderCases() {
     }
   }
 
-  // Desktop table
   document.getElementById('casesTable').innerHTML = filtered.length
     ? filtered.map(c => {
         const client = clientMap[c.clientId];
@@ -1325,7 +1372,6 @@ function renderCases() {
       }).join('')
     : '<tr><td colspan="7" class="px-5 py-12 text-center"><div class="empty-icon">📁</div><p class="text-slate-400 text-sm">មិនមានរឿងក្ដី</p></td></tr>';
 
-  // Mobile cards
   document.getElementById('casesCards').innerHTML = filtered.length
     ? filtered.map(c => {
         const client = clientMap[c.clientId];
@@ -1356,10 +1402,8 @@ function renderCases() {
     : '<div class="text-center py-12"><div class="empty-icon">📁</div><p class="text-slate-400 text-sm">មិនមានរឿងក្ដី</p></div>';
 }
 
-// ✅ Expose ទៅ window ដើម្បីឲ្យ HTML oninput/onchange ហៅបាន
 window.renderCases = renderCases;
 
-// ✅ សម្អាតការស្វែងរក
 window.clearCaseSearch = function() {
   const el = document.getElementById('caseSearch');
   if (el) { el.value = ''; el.focus(); }
@@ -1375,11 +1419,20 @@ window.openCaseModal = function(id=null) {
 
   const courtSelect = document.getElementById('caseCourt');
   const statusSelect = document.getElementById('caseStatus');
+  const typeSelect = document.getElementById('caseType');
+  const statusCustom = document.getElementById('caseStatusCustom');
+  const typeCustom = document.getElementById('caseTypeCustom');
+
   const cleanCustom = (select) => {
     Array.from(select.options).forEach(opt => {
       if (opt.dataset.custom === '1') opt.remove();
     });
   };
+
+  statusCustom.classList.add('hidden');
+  statusCustom.value = '';
+  typeCustom.classList.add('hidden');
+  typeCustom.value = '';
 
   if (id) {
     const c = cacheCases.find(x => x.id === id);
@@ -1389,6 +1442,7 @@ window.openCaseModal = function(id=null) {
     document.getElementById('caseNumber').value = c.caseNumber;
     document.getElementById('caseTitle').value = c.title;
 
+    // Court
     const savedCourt = c.court || '';
     cleanCustom(courtSelect);
     if (Array.from(courtSelect.options).some(o => o.value === savedCourt)) courtSelect.value = savedCourt;
@@ -1398,25 +1452,42 @@ window.openCaseModal = function(id=null) {
       courtSelect.appendChild(o); courtSelect.value = savedCourt;
     } else courtSelect.value = '';
 
+    // Type
+    const savedType = c.caseType || '';
+    cleanCustom(typeSelect);
+    if (Array.from(typeSelect.options).some(o => o.value === savedType)) {
+      typeSelect.value = savedType;
+    } else if (savedType) {
+      typeSelect.value = '__custom__';
+      typeCustom.classList.remove('hidden');
+      typeCustom.value = savedType;
+    } else {
+      typeSelect.value = 'រដ្ឋប្បវេណី';
+    }
+
+    // Status
     const savedStatus = c.status || '';
     cleanCustom(statusSelect);
-    if (Array.from(statusSelect.options).some(o => o.value === savedStatus)) statusSelect.value = savedStatus;
-    else if (savedStatus) {
-      const o = document.createElement('option');
-      o.value = savedStatus; o.textContent = savedStatus + ' (ចាស់)'; o.dataset.custom = '1';
-      statusSelect.appendChild(o); statusSelect.value = savedStatus;
-    } else statusSelect.value = '';
+    if (Array.from(statusSelect.options).some(o => o.value === savedStatus)) {
+      statusSelect.value = savedStatus;
+    } else if (savedStatus) {
+      statusSelect.value = '__custom__';
+      statusCustom.classList.remove('hidden');
+      statusCustom.value = savedStatus;
+    } else {
+      statusSelect.value = '';
+    }
 
-    document.getElementById('caseType').value = c.caseType||'រដ្ឋប្បវេណី';
     document.getElementById('caseClient').value = c.clientId || '';
     document.getElementById('caseHearing').value = c.nextHearing||'';
     document.getElementById('caseNote').value = c.note||'';
   } else {
     document.getElementById('caseModalTitle').textContent = 'បន្ថែមសំណុំរឿងក្ដីថ្មី';
     ['caseId','caseNumber','caseTitle','caseHearing','caseNote'].forEach(i => document.getElementById(i).value = '');
-    cleanCustom(courtSelect); cleanCustom(statusSelect);
+    cleanCustom(courtSelect); cleanCustom(statusSelect); cleanCustom(typeSelect);
     courtSelect.value = '';
     statusSelect.value = 'ដាក់ពាក្យបណ្ដឹង';
+    typeSelect.value = 'រដ្ឋប្បវេណី';
   }
   document.getElementById('caseModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -1425,21 +1496,30 @@ window.openCaseModal = function(id=null) {
 window.closeCaseModal = function() {
   document.getElementById('caseModal').classList.add('hidden');
   document.body.style.overflow = '';
+  document.getElementById('caseTypeCustom').classList.add('hidden');
+  document.getElementById('caseTypeCustom').value = '';
+  document.getElementById('caseStatusCustom').classList.add('hidden');
+  document.getElementById('caseStatusCustom').value = '';
 };
 
 window.saveCase = async function() {
   const id = document.getElementById('caseId').value;
   const clientVal = document.getElementById('caseClient').value;
+
+  const caseTypeValue = getCaseTypeValue();
+  const caseStatusValue = getCaseStatusValue();
+
   const data = {
     caseNumber: document.getElementById('caseNumber').value.trim(),
     title: document.getElementById('caseTitle').value.trim(),
     court: document.getElementById('caseCourt').value,
-    caseType: document.getElementById('caseType').value,
+    caseType: caseTypeValue,
     clientId: clientVal || null,
-    status: document.getElementById('caseStatus').value,
+    status: caseStatusValue,
     nextHearing: document.getElementById('caseHearing').value,
     note: document.getElementById('caseNote').value.trim()
   };
+
   if (!data.caseNumber || !data.title) return toast('⚠️ សូមបំពេញលេខក្ដី និងចំណងជើង');
   if (!data.court) return toast('⚠️ សូមជ្រើសរើសតុលាការ');
   if (!data.status) return toast('⚠️ សូមជ្រើសរើសស្ថានភាព');
