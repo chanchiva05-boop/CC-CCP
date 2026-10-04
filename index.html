@@ -745,7 +745,6 @@ tailwind.config = {
         </select>
       </div>
 
-      <!-- ✅ ប្រភេទសំណុំរឿងក្ដី - គាំទ្រ Custom -->
       <div>
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ប្រភេទសំណុំរឿងក្ដី</label>
         <select id="caseType" onchange="toggleCaseTypeCustom()" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
@@ -764,7 +763,6 @@ tailwind.config = {
         <select id="caseClient" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base"></select>
       </div>
 
-      <!-- ✅ ស្ថានភាពសំណុំរឿងក្ដី - គាំទ្រ Custom -->
       <div class="md:col-span-2">
         <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">ស្ថានភាពសំណុំរឿងក្ដី <span class="text-red-500">*</span></label>
         <select id="caseStatus" onchange="toggleCaseStatusCustom()" class="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 rounded-xl outline-none text-base">
@@ -1258,7 +1256,7 @@ function getCaseStatusValue() {
 }
 
 // ============ DASHBOARD ============
-// ✅ កែ: Upcoming Hearings ចុចបាន នាំទៅកែសំណុំរឿង
+// ✅ Upcoming Hearings ចុចបាន - Modal លោតនៅ Dashboard តែម្ដង
 function renderDashboard() {
   const cases = cacheCases;
   document.getElementById('statTotal').textContent = cases.length;
@@ -1333,7 +1331,7 @@ function renderDashboard() {
 }
 
 // ============================================================
-// ✅ CASES - SEARCH + FILTER + CLIENT NAME SEARCH
+// CASES - SEARCH + FILTER
 // ============================================================
 function renderCases() {
   const searchEl = document.getElementById('caseSearch');
@@ -1456,14 +1454,8 @@ window.clearCaseSearch = function() {
 };
 
 // ============ CASES MODAL ============
-// ✅ កែ: បើកពី Calendar/Dashboard សូមប្ដូរទៅទំព័រ Cases ជាមុន
+// ✅ មិនប្ដូរទំព័រ - Modal លោតនៅទំព័របច្ចុប្បន្នតែម្ដង
 window.openCaseModal = function(id=null) {
-  // បើបើកពី Calendar ឬ Dashboard សូមប្ដូរទៅទំព័រ Cases ជាមុន
-  const currentPage = document.querySelector('.page:not(.hidden)')?.id;
-  if (id && currentPage && currentPage !== 'page-cases') {
-    showPage('cases');
-  }
-  
   const clients = cacheClients;
   document.getElementById('caseClient').innerHTML = clients.length
     ? clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('')
@@ -1557,6 +1549,14 @@ window.closeCaseModal = function() {
   document.getElementById('caseStatusCustom').value = '';
 };
 
+// ✅ Refresh តាមទំព័របច្ចុប្បន្ន
+function refreshCurrentPage() {
+  const currentPage = document.querySelector('.page:not(.hidden)')?.id;
+  if (currentPage === 'page-cases') renderCases();
+  if (currentPage === 'page-calendar') renderCalendar();
+  if (currentPage === 'page-dashboard') renderDashboard();
+}
+
 window.saveCase = async function() {
   const id = document.getElementById('caseId').value;
   const clientVal = document.getElementById('caseClient').value;
@@ -1587,7 +1587,7 @@ window.saveCase = async function() {
     await saveCaseToFirestore(data, id || null);
     toast(id ? '✅ បានកែប្រែ' : '✅ បន្ថែមថ្មី');
     closeCaseModal();
-    renderCases();
+    refreshCurrentPage();
   } catch (e) {
     console.error(e);
     toast('❌ បរាជ័យ: ' + e.message);
@@ -1604,7 +1604,7 @@ window.deleteCase = function(id) {
       await deleteDoc(doc(db, 'users', currentUser.uid, 'cases', id));
       cacheCases = cacheCases.filter(c => c.id !== id);
       toast('🗑️ បានលុប');
-      renderCases();
+      refreshCurrentPage();
     } catch (e) { toast('❌ បរាជ័យ'); }
   });
 };
@@ -1739,7 +1739,7 @@ async function loadUserData() {
 }
 
 // ============ CALENDAR ============
-// ✅ កែ: Calendar Items ចុចបាន នាំទៅកែសំណុំរឿង
+// ✅ ចុចលើសំណុំរឿង → Modal លោតនៅ Calendar តែម្ដង
 function renderCalendar() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -1787,7 +1787,6 @@ function renderCalendar() {
   document.getElementById('calendarList').innerHTML = html;
 }
 
-// ✅ កែ: បន្ថែម onclick + hover + ព្រួញ "កែ"
 function renderCalendarItem(c) {
   const info = getHearingDayInfo(c.nextHearing);
   if (!info) return '';
